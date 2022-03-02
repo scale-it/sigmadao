@@ -1,11 +1,36 @@
 {
-  "private": true,
+  "name": "sigmadao-ui",
+  "description": "Sigma DAO UI",
+  "homepage": "https://algobuilder.dev",
+  "engines": {
+    "node": ">=14.11.0",
+    "yarn": ">=3.1.0"
+  },
   "scripts": {
     "dev": "nuxi dev",
     "build": "nuxi build",
-    "start": "node .output/server/index.mjs"
+    "start": "node .output/server/index.mjs",
+    "lint:js": "eslint --ext \".js,.ts,.vue\" --ignore-path .gitignore .",
+    "lint:prettier": "prettier --check .",
+    "lint": "yarn lint:js && yarn lint:prettier",
+    "lintfix": "prettier --write --list-different . && yarn lint:js --fix",
+    "typecheck": "nuxi typecheck",
+    "test": "jest"
+  },
+  "dependencies": {
+    "eslint": "^8.10.0",
+    "husky": "^7.0.4",
+    "jest": "^27.5.1",
+    "lint-staged": "^12.3.4",
+    "nuxi": "^0.10.1",
+    "prettier": "^2.5.1",
+    "vue-jest": "^3.0.7"
   },
   "devDependencies": {
     "nuxt3": "latest"
+  },
+  "lint-staged": {
+    "*.{js,ts,vue}": "eslint --cache",
+    "*.**": "prettier --ignore-unknown --write"
   }
 }
