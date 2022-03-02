@@ -34,5 +34,8 @@
 	"lint-staged": {
 		"*.{js,ts,vue}": "eslint --cache",
 		"*.**": "prettier --ignore-unknown --write"
+	},
+	"dependencies": {
+		"ant-design-vue": "next"
 	}
 }
