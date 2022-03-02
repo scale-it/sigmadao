@@ -1,0 +1,21 @@
+node_modules
+*.log
+.nuxt
+nuxt.d.ts
+.output
+.env
+
+.yarn
+
+.cache
+
+# next.js build output
+.next
+.nuxt
+# Nuxt generate
+dist
+# vuepress build output
+.vuepress/dist
+
+# macOS
+.DS_Store
