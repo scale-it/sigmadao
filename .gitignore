@@ -8,6 +8,7 @@ nuxt.d.ts
 .yarn
 
 .cache
+.eslintcache
 
 # next.js build output
 .next
