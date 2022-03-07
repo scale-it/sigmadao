@@ -24,7 +24,7 @@
 		"eslint-config-prettier": "^8.4.0",
 		"husky": "^7.0.4",
 		"jest": "^27.5.1",
-		"lint-staged": "^12.3.4",
+		"lint-staged": "^12.3.5",
 		"nuxi": "^0.10.1",
 		"nuxt3": "latest",
 		"prettier": "^2.5.1",
