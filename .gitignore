@@ -1,8 +1,6 @@
 node_modules
+/dist
 *.log
-.nuxt
-nuxt.d.ts
-.output
 .env
 
 .yarn/cache
@@ -11,13 +9,25 @@ nuxt.d.ts
 .cache
 .eslintcache
 
-# next.js build output
-.next
-.nuxt
-# Nuxt generate
-dist
-# vuepress build output
-.vuepress/dist
+# local env files
+.env.local
+.env.*.local
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+node_modules
 
 # macOS
 .DS_Store
