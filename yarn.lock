@@ -614,19 +614,19 @@
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@nuxt/devalue/-/devalue-2.0.0.tgz#c7bd7e9a516514e612d5d2e511ffc399e0eac322"
 
-"@nuxt/kit@npm:@nuxt/kit-edge@3.0.0-27439163.9f506de":
-  version "3.0.0-27439163.9f506de"
-  resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-27439163.9f506de.tgz#07c4c1ca46095c7d7f0866248ff7dea10ae198e2"
+"@nuxt/kit@npm:@nuxt/kit-edge@3.0.0-27446051.40d325e":
+  version "3.0.0-27446051.40d325e"
+  resolved "https://registry.yarnpkg.com/@nuxt/kit-edge/-/kit-edge-3.0.0-27446051.40d325e.tgz#871a1327b7f4e5dd2fc14b75e2e431296a6fffb5"
   dependencies:
-    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-27439163.9f506de"
-    c12 "^0.1.3"
+    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-27446051.40d325e"
+    c12 "^0.1.4"
     consola "^2.15.3"
     defu "^5.0.1"
     globby "^13.1.1"
     hash-sum "^2.0.0"
     ignore "^5.2.0"
     jiti "^1.13.0"
-    knitwork "^0.1.0"
+    knitwork "^0.1.1"
     lodash.template "^4.5.0"
     mlly "^0.4.3"
     pathe "^0.2.0"
@@ -636,15 +636,15 @@
     unctx "^1.0.2"
     untyped "^0.3.0"
 
-"@nuxt/nitro@npm:@nuxt/nitro-edge@3.0.0-27439163.9f506de":
-  version "3.0.0-27439163.9f506de"
-  resolved "https://registry.yarnpkg.com/@nuxt/nitro-edge/-/nitro-edge-3.0.0-27439163.9f506de.tgz#0888fe9003642377e1cfeb1934abf3246cc4c6e0"
+"@nuxt/nitro@npm:@nuxt/nitro-edge@3.0.0-27446051.40d325e":
+  version "3.0.0-27446051.40d325e"
+  resolved "https://registry.yarnpkg.com/@nuxt/nitro-edge/-/nitro-edge-3.0.0-27446051.40d325e.tgz#09ef97cfd0d594919ba05fb6ab78639c1cbe135e"
   dependencies:
     "@cloudflare/kv-asset-handler" "^0.2.0"
     "@netlify/functions" "^1.0.0"
     "@nuxt/design" "0.1.5"
     "@nuxt/devalue" "^2.0.0"
-    "@nuxt/kit" "npm:@nuxt/kit-edge@3.0.0-27439163.9f506de"
+    "@nuxt/kit" "npm:@nuxt/kit-edge@3.0.0-27446051.40d325e"
     "@rollup/plugin-alias" "^3.1.9"
     "@rollup/plugin-commonjs" "^21.0.2"
     "@rollup/plugin-inject" "^4.0.4"
@@ -653,7 +653,7 @@
     "@rollup/plugin-replace" "^4.0.0"
     "@rollup/plugin-virtual" "^2.1.0"
     "@rollup/plugin-wasm" "^5.1.2"
-    "@rollup/pluginutils" "^4.1.2"
+    "@rollup/pluginutils" "^4.2.0"
     "@types/jsdom" "^16.2.14"
     "@vercel/nft" "^0.17.5"
     archiver "^5.3.0"
@@ -664,7 +664,7 @@
     defu "^5.0.1"
     destr "^1.1.0"
     dot-prop "^7.2.0"
-    esbuild "^0.14.23"
+    esbuild "^0.14.25"
     etag "^1.8.1"
     fs-extra "^10.0.1"
     globby "^13.1.1"
@@ -675,18 +675,18 @@
     http-proxy "^1.18.1"
     is-primitive "^3.0.1"
     jiti "^1.13.0"
-    knitwork "^0.1.0"
+    knitwork "^0.1.1"
     listhen "^0.2.6"
     mime "^3.0.0"
     mlly "^0.4.3"
-    node-fetch "^3.2.0"
+    node-fetch "^3.2.2"
     ohmyfetch "^0.4.15"
     ora "^6.1.0"
     p-debounce "^4.0.0"
     pathe "^0.2.0"
     pkg-types "^0.3.2"
     pretty-bytes "^6.0.0"
-    rollup "^2.68.0"
+    rollup "^2.70.0"
     rollup-plugin-terser "^7.0.2"
     rollup-plugin-visualizer "^5.6.0"
     serve-placeholder "^1.2.4"
@@ -699,11 +699,11 @@
     vue-bundle-renderer "^0.3.5"
     vue-server-renderer "^2.6.14"
 
-"@nuxt/schema@npm:@nuxt/schema-edge@3.0.0-27439163.9f506de":
-  version "3.0.0-27439163.9f506de"
-  resolved "https://registry.yarnpkg.com/@nuxt/schema-edge/-/schema-edge-3.0.0-27439163.9f506de.tgz#008e6abf774ff0adb6e52a74461b708eeb3fb50e"
+"@nuxt/schema@npm:@nuxt/schema-edge@3.0.0-27446051.40d325e":
+  version "3.0.0-27446051.40d325e"
+  resolved "https://registry.yarnpkg.com/@nuxt/schema-edge/-/schema-edge-3.0.0-27446051.40d325e.tgz#6da934ee0ff0f15de9bde1c5173e991ed7292cac"
   dependencies:
-    c12 "^0.1.3"
+    c12 "^0.1.4"
     create-require "^1.1.1"
     defu "^5.0.1"
     jiti "^1.13.0"
@@ -713,32 +713,35 @@
     std-env "^3.0.1"
     ufo "^0.7.11"
 
-"@nuxt/vite-builder@npm:@nuxt/vite-builder-edge@3.0.0-27439163.9f506de":
-  version "3.0.0-27439163.9f506de"
-  resolved "https://registry.yarnpkg.com/@nuxt/vite-builder-edge/-/vite-builder-edge-3.0.0-27439163.9f506de.tgz#1673cc89cdc90d17ed2155bce8f684310c7cf99b"
+"@nuxt/vite-builder@npm:@nuxt/vite-builder-edge@3.0.0-27446051.40d325e":
+  version "3.0.0-27446051.40d325e"
+  resolved "https://registry.yarnpkg.com/@nuxt/vite-builder-edge/-/vite-builder-edge-3.0.0-27446051.40d325e.tgz#bc5e06164a43194782eaab1d7983613d31553c35"
   dependencies:
-    "@nuxt/kit" "npm:@nuxt/kit-edge@3.0.0-27439163.9f506de"
+    "@nuxt/kit" "npm:@nuxt/kit-edge@3.0.0-27446051.40d325e"
     "@vitejs/plugin-vue" "^2.2.4"
     "@vitejs/plugin-vue-jsx" "^1.3.8"
     autoprefixer "^10.4.2"
     chokidar "^3.5.3"
-    cssnano "^5.0.17"
+    cssnano "^5.1.0"
     defu "^5.0.1"
-    esbuild "^0.14.23"
+    esbuild "^0.14.25"
     escape-string-regexp "^5.0.0"
     externality "^0.1.6"
     fs-extra "^10.0.1"
     get-port-please "^2.4.3"
-    knitwork "^0.1.0"
+    knitwork "^0.1.1"
+    magic-string "^0.26.1"
     mlly "^0.4.3"
     p-debounce "^4.0.0"
     pathe "^0.2.0"
+    postcss "^8.4.8"
     postcss-import "^14.0.2"
     postcss-url "^10.1.3"
+    rollup "^2.70.0"
     rollup-plugin-visualizer "^5.6.0"
     ufo "^0.7.11"
-    unplugin "^0.3.3"
-    vite "^2.8.5"
+    unplugin "^0.4.0"
+    vite "^2.8.6"
 
 "@nuxtjs/eslint-config-typescript@^8.0.0":
   version "8.0.0"
@@ -837,6 +840,13 @@
 "@rollup/pluginutils@^4.1.2":
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/@rollup/pluginutils/-/pluginutils-4.1.2.tgz#ed5821c15e5e05e32816f5fb9ec607cdf5a75751"
+  dependencies:
+    estree-walker "^2.0.1"
+    picomatch "^2.2.2"
+
+"@rollup/pluginutils@^4.2.0":
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/@rollup/pluginutils/-/pluginutils-4.2.0.tgz#a14bbd058fdbba0a5647143b16ed0d86fb60bd08"
   dependencies:
     estree-walker "^2.0.1"
     picomatch "^2.2.2"
@@ -1715,6 +1725,18 @@ c12@^0.1.3:
     pathe "^0.2.0"
     rc9 "^1.2.0"
 
+c12@^0.1.4:
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/c12/-/c12-0.1.4.tgz#ae56921d47a66d695ca5a4e9abd6bdf57439c9f1"
+  dependencies:
+    defu "^5.0.1"
+    dotenv "^14.3.2"
+    gittar "^0.1.1"
+    jiti "^1.12.14"
+    mlly "^0.4.1"
+    pathe "^0.2.0"
+    rc9 "^1.2.0"
+
 call-bind@^1.0.0, call-bind@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/call-bind/-/call-bind-1.0.2.tgz#b1d4e89e688119c3c9a903ad30abb2f6a919be3c"
@@ -2073,16 +2095,16 @@ cssesc@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/cssesc/-/cssesc-3.0.0.tgz#37741919903b868565e1c09ea747445cd18983ee"
 
-cssnano-preset-default@^5.2.0:
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/cssnano-preset-default/-/cssnano-preset-default-5.2.0.tgz#2579d38b9217746f2cf9f938954a91e00418ded6"
+cssnano-preset-default@^5.2.1:
+  version "5.2.1"
+  resolved "https://registry.yarnpkg.com/cssnano-preset-default/-/cssnano-preset-default-5.2.1.tgz#a83b15d3294c69bd1cedd14b0066c2f2357d108e"
   dependencies:
     css-declaration-sorter "^6.0.3"
     cssnano-utils "^3.1.0"
     postcss-calc "^8.2.3"
     postcss-colormin "^5.3.0"
     postcss-convert-values "^5.1.0"
-    postcss-discard-comments "^5.1.0"
+    postcss-discard-comments "^5.1.1"
     postcss-discard-duplicates "^5.1.0"
     postcss-discard-empty "^5.1.0"
     postcss-discard-overridden "^5.1.0"
@@ -2105,17 +2127,17 @@ cssnano-preset-default@^5.2.0:
     postcss-reduce-initial "^5.1.0"
     postcss-reduce-transforms "^5.1.0"
     postcss-svgo "^5.1.0"
-    postcss-unique-selectors "^5.1.0"
+    postcss-unique-selectors "^5.1.1"
 
 cssnano-utils@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/cssnano-utils/-/cssnano-utils-3.1.0.tgz#95684d08c91511edfc70d2636338ca37ef3a6861"
 
-cssnano@^5.0.17:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/cssnano/-/cssnano-5.1.0.tgz#cf977d660a5824d0d5542639ed1d4045afd84cbe"
+cssnano@^5.1.0:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/cssnano/-/cssnano-5.1.1.tgz#2df44d26461b95f699096b6830df5107b1a758f4"
   dependencies:
-    cssnano-preset-default "^5.2.0"
+    cssnano-preset-default "^5.2.1"
     lilconfig "^2.0.3"
     yaml "^1.10.2"
 
@@ -2451,83 +2473,163 @@ esbuild-android-64@0.14.24:
   version "0.14.24"
   resolved "https://registry.yarnpkg.com/esbuild-android-64/-/esbuild-android-64-0.14.24.tgz#d826ac29a9b983dc200a0ca407c34c64d2480b38"
 
+esbuild-android-64@0.14.25:
+  version "0.14.25"
+  resolved "https://registry.yarnpkg.com/esbuild-android-64/-/esbuild-android-64-0.14.25.tgz#d532d38cb5fe0ae45167ce35f4bbc784c636be40"
+
 esbuild-android-arm64@0.14.24:
   version "0.14.24"
   resolved "https://registry.yarnpkg.com/esbuild-android-arm64/-/esbuild-android-arm64-0.14.24.tgz#f8aaf28dbd4d7b80d30b0323c7a645e3a12b5de9"
+
+esbuild-android-arm64@0.14.25:
+  version "0.14.25"
+  resolved "https://registry.yarnpkg.com/esbuild-android-arm64/-/esbuild-android-arm64-0.14.25.tgz#9c5bb3366aabfd14a1c726d36978b79441dfcb6e"
 
 esbuild-darwin-64@0.14.24:
   version "0.14.24"
   resolved "https://registry.yarnpkg.com/esbuild-darwin-64/-/esbuild-darwin-64-0.14.24.tgz#9f6e4b94066e9c5e521b19176a85edd7f94ac074"
 
+esbuild-darwin-64@0.14.25:
+  version "0.14.25"
+  resolved "https://registry.yarnpkg.com/esbuild-darwin-64/-/esbuild-darwin-64-0.14.25.tgz#05dcdb6d884f427039ffee5e92ff97527e56c26d"
+
 esbuild-darwin-arm64@0.14.24:
   version "0.14.24"
   resolved "https://registry.yarnpkg.com/esbuild-darwin-arm64/-/esbuild-darwin-arm64-0.14.24.tgz#6b8ce7f2a3e1210cc672c73d658669e5f88b8efb"
+
+esbuild-darwin-arm64@0.14.25:
+  version "0.14.25"
+  resolved "https://registry.yarnpkg.com/esbuild-darwin-arm64/-/esbuild-darwin-arm64-0.14.25.tgz#28e080da4ea0cfe9498071e7f8060498caee1a95"
 
 esbuild-freebsd-64@0.14.24:
   version "0.14.24"
   resolved "https://registry.yarnpkg.com/esbuild-freebsd-64/-/esbuild-freebsd-64-0.14.24.tgz#b586d8aa290bfcdf0aa73fdfcf64c092d49795f2"
 
+esbuild-freebsd-64@0.14.25:
+  version "0.14.25"
+  resolved "https://registry.yarnpkg.com/esbuild-freebsd-64/-/esbuild-freebsd-64-0.14.25.tgz#200d3664a3b945bc9fdcba73614b49a11ebd1cfa"
+
 esbuild-freebsd-arm64@0.14.24:
   version "0.14.24"
   resolved "https://registry.yarnpkg.com/esbuild-freebsd-arm64/-/esbuild-freebsd-arm64-0.14.24.tgz#4e7098de07791089b6ef6b4f17a8ce6124da7bec"
+
+esbuild-freebsd-arm64@0.14.25:
+  version "0.14.25"
+  resolved "https://registry.yarnpkg.com/esbuild-freebsd-arm64/-/esbuild-freebsd-arm64-0.14.25.tgz#624b08c5da6013bdc312aaa23c4ff409580f5c3c"
 
 esbuild-linux-32@0.14.24:
   version "0.14.24"
   resolved "https://registry.yarnpkg.com/esbuild-linux-32/-/esbuild-linux-32-0.14.24.tgz#afe7345f3e8ee58eede36c0254e128924680b305"
 
+esbuild-linux-32@0.14.25:
+  version "0.14.25"
+  resolved "https://registry.yarnpkg.com/esbuild-linux-32/-/esbuild-linux-32-0.14.25.tgz#0238e597eb0b60aa06c7e98fccbbfd6bb9a0d6c5"
+
 esbuild-linux-64@0.14.24:
   version "0.14.24"
   resolved "https://registry.yarnpkg.com/esbuild-linux-64/-/esbuild-linux-64-0.14.24.tgz#ce7b95e8ed96076dcb329d1d34e4b9ef084e02cf"
+
+esbuild-linux-64@0.14.25:
+  version "0.14.25"
+  resolved "https://registry.yarnpkg.com/esbuild-linux-64/-/esbuild-linux-64-0.14.25.tgz#8a8b8cf47dfce127c858e71229d9a385a82c62e8"
 
 esbuild-linux-arm64@0.14.24:
   version "0.14.24"
   resolved "https://registry.yarnpkg.com/esbuild-linux-arm64/-/esbuild-linux-arm64-0.14.24.tgz#f8aee4eb78309fd3c064e86393a698e33908e8ec"
 
+esbuild-linux-arm64@0.14.25:
+  version "0.14.25"
+  resolved "https://registry.yarnpkg.com/esbuild-linux-arm64/-/esbuild-linux-arm64-0.14.25.tgz#7ac94371418a2640ba413bc1700aaedeb2794e52"
+
 esbuild-linux-arm@0.14.24:
   version "0.14.24"
   resolved "https://registry.yarnpkg.com/esbuild-linux-arm/-/esbuild-linux-arm-0.14.24.tgz#eaccc0a4d7d17e7290e5b20c383e6969c6769bf7"
+
+esbuild-linux-arm@0.14.25:
+  version "0.14.25"
+  resolved "https://registry.yarnpkg.com/esbuild-linux-arm/-/esbuild-linux-arm-0.14.25.tgz#034bd18e9310b9f010c89f90ef7f05706689600b"
 
 esbuild-linux-mips64le@0.14.24:
   version "0.14.24"
   resolved "https://registry.yarnpkg.com/esbuild-linux-mips64le/-/esbuild-linux-mips64le-0.14.24.tgz#9db94b62bbcbaad6229087ea27a6d7dc3fc878d6"
 
+esbuild-linux-mips64le@0.14.25:
+  version "0.14.25"
+  resolved "https://registry.yarnpkg.com/esbuild-linux-mips64le/-/esbuild-linux-mips64le-0.14.25.tgz#05f98a8cf6b578eab6b4e6b0ab094f37530934f4"
+
 esbuild-linux-ppc64le@0.14.24:
   version "0.14.24"
   resolved "https://registry.yarnpkg.com/esbuild-linux-ppc64le/-/esbuild-linux-ppc64le-0.14.24.tgz#194d59a5ebfcdbfc7e710d13893e6c62216baa77"
+
+esbuild-linux-ppc64le@0.14.25:
+  version "0.14.25"
+  resolved "https://registry.yarnpkg.com/esbuild-linux-ppc64le/-/esbuild-linux-ppc64le-0.14.25.tgz#46fd0add8d8535678439d7a9c2876ad20042d952"
 
 esbuild-linux-riscv64@0.14.24:
   version "0.14.24"
   resolved "https://registry.yarnpkg.com/esbuild-linux-riscv64/-/esbuild-linux-riscv64-0.14.24.tgz#0d8cbbcd2f3b7cc4365ebc8fac8d00fdc95691d2"
 
+esbuild-linux-riscv64@0.14.25:
+  version "0.14.25"
+  resolved "https://registry.yarnpkg.com/esbuild-linux-riscv64/-/esbuild-linux-riscv64-0.14.25.tgz#ea2e986f0f3e5df73c635135dd778051734fc605"
+
 esbuild-linux-s390x@0.14.24:
   version "0.14.24"
   resolved "https://registry.yarnpkg.com/esbuild-linux-s390x/-/esbuild-linux-s390x-0.14.24.tgz#460e726f5d827f1171f9eac8c9bbcad8e6574ec5"
+
+esbuild-linux-s390x@0.14.25:
+  version "0.14.25"
+  resolved "https://registry.yarnpkg.com/esbuild-linux-s390x/-/esbuild-linux-s390x-0.14.25.tgz#efe89486e9a1b1508925048076e3f3a6698aa6a3"
 
 esbuild-netbsd-64@0.14.24:
   version "0.14.24"
   resolved "https://registry.yarnpkg.com/esbuild-netbsd-64/-/esbuild-netbsd-64-0.14.24.tgz#8f6f4c68b8e84e1e011330096f118013cc275601"
 
+esbuild-netbsd-64@0.14.25:
+  version "0.14.25"
+  resolved "https://registry.yarnpkg.com/esbuild-netbsd-64/-/esbuild-netbsd-64-0.14.25.tgz#439fe27d8ee3b5887501ee63988e85f920107db6"
+
 esbuild-openbsd-64@0.14.24:
   version "0.14.24"
   resolved "https://registry.yarnpkg.com/esbuild-openbsd-64/-/esbuild-openbsd-64-0.14.24.tgz#6fbfc089103d154d74d4ea5a3aefc2844189094a"
+
+esbuild-openbsd-64@0.14.25:
+  version "0.14.25"
+  resolved "https://registry.yarnpkg.com/esbuild-openbsd-64/-/esbuild-openbsd-64-0.14.25.tgz#31ebf616aadf6e60674469f2b92cec92280d9930"
 
 esbuild-sunos-64@0.14.24:
   version "0.14.24"
   resolved "https://registry.yarnpkg.com/esbuild-sunos-64/-/esbuild-sunos-64-0.14.24.tgz#09931dbbc610f88feda1c071f2844e7d8867f46e"
 
+esbuild-sunos-64@0.14.25:
+  version "0.14.25"
+  resolved "https://registry.yarnpkg.com/esbuild-sunos-64/-/esbuild-sunos-64-0.14.25.tgz#815e4f936d74970292a63ccfd5791fe5e3569f5f"
+
 esbuild-windows-32@0.14.24:
   version "0.14.24"
   resolved "https://registry.yarnpkg.com/esbuild-windows-32/-/esbuild-windows-32-0.14.24.tgz#3c8dddffaec6dce9a3ac8ef2bec939ec5af17e68"
+
+esbuild-windows-32@0.14.25:
+  version "0.14.25"
+  resolved "https://registry.yarnpkg.com/esbuild-windows-32/-/esbuild-windows-32-0.14.25.tgz#189e14df2478f2c193c86968ab1fb54e1ceaafd2"
 
 esbuild-windows-64@0.14.24:
   version "0.14.24"
   resolved "https://registry.yarnpkg.com/esbuild-windows-64/-/esbuild-windows-64-0.14.24.tgz#e97081ee16d51c5a210cd1de15454689ac09fc8b"
 
+esbuild-windows-64@0.14.25:
+  version "0.14.25"
+  resolved "https://registry.yarnpkg.com/esbuild-windows-64/-/esbuild-windows-64-0.14.25.tgz#3d5fbfdc3856850bb47439299e3b60dd18be111f"
+
 esbuild-windows-arm64@0.14.24:
   version "0.14.24"
   resolved "https://registry.yarnpkg.com/esbuild-windows-arm64/-/esbuild-windows-arm64-0.14.24.tgz#0fcff2b58c772874f8dc52638557f817609ed699"
 
-esbuild@^0.14.14, esbuild@^0.14.23:
+esbuild-windows-arm64@0.14.25:
+  version "0.14.25"
+  resolved "https://registry.yarnpkg.com/esbuild-windows-arm64/-/esbuild-windows-arm64-0.14.25.tgz#8b243cbbad8a86cf98697da9ccb88c05df2ef458"
+
+esbuild@^0.14.14:
   version "0.14.24"
   resolved "https://registry.yarnpkg.com/esbuild/-/esbuild-0.14.24.tgz#543899cf9ff0ebe206dc3de2ac18b9122d9f5697"
   optionalDependencies:
@@ -2551,6 +2653,31 @@ esbuild@^0.14.14, esbuild@^0.14.23:
     esbuild-windows-32 "0.14.24"
     esbuild-windows-64 "0.14.24"
     esbuild-windows-arm64 "0.14.24"
+
+esbuild@^0.14.25:
+  version "0.14.25"
+  resolved "https://registry.yarnpkg.com/esbuild/-/esbuild-0.14.25.tgz#ddb9d47b91ca76abb7d850ce3dfed0bc3dc88d16"
+  optionalDependencies:
+    esbuild-android-64 "0.14.25"
+    esbuild-android-arm64 "0.14.25"
+    esbuild-darwin-64 "0.14.25"
+    esbuild-darwin-arm64 "0.14.25"
+    esbuild-freebsd-64 "0.14.25"
+    esbuild-freebsd-arm64 "0.14.25"
+    esbuild-linux-32 "0.14.25"
+    esbuild-linux-64 "0.14.25"
+    esbuild-linux-arm "0.14.25"
+    esbuild-linux-arm64 "0.14.25"
+    esbuild-linux-mips64le "0.14.25"
+    esbuild-linux-ppc64le "0.14.25"
+    esbuild-linux-riscv64 "0.14.25"
+    esbuild-linux-s390x "0.14.25"
+    esbuild-netbsd-64 "0.14.25"
+    esbuild-openbsd-64 "0.14.25"
+    esbuild-sunos-64 "0.14.25"
+    esbuild-windows-32 "0.14.25"
+    esbuild-windows-64 "0.14.25"
+    esbuild-windows-arm64 "0.14.25"
 
 escalade@^3.1.1:
   version "3.1.1"
@@ -4163,9 +4290,9 @@ kleur@^3.0.3:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/kleur/-/kleur-3.0.3.tgz#a79c9ecc86ee1ce3fa6206d1216c501f147fc07e"
 
-knitwork@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/knitwork/-/knitwork-0.1.0.tgz#9495fde93d2390bcfa7439292fe8a44447f7fc67"
+knitwork@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/knitwork/-/knitwork-0.1.1.tgz#8f3d3a14fd5e81b68149c4b69ae4d5e551cfdb72"
 
 lazystream@^1.0.0:
   version "1.0.1"
@@ -4361,7 +4488,7 @@ magic-string@^0.25.7:
   dependencies:
     sourcemap-codec "^1.4.8"
 
-magic-string@^0.26.0:
+magic-string@^0.26.1:
   version "0.26.1"
   resolved "https://registry.yarnpkg.com/magic-string/-/magic-string-0.26.1.tgz#ba9b651354fa9512474199acecf9c6dbe93f97fd"
   dependencies:
@@ -4638,6 +4765,14 @@ node-fetch@^3.0.0, node-fetch@^3.2.0:
     fetch-blob "^3.1.4"
     formdata-polyfill "^4.0.10"
 
+node-fetch@^3.2.2:
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-3.2.2.tgz#16d33fbe32ca7c6ca1ca8ba5dfea1dd885c59f04"
+  dependencies:
+    data-uri-to-buffer "^4.0.0"
+    fetch-blob "^3.1.4"
+    formdata-polyfill "^4.0.10"
+
 node-forge@^1.2.0:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/node-forge/-/node-forge-1.2.1.tgz#82794919071ef2eb5c509293325cec8afd0fd53c"
@@ -4755,7 +4890,7 @@ number-is-nan@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/number-is-nan/-/number-is-nan-1.0.1.tgz#097b602b53422a522c1afb8790318336941a011d"
 
-nuxi-edge@latest, "nuxi@npm:nuxi-edge@3.0.0-27439163.9f506de":
+nuxi-edge@latest:
   version "3.0.0-27439163.9f506de"
   resolved "https://registry.yarnpkg.com/nuxi-edge/-/nuxi-edge-3.0.0-27439163.9f506de.tgz#401342cfafb0aeeb75c8aa72aea1bc30995839da"
   optionalDependencies:
@@ -4767,15 +4902,21 @@ nuxi@^0.10.1:
   dependencies:
     nuxi-edge latest
 
+"nuxi@npm:nuxi-edge@3.0.0-27446051.40d325e":
+  version "3.0.0-27446051.40d325e"
+  resolved "https://registry.yarnpkg.com/nuxi-edge/-/nuxi-edge-3.0.0-27446051.40d325e.tgz#9efc803cb47e8f6d7de7ae6536e8a9449f048d3e"
+  optionalDependencies:
+    fsevents "~2.3.2"
+
 nuxt3@latest:
-  version "3.0.0-27439163.9f506de"
-  resolved "https://registry.yarnpkg.com/nuxt3/-/nuxt3-3.0.0-27439163.9f506de.tgz#79749ad7e0e4c67760487789919ec04d95308968"
+  version "3.0.0-27446051.40d325e"
+  resolved "https://registry.yarnpkg.com/nuxt3/-/nuxt3-3.0.0-27446051.40d325e.tgz#7b312d546dafb024602f3fd5bfa6e486cda79b0d"
   dependencies:
     "@nuxt/design" "^0.1.5"
-    "@nuxt/kit" "npm:@nuxt/kit-edge@3.0.0-27439163.9f506de"
-    "@nuxt/nitro" "npm:@nuxt/nitro-edge@3.0.0-27439163.9f506de"
-    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-27439163.9f506de"
-    "@nuxt/vite-builder" "npm:@nuxt/vite-builder-edge@3.0.0-27439163.9f506de"
+    "@nuxt/kit" "npm:@nuxt/kit-edge@3.0.0-27446051.40d325e"
+    "@nuxt/nitro" "npm:@nuxt/nitro-edge@3.0.0-27446051.40d325e"
+    "@nuxt/schema" "npm:@nuxt/schema-edge@3.0.0-27446051.40d325e"
+    "@nuxt/vite-builder" "npm:@nuxt/vite-builder-edge@3.0.0-27446051.40d325e"
     "@vue/reactivity" "^3.2.31"
     "@vue/shared" "^3.2.31"
     "@vueuse/head" "^0.7.5"
@@ -4789,17 +4930,17 @@ nuxt3@latest:
     h3 "^0.3.9"
     hash-sum "^2.0.0"
     hookable "^5.1.1"
-    knitwork "^0.1.0"
-    magic-string "^0.26.0"
+    knitwork "^0.1.1"
+    magic-string "^0.26.1"
     mlly "^0.4.3"
     murmurhash-es "^0.1.1"
     nitropack "npm:nitropack-edge@latest"
-    nuxi "npm:nuxi-edge@3.0.0-27439163.9f506de"
+    nuxi "npm:nuxi-edge@3.0.0-27446051.40d325e"
     ohmyfetch "^0.4.15"
     pathe "^0.2.0"
     scule "^0.2.1"
     ufo "^0.7.11"
-    unplugin "^0.3.3"
+    unplugin "^0.4.0"
     vue "^3.2.31"
     vue-router "^4.0.13"
 
@@ -5083,9 +5224,9 @@ postcss-convert-values@^5.1.0:
   dependencies:
     postcss-value-parser "^4.2.0"
 
-postcss-discard-comments@^5.1.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/postcss-discard-comments/-/postcss-discard-comments-5.1.0.tgz#87be4e0953bf599935837b940c701f8d4eca7d0b"
+postcss-discard-comments@^5.1.1:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/postcss-discard-comments/-/postcss-discard-comments-5.1.1.tgz#e90019e1a0e5b99de05f63516ce640bd0df3d369"
 
 postcss-discard-duplicates@^5.1.0:
   version "5.1.0"
@@ -5245,9 +5386,9 @@ postcss-svgo@^5.1.0:
     postcss-value-parser "^4.2.0"
     svgo "^2.7.0"
 
-postcss-unique-selectors@^5.1.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/postcss-unique-selectors/-/postcss-unique-selectors-5.1.0.tgz#70a945da1b0599d00f617222a44ba1d82a676694"
+postcss-unique-selectors@^5.1.1:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/postcss-unique-selectors/-/postcss-unique-selectors-5.1.1.tgz#a9f273d1eacd09e9aa6088f4b0507b18b1b541b6"
   dependencies:
     postcss-selector-parser "^6.0.5"
 
@@ -5267,6 +5408,14 @@ postcss-value-parser@^4.0.0, postcss-value-parser@^4.2.0:
 postcss@^8.1.10, postcss@^8.4.6:
   version "8.4.7"
   resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.4.7.tgz#f99862069ec4541de386bf57f5660a6c7a0875a8"
+  dependencies:
+    nanoid "^3.3.1"
+    picocolors "^1.0.0"
+    source-map-js "^1.0.2"
+
+postcss@^8.4.8:
+  version "8.4.8"
+  resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.4.8.tgz#dad963a76e82c081a0657d3a2f3602ce10c2e032"
   dependencies:
     nanoid "^3.3.1"
     picocolors "^1.0.0"
@@ -5563,9 +5712,15 @@ rollup-pluginutils@^2.8.2:
   dependencies:
     estree-walker "^0.6.1"
 
-rollup@^2.59.0, rollup@^2.66.1, rollup@^2.68.0:
+rollup@^2.59.0, rollup@^2.66.1:
   version "2.69.0"
   resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.69.0.tgz#82aa86682a45e9760146b736c1643bf435506156"
+  optionalDependencies:
+    fsevents "~2.3.2"
+
+rollup@^2.70.0:
+  version "2.70.0"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.70.0.tgz#17a92e5938e92a251b962352e904c9f558230ec7"
   optionalDependencies:
     fsevents "~2.3.2"
 
@@ -6275,10 +6430,11 @@ unpipe@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/unpipe/-/unpipe-1.0.0.tgz#b2bf4ee8514aae6165b4817829d21b2ef49904ec"
 
-unplugin@^0.3.3:
-  version "0.3.3"
-  resolved "https://registry.yarnpkg.com/unplugin/-/unplugin-0.3.3.tgz#e9b148f84cabef5e6529f232a10e674a7c020930"
+unplugin@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/unplugin/-/unplugin-0.4.0.tgz#43a923f0267f8834118a926c406131d1d84a1358"
   dependencies:
+    chokidar "^3.5.3"
     webpack-virtual-modules "^0.4.3"
 
 unstorage@^0.3.3:
@@ -6352,7 +6508,7 @@ validate-npm-package-license@^3.0.1:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
 
-vite@^2.8.5:
+vite@^2.8.6:
   version "2.8.6"
   resolved "https://registry.yarnpkg.com/vite/-/vite-2.8.6.tgz#32d50e23c99ca31b26b8ccdc78b1d72d4d7323d3"
   dependencies:
