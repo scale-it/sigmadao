@@ -5,7 +5,8 @@ nuxt.d.ts
 .output
 .env
 
-.yarn
+.yarn/cache
+.yarn/install-state.gz
 
 .cache
 .eslintcache
