@@ -20,7 +20,7 @@
 	"dependencies": {
 		"@algo-builder/algob": "^3.2.0",
 		"@algo-builder/web": "^3.2.0",
-		"@ant-design/icons-vue": "^6.0.1",
+		"@ant-design/icons-vue": "^6.1.0",
 		"algosdk": "^1.10.0",
 		"ant-design-vue": "3.0.0-beta.13",
 		"core-js": "^3.6.5",
