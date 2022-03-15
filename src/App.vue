@@ -11,17 +11,16 @@ declare var AlgoSigner: any; // eslint-disable-line
 
 export default defineComponent({
 	name: "App",
-	components: {},
 	data() {
 		return {
 			walletCheckCount: 1,
 		};
 	},
 	setup() {
-		const counter = WalletStore();
+		const walletStore = WalletStore();
 
 		return {
-			setHasAlgoSigner: counter.setHasAlgoSigner,
+			setHasAlgoSigner: walletStore.setHasAlgoSigner,
 		};
 	},
 	mounted() {
