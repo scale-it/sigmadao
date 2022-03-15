@@ -51,6 +51,6 @@
 		"eslint-plugin-vue": "latest",
 		"lint-staged": "^12.3.4",
 		"prettier": "^2.5.1",
-		"typescript": "~4.3.5"
+		"typescript": "~4.6.2"
 	}
 }
