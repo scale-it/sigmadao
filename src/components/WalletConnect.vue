@@ -5,9 +5,11 @@
 				<a-dropdown>
 					<template #overlay>
 						<a-menu @click="handleMenuClick">
-							<a-menu-item key="1"> Algosigner </a-menu-item>
-							<a-menu-item key="2"> Wallet Connect </a-menu-item>
-							<a-menu-item key="3"> My Algo Wallet </a-menu-item>
+							<a-menu-item :key="Wallet.ALGOSIGNER"> Algosigner </a-menu-item>
+							<a-menu-item :key="Wallet.WALLET_CONNECT">
+								Wallet Connect
+							</a-menu-item>
+							<a-menu-item :key="Wallet.MY_ALGO"> My Algo Wallet </a-menu-item>
 						</a-menu>
 					</template>
 					<a-button style="margin-bottom: 10px">
@@ -18,7 +20,7 @@
 			</a-col>
 		</a-row>
 		<a-row>
-			<a-col>Address: {{ walletAddress }}</a-col>
+			<a-col v-if="walletAddress">Address: {{ walletAddress }}</a-col>
 		</a-row>
 	</div>
 </template>
@@ -27,6 +29,7 @@
 import { DownOutlined } from "@ant-design/icons-vue";
 import { CHAIN_NAME } from "../config/algosigner.config";
 import { defineComponent } from "vue";
+import { Wallet } from "../types/enum.types";
 declare var AlgoSigner: any; // eslint-disable-line
 
 export default defineComponent({
@@ -35,9 +38,10 @@ export default defineComponent({
 	},
 	data() {
 		return {
-			walletAddress: "Not Found",
+			walletAddress: "",
 			text: "Connect Wallet",
-			selectedWallet: "",
+			selectedWallet: Wallet.NONE,
+			Wallet,
 		};
 	},
 	methods: {
@@ -63,9 +67,11 @@ export default defineComponent({
 		},
 		handleMenuClick(e: any) {
 			console.error("changing wallet kind", e.key);
-			if (e.key === "1") {
-				this.selectedWallet = "1";
+			if (e.key === Wallet.ALGOSIGNER) {
+				this.selectedWallet = Wallet.ALGOSIGNER;
 				this.connectAlgoSigner();
+			} else {
+				console.warn("Wallet %s not supported", e.key);
 			}
 		},
 	},

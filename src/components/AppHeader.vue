@@ -1,37 +1,52 @@
 <template>
+	<!-- TODO: Update to ANTD menu and header -->
 	<div class="header" id="header">
-		<div class="grid">
-			<div class="flexbox">
-				<h1>SigmaDao</h1>
-				<div class="menu_id">
-					<label for="dao_id" style="padding-right: 10px">DAO ID</label>
-					<input id="dao_id" v-model="id" type="number" />
+		<a-row class="veritcal_center">
+			<a-col :span="20">
+				<a-row class="veritcal_center">
+					<a-col :span="4">
+						<h1>SigmaDao</h1>
+					</a-col>
+					<a-col :span="8">
+						<div class="menu_id">
+							<label for="dao_id" style="padding-right: 10px">DAO ID</label>
+							<input id="dao_id" v-model="id" type="number" />
+						</div>
+					</a-col>
+					<a-col>
+						<div>
+							<router-link :to="{ path: '/vote' }">
+								<a-button
+									class="menu_option"
+									:type="
+										currentPageKey === NavigationKey.VOTE ? 'link' : 'text'
+									"
+									@click="() => handleMenuClick(NavigationKey.VOTE)"
+									>Vote</a-button
+								>
+							</router-link>
+							<router-link :to="{ path: '/addProposal' }">
+								<a-button
+									class="menu_option"
+									:type="
+										currentPageKey === NavigationKey.ADD_PROPOSAL
+											? 'link'
+											: 'text'
+									"
+									@click="() => handleMenuClick(NavigationKey.ADD_PROPOSAL)"
+									>Add Proposal</a-button
+								>
+							</router-link>
+						</div>
+					</a-col>
+				</a-row>
+			</a-col>
+			<a-col :span="4">
+				<div>
+					<WalletConnect />
 				</div>
-				<div class="menu">
-					<router-link :to="{ path: '/vote' }">
-						<a-button
-							class="menu_option"
-							:type="currentPageKey === NavigationKey.VOTE ? 'link' : 'text'"
-							@click="() => handleMenuClick(NavigationKey.VOTE)"
-							>Vote</a-button
-						>
-					</router-link>
-					<router-link :to="{ path: '/addProposal' }">
-						<a-button
-							class="menu_option"
-							:type="
-								currentPageKey === NavigationKey.ADD_PROPOSAL ? 'link' : 'text'
-							"
-							@click="() => handleMenuClick(NavigationKey.ADD_PROPOSAL)"
-							>Add Proposal</a-button
-						>
-					</router-link>
-				</div>
-			</div>
-			<div class="right_corner">
-				<WalletConnect />
-			</div>
-		</div>
+			</a-col>
+		</a-row>
 	</div>
 </template>
 
@@ -82,31 +97,18 @@ export default defineComponent({
 	font-size: 15px !important;
 }
 
-.grid {
-	display: grid;
-	grid-template-columns: auto max-content;
+.veritcal_center {
 	align-items: center;
-}
-
-.right_corner {
-	justify-self: flex-end;
 }
 
 .flexbox {
 	display: flex;
 }
 
-.menu {
-	position: absolute;
-	left: 50%;
-	transform: translateX(-50%);
-	align-self: center;
-}
 .menu_option {
 	font-size: 20px;
 }
 .menu_id {
 	align-self: center;
-	margin-inline: 20px;
 }
 </style>

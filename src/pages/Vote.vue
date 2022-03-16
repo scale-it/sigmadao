@@ -4,6 +4,13 @@
 		:style="'--p-height: ' + headerHeight + 'px'"
 	></div>
 	<div class="mt flexBox flexBox_center">
+		<a-alert
+			v-if="showError"
+			message="Error"
+			description="Please fill the required fields"
+			type="error"
+			show-icon
+		/>
 		<form @submit="onSubmit">
 			<label for="proposal_id">Proposal ID</label>
 			<input id="proposal_id" required v-model="proposal_id" type="number" />
@@ -20,7 +27,7 @@
 
 <script lang="ts">
 import { VoteFormState } from "@/types";
-import { defineComponent, reactive } from "vue";
+import { defineComponent, reactive, ref } from "vue";
 import { useRoute } from "vue-router";
 import VoteStore from "../store/VoteStore";
 import { VoteOptions } from "../types/enum.types";
@@ -33,6 +40,7 @@ export default defineComponent({
 		};
 	},
 	setup() {
+		const showError = ref(false);
 		const route = useRoute();
 		console.log(route.params);
 		const store = VoteStore();
@@ -40,14 +48,16 @@ export default defineComponent({
 
 		const onSubmit = () => {
 			if (formState.proposal_id && formState.vote) {
+				showError.value = false;
 				store.setFormValue(formState);
-			}
+			} else showError.value = true;
 		};
 		const headerHeight = document.getElementById("header")?.offsetHeight;
 		return {
 			onSubmit,
 			formState,
 			headerHeight,
+			showError,
 		};
 	},
 });

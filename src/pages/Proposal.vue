@@ -4,6 +4,13 @@
 		:style="'--p-height: ' + headerHeight + 'px'"
 	></div>
 	<div class="mt flexBox flexBox_center">
+		<a-alert
+			v-if="showError"
+			message="Error"
+			description="Please fill the required fields"
+			type="error"
+			show-icon
+		/>
 		<form @submit="onSubmit">
 			<label for="url">URL</label>
 			<input id="url" required v-model="formState.url" type="url" />
@@ -69,7 +76,7 @@
 
 <script lang="ts">
 import { ProposalFormState } from "@/types";
-import { defineComponent, reactive } from "vue";
+import { defineComponent, reactive, ref } from "vue";
 import ProposalStore from "../store/ProposalStore";
 import { ProposalType } from "../types/enum.types";
 
@@ -81,6 +88,7 @@ export default defineComponent({
 		};
 	},
 	setup() {
+		const showError = ref(false);
 		const store = ProposalStore();
 		const formState = reactive<ProposalFormState>(store.$state);
 
@@ -107,7 +115,7 @@ export default defineComponent({
 								: false);
 				}
 			}
-
+			showError.value = !success;
 			success && store.setFormValue(formState);
 		};
 
@@ -146,6 +154,7 @@ export default defineComponent({
 			disabledRangeTime,
 			onSubmit,
 			headerHeight,
+			showError,
 		};
 	},
 });
