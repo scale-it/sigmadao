@@ -7,7 +7,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import WalletStore from "./store/WalletStore";
-import { Wallet } from "./types";
+import { WalletType } from "./types";
 import { MAX_WALLET_COUNT_CHECK } from "./config/app.config";
 import AppHeader from "./components/AppHeader.vue";
 import AppFooter from "./components/AppFooter.vue";
@@ -22,10 +22,10 @@ export default defineComponent({
 		};
 	},
 	setup() {
-		const counter = WalletStore();
+		const walletStore = WalletStore();
 
 		return {
-			setHasAlgoSigner: counter.setHasAlgoSigner,
+			setWalletType: walletStore.setWalletType,
 		};
 	},
 	mounted() {
@@ -34,7 +34,7 @@ export default defineComponent({
 	methods: {
 		async checkAlgoSigner() {
 			if (typeof AlgoSigner !== "undefined") {
-				this.setHasAlgoSigner(Wallet.ALGOSIGNER);
+				this.setWalletType(WalletType.ALGOSIGNER);
 				await AlgoSigner.connect();
 			} else {
 				// maximum number of times to check wallet

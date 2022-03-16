@@ -5,11 +5,9 @@
 				<a-dropdown>
 					<template #overlay>
 						<a-menu @click="handleMenuClick">
-							<a-menu-item :key="Wallet.ALGOSIGNER"> Algosigner </a-menu-item>
-							<a-menu-item :key="Wallet.WALLET_CONNECT">
-								Wallet Connect
+							<a-menu-item :key="WalletType.ALGOSIGNER">
+								Algosigner
 							</a-menu-item>
-							<a-menu-item :key="Wallet.MY_ALGO"> My Algo Wallet </a-menu-item>
 						</a-menu>
 					</template>
 					<a-button style="margin-bottom: 10px">
@@ -29,7 +27,9 @@
 import { DownOutlined } from "@ant-design/icons-vue";
 import { CHAIN_NAME } from "../config/algosigner.config";
 import { defineComponent } from "vue";
-import { Wallet } from "../types/enum.types";
+import { WalletType } from "../types/enum.types";
+import { WebMode } from "@algo-builder/web";
+import WalletStore from "../store/WalletStore";
 declare var AlgoSigner: any; // eslint-disable-line
 
 export default defineComponent({
@@ -40,13 +40,21 @@ export default defineComponent({
 		return {
 			walletAddress: "",
 			text: "Connect Wallet",
-			selectedWallet: Wallet.NONE,
-			Wallet,
+			selectedWallet: WalletType.NONE,
+			WalletType,
+		};
+	},
+	setup() {
+		const walletStore = WalletStore();
+		return {
+			initializeWebMode: walletStore.setWebMode,
 		};
 	},
 	methods: {
 		async connectAlgoSigner() {
 			try {
+				const webMode = new WebMode(AlgoSigner, CHAIN_NAME);
+				this.initializeWebMode(webMode);
 				const algoSignerResponse = await AlgoSigner.connect({
 					ledger: CHAIN_NAME,
 				});
@@ -67,8 +75,8 @@ export default defineComponent({
 		},
 		handleMenuClick(e: any) {
 			console.error("changing wallet kind", e.key);
-			if (e.key === Wallet.ALGOSIGNER) {
-				this.selectedWallet = Wallet.ALGOSIGNER;
+			if (e.key === WalletType.ALGOSIGNER) {
+				this.selectedWallet = WalletType.ALGOSIGNER;
 				this.connectAlgoSigner();
 			} else {
 				console.warn("Wallet %s not supported", e.key);
