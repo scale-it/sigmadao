@@ -1,4 +1,4 @@
-export enum Wallet {
+export enum WalletType {
 	NONE,
 	ALGOSIGNER,
 	MY_ALGO,

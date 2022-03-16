@@ -1,20 +1,20 @@
 import { defineStore } from "pinia";
-import { Wallet, WalletStoreState } from "../types";
+import { WalletType, WalletStoreState } from "../types";
 import { WebMode } from "@algo-builder/web";
 
 export default defineStore("WalletStore", {
 	state: (): WalletStoreState => {
 		return {
-			walletKind: Wallet.NONE,
+			walletKind: WalletType.NONE,
 			webMode: <WebMode>{},
 		};
 	},
 	actions: {
-		setHasAlgoSigner(value: Wallet) {
-			this.walletKind = value;
+		setWalletType(walletType: WalletType) {
+			this.walletKind = walletType;
 		},
-		setWebMode(value: WebMode) {
-			console.log("WebMode Initialized", value);
+		setWebMode(webMode: WebMode) {
+			console.log("WebMode Initialized", webMode);
 		},
 	},
 });
