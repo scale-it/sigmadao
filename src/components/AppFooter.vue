@@ -1,5 +1,14 @@
 <template>
-	<a-row type="flex" justify="center">
-		<a-col :span="12">All rights reserved</a-col>
-	</a-row>
+	<div class="bottom_center">
+		<p>All rights reserved</p>
+	</div>
 </template>
+
+<style scoped>
+.bottom_center {
+	position: absolute;
+	bottom: 0;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+</style>

@@ -1,5 +1,7 @@
 <template>
+	<AppHeader />
 	<router-view />
+	<AppFooter />
 </template>
 
 <script lang="ts">
@@ -7,11 +9,13 @@ import { defineComponent } from "vue";
 import WalletStore from "./store/WalletStore";
 import { Wallet } from "./types";
 import { MAX_WALLET_COUNT_CHECK } from "./config/app.config";
+import AppHeader from "./components/AppHeader.vue";
+import AppFooter from "./components/AppFooter.vue";
 declare var AlgoSigner: any; // eslint-disable-line
 
 export default defineComponent({
 	name: "App",
-	components: {},
+	components: { AppHeader, AppFooter },
 	data() {
 		return {
 			walletCheckCount: 1,

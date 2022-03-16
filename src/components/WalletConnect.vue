@@ -1,7 +1,7 @@
 <template>
-	<div>
-		<a-row type="flex" justify="center">
-			<a-col :span="12">
+	<div class="top_index">
+		<a-row>
+			<a-col>
 				<a-dropdown>
 					<template #overlay>
 						<a-menu @click="handleMenuClick">
@@ -10,20 +10,15 @@
 							<a-menu-item key="3"> My Algo Wallet </a-menu-item>
 						</a-menu>
 					</template>
-					<a-button>
-						Select your wallet
+					<a-button style="margin-bottom: 10px">
+						{{ text }}
 						<DownOutlined />
 					</a-button>
 				</a-dropdown>
 			</a-col>
 		</a-row>
-		<a-row type="flex" justify="center">
-			<a-button danger @click="connectAlgoSigner">
-				Connect AlgoSigner
-			</a-button>
-		</a-row>
-		<a-row type="flex" justify="center">
-			<a-col :span="12">Address: {{ walletAddress }}</a-col>
+		<a-row>
+			<a-col>Address: {{ walletAddress }}</a-col>
 		</a-row>
 	</div>
 </template>
@@ -41,6 +36,8 @@ export default defineComponent({
 	data() {
 		return {
 			walletAddress: "Not Found",
+			text: "Connect Wallet",
+			selectedWallet: "",
 		};
 	},
 	methods: {
@@ -61,11 +58,23 @@ export default defineComponent({
 			});
 			if (userAccount && userAccount.length) {
 				this.walletAddress = userAccount[0].address;
+				this.text = "AlgoSigner";
 			}
 		},
-		handleMenuClick(e: Event) {
-			console.error("changing wallet kind", e);
+		handleMenuClick(e: any) {
+			console.error("changing wallet kind", e.key);
+			if (e.key === "1") {
+				this.selectedWallet = "1";
+				this.connectAlgoSigner();
+			}
 		},
 	},
 });
 </script>
+
+<style scoped>
+.top_index {
+	z-index: 99999;
+	background-color: white;
+}
+</style>
