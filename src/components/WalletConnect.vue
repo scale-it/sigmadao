@@ -6,8 +6,6 @@
 					<template #overlay>
 						<a-menu @click="handleMenuClick">
 							<a-menu-item key="1"> Algosigner </a-menu-item>
-							<a-menu-item key="2"> Wallet Connect </a-menu-item>
-							<a-menu-item key="3"> My Algo Wallet </a-menu-item>
 						</a-menu>
 					</template>
 					<a-button>
@@ -32,6 +30,8 @@
 import { DownOutlined } from "@ant-design/icons-vue";
 import { CHAIN_NAME } from "../config/algosigner.config";
 import { defineComponent } from "vue";
+import { WebMode } from "@algo-builder/web";
+import WalletStore from "../store/WalletStore";
 declare var AlgoSigner: any; // eslint-disable-line
 
 export default defineComponent({
@@ -43,9 +43,17 @@ export default defineComponent({
 			walletAddress: "Not Found",
 		};
 	},
+	setup() {
+		const walletStore = WalletStore();
+		return {
+			initializeWebMode: walletStore.setWebMode,
+		};
+	},
 	methods: {
 		async connectAlgoSigner() {
 			try {
+				const webMode = new WebMode(AlgoSigner, CHAIN_NAME);
+				this.initializeWebMode(webMode);
 				const algoSignerResponse = await AlgoSigner.connect({
 					ledger: CHAIN_NAME,
 				});
