@@ -16,21 +16,21 @@
 		>
 			<a-form-item
 				label="URL"
-				name="URL"
+				name="url"
 				:rules="[{ required: true, type: 'url' }]"
 			>
 				<a-input v-model:value="formState.url" />
 			</a-form-item>
 			<a-form-item
 				label="URL Hash"
-				name="URL Hash"
+				name="url_hash"
 				:rules="[{ required: true }]"
 			>
 				<a-input v-model:value="formState.url_hash" />
 			</a-form-item>
 			<a-form-item
 				label="Proposal Account Address"
-				name="Proposal Account Address"
+				name="proposal_address"
 				:rules="[
 					{
 						required: true,
@@ -41,14 +41,14 @@
 			</a-form-item>
 			<a-form-item
 				label="Proposal ID"
-				name="Proposal ID"
+				name="proposal_id"
 				:rules="[{ required: true, type: 'number' }]"
 			>
-				<a-input v-model:value="formState.proposal_id" />
+				<a-input-number v-model:value="formState.proposal_id" />
 			</a-form-item>
 			<a-form-item
 				label="Voting Date"
-				name="Voting Date"
+				name="vote_date"
 				:rules="[{ required: true }]"
 			>
 				<a-range-picker
@@ -60,11 +60,10 @@
 					v-model:value="formState.vote_date"
 				/>
 			</a-form-item>
-			<a-form-item label="Vote">
+			<a-form-item label="Vote" name="vote_type" :rules="[{ required: true }]">
 				<a-select
 					v-model:value="formState.vote_type"
 					placeholder="Please select your type"
-					:rules="[{ required: true }]"
 				>
 					<a-select-option :value="ProposalType.ALGO"
 						>Algo Transfer</a-select-option
@@ -83,43 +82,43 @@
 					formState.vote_type && formState.vote_type !== ProposalType.MESSAGE
 				"
 			>
-				<a-form-item label="From" name="From" :rules="[{ required: true }]">
-					<a-input v-model="formState.from" />
+				<a-form-item label="From" name="from" :rules="[{ required: true }]">
+					<a-input v-model:value="formState.from" />
 				</a-form-item>
 				<a-form-item
 					label="Recipient"
-					name="Recipient"
+					name="recipient"
 					:rules="[{ required: true }]"
 				>
-					<a-input v-model="formState.recipient" />
+					<a-input v-model:value="formState.recipient" />
 				</a-form-item>
 				<a-form-item
 					label="Amount"
-					name="Amount"
+					name="amount"
 					:rules="[{ required: true, type: 'number' }]"
 				>
-					<a-input v-model="formState.amount" />
+					<a-input-number v-model:value="formState.amount" />
 				</a-form-item>
 			</div>
 			<div class="flexBox" v-if="formState.vote_type === ProposalType.ASA">
 				<a-form-item
 					label="ASA ID"
-					name="ASA ID"
+					name="asaId"
 					:rules="[{ required: true, type: 'number' }]"
 				>
-					<a-input v-model="formState.asaId" />
+					<a-input-number v-model:value="formState.asaId" />
 				</a-form-item>
 			</div>
 			<div class="flexBox" v-if="formState.vote_type === ProposalType.MESSAGE">
 				<a-form-item
 					label="Message"
-					name="Message"
+					name="message"
 					:rules="[{ required: true }]"
 				>
-					<a-input v-model="formState.message" />
+					<a-input v-model:value="formState.message" />
 				</a-form-item>
 			</div>
-			<a-form-item :wrapper-col="{ offset: 8, span: 16 }">
+			<a-form-item :wrapper-col="{ offset: 10, span: 20 }">
 				<a-button type="primary" html-type="submit">Submit</a-button>
 			</a-form-item>
 		</a-form>
@@ -127,7 +126,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref } from "vue";
+import { defineComponent } from "vue";
 import ProposalStore from "../store/ProposalStore";
 import { ProposalType } from "../types/enum.types";
 
@@ -139,13 +138,13 @@ export default defineComponent({
 		};
 	},
 	setup() {
-		const showError = ref(false);
 		const formState = ProposalStore();
+
 		const onFinish = (values: any) => {
 			console.log("Success:", values);
 		};
 		const onFinishFailed = (errorinfo: any) => {
-			console.log("failed:", errorinfo);
+			console.warn("Failed:", errorinfo);
 		};
 		const disabledDate = (current: any) => {
 			// Can not select day before today
@@ -176,17 +175,13 @@ export default defineComponent({
 		};
 
 		const validateMessages = {
-			required: "${label} is required!",
+			required: "required!",
 			types: {
-				url: "${label} is not a valid url!",
-				number: "${label} is not a valid number!",
+				url: "It is not a valid url!",
+				number: "It is is not a valid number!",
 			},
 		};
 		const headerHeight = document.getElementById("header")?.offsetHeight;
-
-		formState.$subscribe((mutation, state) => {
-			formState.setFormValue(state);
-		});
 
 		return {
 			formState,
@@ -195,7 +190,6 @@ export default defineComponent({
 			onFinish,
 			onFinishFailed,
 			headerHeight,
-			showError,
 			validateMessages,
 		};
 	},

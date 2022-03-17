@@ -4,31 +4,44 @@
 		:style="'--p-height: ' + headerHeight + 'px'"
 	></div>
 	<div class="mt flexBox flexBox_center">
-		<a-alert
-			v-if="showError"
-			message="Error"
-			description="Please fill the required fields"
-			type="error"
-			show-icon
-		/>
-		<form @submit="onSubmit">
-			<label for="proposal_id">Proposal ID</label>
-			<input id="proposal_id" required v-model="proposal_id" type="number" />
-			<label for="vote_options">Vote</label>
-			<select name="vote" id="vote_options" required v-model="vote">
-				<option :value="VoteOptions.ABSTAIN">Abstain</option>
-				<option :value="VoteOptions.YES">Yes</option>
-				<option :value="VoteOptions.NO">No</option>
-			</select>
-			<button type="submit" class="submit_btn" @click="onSubmit">Submit</button>
-		</form>
+		<a-form
+			:label-col="{ span: 12 }"
+			:wrapper-col="{ span: 12 }"
+			:model="formState"
+			name="Vote"
+			autocomplete="off"
+			@finish="onFinish"
+			@finishFailed="onFinishFailed"
+			@validate-messages="validateMessages"
+		>
+			<a-form-item
+				label="Proposal ID"
+				name="proposal_id"
+				:rules="[{ required: true, type: 'number' }]"
+			>
+				<a-input-number v-model:value="formState.proposal_id" />
+			</a-form-item>
+			<a-form-item label="Vote" name="vote" :rules="[{ required: true }]">
+				<a-select
+					v-model:value="formState.vote"
+					placeholder="Please select your option"
+				>
+					<a-select-option :value="VoteOptions.ABSTAIN"
+						>Abstain</a-select-option
+					>
+					<a-select-option :value="VoteOptions.YES">Yes</a-select-option>
+					<a-select-option :value="VoteOptions.NO">No</a-select-option>
+				</a-select>
+			</a-form-item>
+			<a-form-item :wrapper-col="{ offset: 10, span: 20 }">
+				<a-button type="primary" html-type="submit">Submit</a-button>
+			</a-form-item>
+		</a-form>
 	</div>
 </template>
 
 <script lang="ts">
-import { VoteFormState } from "@/types";
-import { defineComponent, reactive, ref } from "vue";
-import { useRoute } from "vue-router";
+import { defineComponent } from "vue";
 import VoteStore from "../store/VoteStore";
 import { VoteOptions } from "../types/enum.types";
 
@@ -40,69 +53,32 @@ export default defineComponent({
 		};
 	},
 	setup() {
-		const showError = ref(false);
-		const route = useRoute();
-		console.log(route.params);
-		const store = VoteStore();
-		const formState = reactive<VoteFormState>(store);
+		const formState = VoteStore();
 
-		const onSubmit = () => {
-			if (formState.proposal_id && formState.vote) {
-				showError.value = false;
-				store.setFormValue(formState);
-			} else showError.value = true;
+		const onFinish = (values: any) => {
+			console.log("Success:", values);
 		};
+		const onFinishFailed = (errorinfo: any) => {
+			console.warn("Failed:", errorinfo);
+		};
+
+		const validateMessages = {
+			required: "required!",
+			types: {
+				number: "It is is not a valid number!",
+			},
+		};
+
 		const headerHeight = document.getElementById("header")?.offsetHeight;
 		return {
-			onSubmit,
+			onFinish,
+			onFinishFailed,
 			formState,
 			headerHeight,
-			showError,
+			validateMessages,
 		};
 	},
 });
 </script>
 
-<style>
-label {
-	font-size: 16px;
-	margin-block: 5px;
-	font-weight: 500;
-}
-input {
-	margin: 10px;
-	min-width: 300px;
-	min-height: 35px;
-}
-
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-	-webkit-appearance: none;
-	-moz-appearance: none;
-	appearance: none;
-	margin: 0;
-}
-
-select {
-	margin: 10px;
-	min-width: 300px;
-	min-height: 35px;
-}
-
-form {
-	display: flex;
-	flex-direction: column;
-}
-
-.submit_btn {
-	width: fit-content;
-	margin-block: 10px;
-	background-color: #1890ff;
-	color: white;
-	border-radius: 3px;
-	padding-block: 5px;
-	padding-inline: 10px;
-	box-shadow: 0 2px 0 rgb(0 0 0 / 5%);
-	border-color: #1890ff;
-}
-</style>
+<style></style>
