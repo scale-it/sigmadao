@@ -1,27 +1,24 @@
 <template>
-	<div>
-		<a-row type="flex" justify="center">
-			<a-col :span="12">
+	<div class="top_index">
+		<a-row>
+			<a-col>
 				<a-dropdown>
 					<template #overlay>
 						<a-menu @click="handleMenuClick">
-							<a-menu-item key="1"> Algosigner </a-menu-item>
+							<a-menu-item :key="WalletType.ALGOSIGNER">
+								Algosigner
+							</a-menu-item>
 						</a-menu>
 					</template>
-					<a-button>
-						Select your wallet
+					<a-button style="margin-bottom: 10px">
+						{{ text }}
 						<DownOutlined />
 					</a-button>
 				</a-dropdown>
 			</a-col>
 		</a-row>
-		<a-row type="flex" justify="center">
-			<a-button danger @click="connectAlgoSigner">
-				Connect AlgoSigner
-			</a-button>
-		</a-row>
-		<a-row type="flex" justify="center">
-			<a-col :span="12">Address: {{ walletAddress }}</a-col>
+		<a-row>
+			<a-col v-if="walletAddress">Address: {{ walletAddress }}</a-col>
 		</a-row>
 	</div>
 </template>
@@ -30,6 +27,7 @@
 import { DownOutlined } from "@ant-design/icons-vue";
 import { CHAIN_NAME } from "../config/algosigner.config";
 import { defineComponent } from "vue";
+import { WalletType } from "../types/enum.types";
 import { WebMode } from "@algo-builder/web";
 import WalletStore from "../store/WalletStore";
 declare var AlgoSigner: any; // eslint-disable-line
@@ -40,7 +38,10 @@ export default defineComponent({
 	},
 	data() {
 		return {
-			walletAddress: "Not Found",
+			walletAddress: "",
+			text: "Connect Wallet",
+			selectedWallet: WalletType.NONE,
+			WalletType,
 		};
 	},
 	setup() {
@@ -69,11 +70,25 @@ export default defineComponent({
 			});
 			if (userAccount && userAccount.length) {
 				this.walletAddress = userAccount[0].address;
+				this.text = "AlgoSigner";
 			}
 		},
-		handleMenuClick(e: Event) {
-			console.error("changing wallet kind", e);
+		handleMenuClick(e: any) {
+			console.error("changing wallet kind", e.key);
+			if (e.key === WalletType.ALGOSIGNER) {
+				this.selectedWallet = WalletType.ALGOSIGNER;
+				this.connectAlgoSigner();
+			} else {
+				console.warn("Wallet %s not supported", e.key);
+			}
 		},
 	},
 });
 </script>
+
+<style scoped>
+.top_index {
+	z-index: 99999;
+	background-color: white;
+}
+</style>
