@@ -4,78 +4,129 @@
 		:style="'--p-height: ' + headerHeight + 'px'"
 	></div>
 	<div class="mt flexBox flexBox_center">
-		<a-alert
-			v-if="showError"
-			message="Error"
-			description="Please fill the required fields"
-			type="error"
-			show-icon
-		/>
-		<form @submit="onSubmit">
-			<label for="url">URL</label>
-			<input id="url" required v-model="formState.url" type="url" />
-			<label for="url_hash">URL Hash</label>
-			<input id="url_hash" required v-model="formState.url_hash" />
-			<label for="proposal_address">Proposal Account Address</label>
-			<input
-				id="proposal_address"
-				required
-				v-model="formState.proposal_address"
-			/>
-			<label for="url">Proposal ID</label>
-			<input id="url" required v-model="formState.proposal_id" />
-			<label for="voting_date">Voting Date</label>
-			<a-range-picker
-				id="voting_date"
-				format="YYYY-MM-DD HH:mm:ss"
-				value-format="YYYY-MM-DD HH:mm:ss"
-				:disabled-date="disabledDate"
-				:disabled-time="disabledRangeTime"
-				showTime
-				v-model:value="formState.vote_date"
-				style="border-color: black"
-			/>
-			<label for="vote_options">Vote</label>
-			<select
-				name="vote_type"
-				id="vote_options"
-				required
-				v-model="formState.vote_type"
+		<a-form
+			:label-col="{ span: 10 }"
+			:wrapper-col="{ span: 20 }"
+			:model="formState"
+			name="Add Proposal"
+			autocomplete="off"
+			@finish="onFinish"
+			@finishFailed="onFinishFailed"
+			@validate-messages="validateMessages"
+		>
+			<a-form-item
+				label="URL"
+				name="URL"
+				:rules="[{ required: true, type: 'url' }]"
 			>
-				<option :value="ProposalType.ALGO">Algo Transfer</option>
-				<option :value="ProposalType.ASA">ASA Transfer</option>
-				<option :value="ProposalType.MESSAGE">Message</option>
-			</select>
+				<a-input v-model:value="formState.url" />
+			</a-form-item>
+			<a-form-item
+				label="URL Hash"
+				name="URL Hash"
+				:rules="[{ required: true }]"
+			>
+				<a-input v-model:value="formState.url_hash" />
+			</a-form-item>
+			<a-form-item
+				label="Proposal Account Address"
+				name="Proposal Account Address"
+				:rules="[
+					{
+						required: true,
+					},
+				]"
+			>
+				<a-input v-model:value="formState.proposal_address" />
+			</a-form-item>
+			<a-form-item
+				label="Proposal ID"
+				name="Proposal ID"
+				:rules="[{ required: true, type: 'number' }]"
+			>
+				<a-input v-model:value="formState.proposal_id" />
+			</a-form-item>
+			<a-form-item
+				label="Voting Date"
+				name="Voting Date"
+				:rules="[{ required: true }]"
+			>
+				<a-range-picker
+					format="YYYY-MM-DD HH:mm:ss"
+					value-format="YYYY-MM-DD HH:mm:ss"
+					:disabled-date="disabledDate"
+					:disabled-time="disabledRangeTime"
+					showTime
+					v-model:value="formState.vote_date"
+				/>
+			</a-form-item>
+			<a-form-item label="Vote">
+				<a-select
+					v-model:value="formState.vote_type"
+					placeholder="Please select your type"
+					:rules="[{ required: true }]"
+				>
+					<a-select-option :value="ProposalType.ALGO"
+						>Algo Transfer</a-select-option
+					>
+					<a-select-option :value="ProposalType.ASA"
+						>ASA Transfer</a-select-option
+					>
+					<a-select-option :value="ProposalType.MESSAGE"
+						>Message</a-select-option
+					>
+				</a-select>
+			</a-form-item>
 			<div
 				class="flexBox"
 				v-if="
 					formState.vote_type && formState.vote_type !== ProposalType.MESSAGE
 				"
 			>
-				<label for="from"> From</label>
-				<input id="from" v-model="formState.from" required />
-
-				<label for="recipient">Recipient</label>
-				<input id="recipient" v-model="formState.recipient" />
-
-				<label for="amount"> Amount </label>
-				<input id="amount" v-model="formState.amount" />
+				<a-form-item label="From" name="From" :rules="[{ required: true }]">
+					<a-input v-model="formState.from" />
+				</a-form-item>
+				<a-form-item
+					label="Recipient"
+					name="Recipient"
+					:rules="[{ required: true }]"
+				>
+					<a-input v-model="formState.recipient" />
+				</a-form-item>
+				<a-form-item
+					label="Amount"
+					name="Amount"
+					:rules="[{ required: true, type: 'number' }]"
+				>
+					<a-input v-model="formState.amount" />
+				</a-form-item>
 			</div>
 			<div class="flexBox" v-if="formState.vote_type === ProposalType.ASA">
-				<label for="asa_id">ASA ID</label>
-				<input id="asa_id" v-model="formState.asaId" />
+				<a-form-item
+					label="ASA ID"
+					name="ASA ID"
+					:rules="[{ required: true, type: 'number' }]"
+				>
+					<a-input v-model="formState.asaId" />
+				</a-form-item>
 			</div>
 			<div class="flexBox" v-if="formState.vote_type === ProposalType.MESSAGE">
-				<label for="message">Message</label>
-				<input id="message" v-model="formState.message" />
+				<a-form-item
+					label="Message"
+					name="Message"
+					:rules="[{ required: true }]"
+				>
+					<a-input v-model="formState.message" />
+				</a-form-item>
 			</div>
-			<button type="submit" class="submit_btn" @click="onSubmit">Submit</button>
-		</form>
+			<a-form-item :wrapper-col="{ offset: 8, span: 16 }">
+				<a-button type="primary" html-type="submit">Submit</a-button>
+			</a-form-item>
+		</a-form>
 	</div>
 </template>
 
 <script lang="ts">
-import { ProposalFormState } from "@/types";
 import { defineComponent, reactive, ref } from "vue";
 import ProposalStore from "../store/ProposalStore";
 import { ProposalType } from "../types/enum.types";
@@ -89,36 +140,13 @@ export default defineComponent({
 	},
 	setup() {
 		const showError = ref(false);
-		const store = ProposalStore();
-		const formState = reactive<ProposalFormState>(store.$state);
-
-		const onSubmit = () => {
-			let success = false;
-			if (
-				!formState.vote_type ||
-				!formState.url ||
-				!formState.url_hash ||
-				!formState.vote_date ||
-				!formState.proposal_address
-			) {
-				success = false;
-			} else {
-				switch (formState.vote_type) {
-					case ProposalType.ASA:
-						return (success = formState.asaId ? true : false);
-					case ProposalType.MESSAGE:
-						return (success = formState.message ? true : false);
-					default:
-						return (success =
-							formState.from || formState.recipient || formState.amount
-								? true
-								: false);
-				}
-			}
-			showError.value = !success;
-			success && store.setFormValue(formState);
+		const formState = ProposalStore();
+		const onFinish = (values: any) => {
+			console.log("Success:", values);
 		};
-
+		const onFinishFailed = (errorinfo: any) => {
+			console.log("failed:", errorinfo);
+		};
 		const disabledDate = (current: any) => {
 			// Can not select day before today
 			return (
@@ -147,14 +175,28 @@ export default defineComponent({
 			}
 		};
 
+		const validateMessages = {
+			required: "${label} is required!",
+			types: {
+				url: "${label} is not a valid url!",
+				number: "${label} is not a valid number!",
+			},
+		};
 		const headerHeight = document.getElementById("header")?.offsetHeight;
+
+		formState.$subscribe((mutation, state) => {
+			formState.setFormValue(state);
+		});
+
 		return {
 			formState,
 			disabledDate,
 			disabledRangeTime,
-			onSubmit,
+			onFinish,
+			onFinishFailed,
 			headerHeight,
 			showError,
+			validateMessages,
 		};
 	},
 });
