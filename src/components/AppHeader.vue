@@ -83,18 +83,12 @@ export default defineComponent({
 </script>
 <style scoped>
 .header {
-	padding-block: 10px;
-	padding-inline: 20px;
+	width: 1400px;
 	height: auto;
 	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
-	position: fixed;
-	top: 0;
-	left: 50%;
-	transform: translateX(-50%);
-	width: 1400px;
-	background-color: white;
-	z-index: 9998;
 	font-size: 15px !important;
+	padding: 10px;
+	margin: auto;
 }
 
 .veritcal_center {

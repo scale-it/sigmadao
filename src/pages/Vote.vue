@@ -1,8 +1,4 @@
 <template>
-	<div
-		class="header_margin"
-		:style="'--p-height: ' + headerHeight + 'px'"
-	></div>
 	<div class="mt flexBox flexBox_center">
 		<a-form
 			:label-col="{ span: 12 }"

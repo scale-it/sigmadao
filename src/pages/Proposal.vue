@@ -1,8 +1,4 @@
 <template>
-	<div
-		class="header_margin"
-		:style="'--p-height: ' + headerHeight + 'px'"
-	></div>
 	<div class="mt flexBox flexBox_center">
 		<a-form
 			:label-col="{ span: 10 }"
@@ -207,13 +203,5 @@ export default defineComponent({
 .flexBox_center {
 	justify-content: center;
 	align-items: center;
-}
-
-.header_margin {
-	padding: 10px;
-	top: 0;
-	left: 0;
-	width: 1400px;
-	height: var(--p-height);
 }
 </style>
