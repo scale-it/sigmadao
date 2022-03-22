@@ -17,9 +17,6 @@
 				</a-dropdown>
 			</a-col>
 		</a-row>
-		<a-row>
-			<a-col v-if="walletAddress">Address: {{ walletAddress }}</a-col>
-		</a-row>
 	</div>
 </template>
 
@@ -38,7 +35,6 @@ export default defineComponent({
 	},
 	data() {
 		return {
-			walletAddress: "",
 			text: "Connect Wallet",
 			selectedWallet: WalletType.NONE,
 			WalletType,
@@ -81,9 +77,12 @@ export default defineComponent({
 				ledger: CHAIN_NAME,
 			});
 			if (userAccount && userAccount.length) {
-				this.walletAddress = userAccount[0].address;
-				this.text = "AlgoSigner";
+				this.updateWallet(userAccount[0].address, "AlgoSigner");
 			}
+		},
+		updateWallet(address: string, walletName: string) {
+			this.$emit("updateWalletAddress", address);
+			this.text = walletName;
 		},
 		handleMenuClick(e: any) {
 			console.log("changing wallet kind", e.key);

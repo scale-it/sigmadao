@@ -43,9 +43,13 @@
 			</a-col>
 			<a-col :span="4">
 				<div>
-					<WalletConnect />
+					<WalletConnect @updateWalletAddress="updateWalletAddress($event)" />
 				</div>
 			</a-col>
+		</a-row>
+		<a-row v-if="walletAddress" justify="end">
+			Address: <br />
+			{{ walletAddress }}
 		</a-row>
 	</div>
 </template>
@@ -62,6 +66,7 @@ export default defineComponent({
 	},
 	data() {
 		return {
+			walletAddress: "",
 			currentPageKey: "",
 			NavigationKey: NavigationKey,
 		};
@@ -70,6 +75,9 @@ export default defineComponent({
 		handleMenuClick(value: string) {
 			this.currentPageKey = value;
 			console.log(value);
+		},
+		updateWalletAddress(walletAddress: string) {
+			this.walletAddress = walletAddress;
 		},
 	},
 	setup() {
@@ -90,15 +98,12 @@ export default defineComponent({
 	padding: 10px;
 	margin: auto;
 }
-
 .veritcal_center {
 	align-items: center;
 }
-
 .flexbox {
 	display: flex;
 }
-
 .menu_option {
 	font-size: 20px;
 }
