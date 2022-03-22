@@ -48,9 +48,19 @@ export default defineComponent({
 		const walletStore = WalletStore();
 		return {
 			initializeWebMode: walletStore.setWebMode,
+			setWalletType: walletStore.setWalletType,
 		};
 	},
 	methods: {
+		connectWallet(walletType: WalletType) {
+			switch (walletType) {
+				case WalletType.ALGOSIGNER:
+					this.connectAlgoSigner();
+					break;
+				default:
+					console.warn("Wallet %s not supported", walletType);
+			}
+		},
 		async connectAlgoSigner() {
 			try {
 				const webMode = new WebMode(AlgoSigner, CHAIN_NAME);
@@ -58,6 +68,8 @@ export default defineComponent({
 				const algoSignerResponse = await AlgoSigner.connect({
 					ledger: CHAIN_NAME,
 				});
+				this.setWalletType(WalletType.ALGOSIGNER);
+				this.selectedWallet = WalletType.ALGOSIGNER;
 				console.log("Connected to AlgoSigner:", algoSignerResponse);
 				await this.getUserAccount();
 			} catch (e) {
@@ -74,13 +86,8 @@ export default defineComponent({
 			}
 		},
 		handleMenuClick(e: any) {
-			console.error("changing wallet kind", e.key);
-			if (e.key === WalletType.ALGOSIGNER) {
-				this.selectedWallet = WalletType.ALGOSIGNER;
-				this.connectAlgoSigner();
-			} else {
-				console.warn("Wallet %s not supported", e.key);
-			}
+			console.log("changing wallet kind", e.key);
+			this.connectWallet(e.key);
 		},
 	},
 });
