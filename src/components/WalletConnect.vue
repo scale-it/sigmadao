@@ -94,6 +94,7 @@ export default defineComponent({
 			this.$emit("updateWalletAddress", address);
 			this.text = walletName;
 		},
+		// eslint-disable-next-line
 		handleMenuClick(e: any) {
 			console.log("changing wallet kind", e.key);
 			this.connectWallet(e.key);

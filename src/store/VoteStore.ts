@@ -9,7 +9,7 @@ export default defineStore("VoteStore", {
 		};
 	},
 	actions: {
-		setFormValue(value: any) {
+		setFormValue(value: VoteFormState) {
 			this.vote = value.vote;
 			this.proposal_id = value.proposal_id;
 		},

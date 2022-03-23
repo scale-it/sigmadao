@@ -19,7 +19,7 @@ export default defineStore("ProposalStore", {
 		};
 	},
 	actions: {
-		setFormValue(value: any) {
+		setFormValue(value: ProposalFormState) {
 			this.vote_type = value.vote_type;
 			this.url = value.url;
 			this.url_hash = value.url_hash;
