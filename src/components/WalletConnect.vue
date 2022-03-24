@@ -1,7 +1,7 @@
 <template>
 	<div class="top_index">
-		<a-row>
-			<a-col>
+		<a-row v-if="selectedWallet === WalletType.NONE">
+			<a-col :offset="10">
 				<a-dropdown>
 					<template #overlay>
 						<a-menu @click="handleMenuClick">
@@ -17,8 +17,17 @@
 				</a-dropdown>
 			</a-col>
 		</a-row>
-		<a-row>
-			<a-col v-if="walletAddress">Address: {{ walletAddress }}</a-col>
+		<a-row v-else>
+			<a-space>
+				<a-col v-if="walletAddress" sp>
+					<div class="">
+						Wallet: {{ walletAddress.substring(0, 10) }} ...
+					</div></a-col
+				>
+				<a-col>
+					<a-button @click="handleLogout"> Logout </a-button>
+				</a-col>
+			</a-space>
 		</a-row>
 	</div>
 </template>
@@ -81,6 +90,10 @@ export default defineComponent({
 			} else {
 				console.warn("Wallet %s not supported", e.key);
 			}
+		},
+		handleLogout() {
+			this.selectedWallet = WalletType.NONE;
+			this.walletAddress = "";
 		},
 	},
 });
