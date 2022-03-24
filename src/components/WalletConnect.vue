@@ -10,21 +10,27 @@
 							</a-menu-item>
 						</a-menu>
 					</template>
-					<a-button style="margin-bottom: 10px">
+					<a-button>
 						{{ text }}
 						<DownOutlined />
 					</a-button>
 				</a-dropdown>
+				<a-button
+					v-if="selectedWallet !== WalletType.NONE"
+					type="primary"
+					@click="handleLogOut"
+				>
+					<template #icon>
+						<LogoutOutlined />
+					</template>
+				</a-button>
 			</a-col>
-		</a-row>
-		<a-row>
-			<a-col v-if="walletAddress">Address: {{ walletAddress }}</a-col>
 		</a-row>
 	</div>
 </template>
 
 <script lang="ts">
-import { DownOutlined } from "@ant-design/icons-vue";
+import { DownOutlined, LogoutOutlined } from "@ant-design/icons-vue";
 import { CHAIN_NAME } from "../config/algosigner.config";
 import { defineComponent } from "vue";
 import { WalletType } from "../types/enum.types";
@@ -35,10 +41,10 @@ declare var AlgoSigner: any; // eslint-disable-line
 export default defineComponent({
 	components: {
 		DownOutlined,
+		LogoutOutlined,
 	},
 	data() {
 		return {
-			walletAddress: "",
 			text: "Connect Wallet",
 			selectedWallet: WalletType.NONE,
 			WalletType,
@@ -81,13 +87,22 @@ export default defineComponent({
 				ledger: CHAIN_NAME,
 			});
 			if (userAccount && userAccount.length) {
-				this.walletAddress = userAccount[0].address;
-				this.text = "AlgoSigner";
+				this.updateWallet(userAccount[0].address, "AlgoSigner");
 			}
 		},
+		updateWallet(address: string, walletName: string) {
+			this.$emit("updateWalletAddress", address);
+			this.text = walletName;
+		},
+		// eslint-disable-next-line
 		handleMenuClick(e: any) {
 			console.log("changing wallet kind", e.key);
 			this.connectWallet(e.key);
+		},
+		handleLogOut() {
+			console.log("Wallet Disconnected");
+			this.updateWallet("", "Connect Wallet");
+			this.setWalletType(WalletType.NONE);
 		},
 	},
 });

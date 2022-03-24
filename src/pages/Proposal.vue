@@ -136,12 +136,13 @@ export default defineComponent({
 	setup() {
 		const formState = ProposalStore();
 
-		const onFinish = (values: any) => {
+		const onFinish = (values: Event) => {
 			console.log("Success:", values);
 		};
-		const onFinishFailed = (errorinfo: any) => {
+		const onFinishFailed = (errorinfo: Event) => {
 			console.warn("Failed:", errorinfo);
 		};
+		// eslint-disable-next-line
 		const disabledDate = (current: any) => {
 			// Can not select day before today
 			return (
@@ -159,7 +160,7 @@ export default defineComponent({
 
 			return result;
 		};
-
+		// eslint-disable-next-line
 		const disabledRangeTime = (_: any, type: "start" | "end") => {
 			if (type === "start") {
 				return {

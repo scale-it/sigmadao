@@ -51,10 +51,10 @@ export default defineComponent({
 	setup() {
 		const formState = VoteStore();
 
-		const onFinish = (values: any) => {
+		const onFinish = (values: Event) => {
 			console.log("Success:", values);
 		};
-		const onFinishFailed = (errorinfo: any) => {
+		const onFinishFailed = (errorinfo: Event) => {
 			console.warn("Failed:", errorinfo);
 		};
 
