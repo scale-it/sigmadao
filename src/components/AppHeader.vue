@@ -94,7 +94,7 @@ export default defineComponent({
 		isLinkActive(currentPage: number) {
 			if (this.currentPageKey === currentPage) {
 				return "link";
-			} else return "text";
+			} return "text";
 		},
 	},
 	setup() {
