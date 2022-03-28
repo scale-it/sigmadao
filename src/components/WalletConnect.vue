@@ -1,7 +1,7 @@
 <template>
-	<div class="top_index">
-		<a-row v-if="selectedWallet === WalletType.NONE">
-			<a-col :offset="10">
+	<template v-if="selectedWallet === WalletType.NONE">
+		<a-row>
+			<a-col>
 				<a-dropdown>
 					<template #overlay>
 						<a-menu @click="handleMenuClick">
@@ -10,30 +10,45 @@
 							</a-menu-item>
 						</a-menu>
 					</template>
-					<a-button style="margin-bottom: 10px">
-						{{ text }}
+					<a-button>
+						Connect Wallet
 						<DownOutlined />
 					</a-button>
 				</a-dropdown>
 			</a-col>
 		</a-row>
-		<a-row v-else>
-			<a-space>
-				<a-col v-if="walletAddress" sp>
-					<div class="">
-						Wallet: {{ walletAddress.substring(0, 10) }} ...
-					</div></a-col
-				>
-				<a-col>
-					<a-button @click="handleLogout"> Logout </a-button>
-				</a-col>
-			</a-space>
+	</template>
+	<template v-else>
+		<a-row class="wallet">
+			<a-col v-if="walletAddress">
+				<a-card size="small">
+					<a-row align="middle">
+						<a-col :span="20">
+							<a-descriptions :column="1" size="small" class="ellipsis">
+								<a-descriptions-item label="Wallet">{{
+									walletAddress
+								}}</a-descriptions-item>
+								<a-descriptions-item label="Selected Wallet">
+									{{ selectedWallet }}
+								</a-descriptions-item>
+							</a-descriptions>
+						</a-col>
+						<a-col style="margin: auto">
+							<a-button type="primary" @click="handleLogOut">
+								<template #icon>
+									<LogoutOutlined />
+								</template>
+							</a-button>
+						</a-col>
+					</a-row>
+				</a-card>
+			</a-col>
 		</a-row>
-	</div>
+	</template>
 </template>
 
 <script lang="ts">
-import { DownOutlined } from "@ant-design/icons-vue";
+import { DownOutlined, LogoutOutlined } from "@ant-design/icons-vue";
 import { CHAIN_NAME } from "../config/algosigner.config";
 import { defineComponent } from "vue";
 import { WalletType } from "../types/enum.types";
@@ -44,22 +59,33 @@ declare var AlgoSigner: any; // eslint-disable-line
 export default defineComponent({
 	components: {
 		DownOutlined,
+		LogoutOutlined,
 	},
 	data() {
 		return {
-			walletAddress: "",
-			text: "Connect Wallet",
-			selectedWallet: WalletType.NONE,
 			WalletType,
+			selectedWallet: WalletType.NONE,
+			walletAddress: "",
 		};
 	},
 	setup() {
 		const walletStore = WalletStore();
 		return {
 			initializeWebMode: walletStore.setWebMode,
+			setWalletType: walletStore.setWalletType,
+			setAddress: walletStore.setWalletAddress,
 		};
 	},
 	methods: {
+		connectWallet(walletType: WalletType) {
+			switch (walletType) {
+				case WalletType.ALGOSIGNER:
+					this.connectAlgoSigner();
+					break;
+				default:
+					console.warn("Wallet %s not supported", walletType);
+			}
+		},
 		async connectAlgoSigner() {
 			try {
 				const webMode = new WebMode(AlgoSigner, CHAIN_NAME);
@@ -67,6 +93,8 @@ export default defineComponent({
 				const algoSignerResponse = await AlgoSigner.connect({
 					ledger: CHAIN_NAME,
 				});
+				this.setWalletType(WalletType.ALGOSIGNER);
+				this.selectedWallet = WalletType.ALGOSIGNER;
 				console.log("Connected to AlgoSigner:", algoSignerResponse);
 				await this.getUserAccount();
 			} catch (e) {
@@ -78,30 +106,36 @@ export default defineComponent({
 				ledger: CHAIN_NAME,
 			});
 			if (userAccount && userAccount.length) {
-				this.walletAddress = userAccount[0].address;
-				this.text = "AlgoSigner";
+				this.updateWallet(userAccount[0].address);
 			}
 		},
+		updateWallet(address: string) {
+			this.walletAddress = address;
+			this.setAddress(address);
+		},
+		// eslint-disable-next-line
 		handleMenuClick(e: any) {
-			console.error("changing wallet kind", e.key);
-			if (e.key === WalletType.ALGOSIGNER) {
-				this.selectedWallet = WalletType.ALGOSIGNER;
-				this.connectAlgoSigner();
-			} else {
-				console.warn("Wallet %s not supported", e.key);
-			}
+			console.log("changing wallet kind", e.key);
+			this.connectWallet(e.key);
 		},
-		handleLogout() {
+		handleLogOut() {
+			console.log("Wallet Disconnected");
+			this.updateWallet("");
+			this.setWalletType(WalletType.NONE);
 			this.selectedWallet = WalletType.NONE;
-			this.walletAddress = "";
 		},
 	},
 });
 </script>
 
 <style scoped>
-.top_index {
-	z-index: 99999;
-	background-color: white;
+.ellipsis {
+	white-space: nowrap !important;
+	overflow: hidden !important;
+	text-overflow: ellipsis !important;
+}
+.wallet {
+	width: 60%;
+	margin-left: auto !important;
 }
 </style>

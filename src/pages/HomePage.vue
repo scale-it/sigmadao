@@ -1,5 +1,5 @@
 <template>
-	<!-- text to be added later -->
+	<!--home page to be added later -->
 	<div></div>
 </template>
 

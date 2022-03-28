@@ -7,7 +7,7 @@
 <style scoped>
 .bottom_center {
 	position: absolute;
-	bottom: 0;
+	bottom: 0.1rem;
 	left: 50%;
 	transform: translate(-50%, -50%);
 }
