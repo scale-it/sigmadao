@@ -13,10 +13,10 @@ export enum ASA {
 }
 
 export enum NavigationKey {
-	VOTE,
-	ADD_PROPOSAL,
 	CREATE_DAO,
 	ALL_DAO,
+	VOTE,
+	ADD_PROPOSAL,
 }
 
 export enum VoteOptions {
@@ -29,4 +29,9 @@ export enum ProposalType {
 	ALGO = "algo",
 	ASA = "asa",
 	MESSAGE = "msg",
+}
+
+export enum EndPoint {
+	VOTE = "/vote",
+	ADD_PROPOSAL = "/addProposal",
 }

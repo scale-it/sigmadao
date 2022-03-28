@@ -26,7 +26,7 @@
 									@click="() => handleMenuClick(NavigationKey.ALL_DAO)"
 									>All DAOs</a-button
 								>
-								<router-link :to="{ path: '/vote' }">
+								<router-link :to="{ path: EndPoint.VOTE }">
 									<a-button
 										class="menu_option"
 										:type="isLinkActive(NavigationKey.VOTE)"
@@ -34,7 +34,7 @@
 										>Vote</a-button
 									>
 								</router-link>
-								<router-link :to="{ path: '/addProposal' }">
+								<router-link :to="{ path: EndPoint.ADD_PROPOSAL }">
 									<a-button
 										class="menu_option"
 										:type="isLinkActive(NavigationKey.ADD_PROPOSAL)"
@@ -73,7 +73,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import WalletConnect from "./WalletConnect.vue";
-import { NavigationKey } from "../types/enum.types";
+import { NavigationKey, EndPoint } from "../types/enum.types";
 import DaoIDStore from "../store/DaoID";
 
 export default defineComponent({
@@ -84,6 +84,7 @@ export default defineComponent({
 		return {
 			currentPageKey: 0,
 			NavigationKey: NavigationKey,
+			EndPoint,
 		};
 	},
 	methods: {
