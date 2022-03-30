@@ -1,7 +1,9 @@
 <template>
 	<div class="app_root">
 		<AppHeader />
-		<router-view />
+		<div class="margin_top_sm">
+			<router-view />
+		</div>
 		<AppFooter />
 	</div>
 </template>
@@ -18,29 +20,5 @@ export default defineComponent({
 </script>
 
 <style>
-html {
-	font-size: 62.5%;
-}
-
-@media only screen and (max-width: 75em) {
-	html {
-		font-size: 56.25%;
-	}
-}
-
-@media only screen and (max-width: 56.25em) {
-	html {
-		font-size: 50%;
-	}
-}
-
-@media only screen and (min-width: 112.5em) {
-	html {
-		font-size: 75%;
-	}
-}
-.app_root {
-	max-width: 120rem;
-	margin: auto;
-}
+@import "./styles/style.css";
 </style>

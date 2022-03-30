@@ -1,0 +1,11 @@
+.wallet {
+	width: 60%;
+	margin-left: auto !important;
+	min-width: 200px;
+}
+
+.ellipsis {
+	white-space: nowrap !important;
+	overflow: hidden !important;
+	text-overflow: ellipsis !important;
+}

@@ -19,30 +19,28 @@
 		</a-row>
 	</template>
 	<template v-else>
-		<a-row class="wallet">
-			<a-col v-if="walletAddress">
-				<a-card size="small">
-					<a-row align="middle">
-						<a-col :span="20">
-							<a-descriptions :column="1" size="small" class="ellipsis">
-								<a-descriptions-item label="Wallet">{{
-									walletAddress
-								}}</a-descriptions-item>
-								<a-descriptions-item label="Selected Wallet">
-									{{ selectedWallet }}
-								</a-descriptions-item>
-							</a-descriptions>
-						</a-col>
-						<a-col style="margin: auto">
-							<a-button type="primary" @click="handleLogOut">
-								<template #icon>
-									<LogoutOutlined />
-								</template>
-							</a-button>
-						</a-col>
-					</a-row>
-				</a-card>
-			</a-col>
+		<a-row class="wallet" v-if="walletAddress">
+			<a-card size="small">
+				<a-row align="middle">
+					<a-col :span="20">
+						<a-descriptions :column="1" size="small" class="ellipsis">
+							<a-descriptions-item label="Wallet">{{
+								walletAddress
+							}}</a-descriptions-item>
+							<a-descriptions-item label="Selected Wallet">
+								{{ selectedWallet }}
+							</a-descriptions-item>
+						</a-descriptions>
+					</a-col>
+					<a-col style="margin: auto">
+						<a-button type="primary" @click="handleLogOut">
+							<template #icon>
+								<LogoutOutlined />
+							</template>
+						</a-button>
+					</a-col>
+				</a-row>
+			</a-card>
 		</a-row>
 	</template>
 </template>
@@ -127,15 +125,3 @@ export default defineComponent({
 	},
 });
 </script>
-
-<style scoped>
-.ellipsis {
-	white-space: nowrap !important;
-	overflow: hidden !important;
-	text-overflow: ellipsis !important;
-}
-.wallet {
-	width: 60%;
-	margin-left: auto !important;
-}
-</style>
