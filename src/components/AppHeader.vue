@@ -1,5 +1,5 @@
 <template>
-	<div class="components-page-header-demo-responsive header">
+	<div class="components-page-header-demo-responsive">
 		<a-page-header>
 			<template #title>
 				<img src="../assets/logo.png" class="logo" />
@@ -45,7 +45,7 @@
 							</div>
 						</a-col>
 					</a-row>
-					<a-row>
+					<a-row class="dao-table">
 						<a-col :span="24">
 							<a-descriptions
 								:column="4"
@@ -112,11 +112,15 @@ export default defineComponent({
 #components-page-header-demo-responsive .content {
 	display: flex;
 }
+.ant-page-header-heading-extra {
+	align-self: center;
+}
 .ant-page-header-heading-left {
 	flex-shrink: 0;
 }
-.header {
-	border: 0.1rem solid rgb(235, 237, 240);
+.dao-table {
+	max-width: 1000px;
+	margin: auto;
 }
 .menu {
 	text-align: center;
@@ -127,6 +131,6 @@ export default defineComponent({
 	font-weight: 500 !important;
 }
 .logo {
-	width: auto;
+	max-width: 12rem;
 }
 </style>
