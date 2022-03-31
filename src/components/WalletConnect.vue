@@ -37,6 +37,7 @@ import { WalletType } from "../types/enum.types";
 import { WebMode } from "@algo-builder/web";
 import WalletStore from "../store/WalletStore";
 import { searchForAssets } from "../indexer";
+import { GOV_TOKEN_ASSET } from "../constants/constant";
 declare var AlgoSigner: any; // eslint-disable-line
 
 export default defineComponent({
@@ -52,7 +53,7 @@ export default defineComponent({
 		};
 	},
 	mounted() {
-		searchForAssets("gov-token")
+		searchForAssets(GOV_TOKEN_ASSET)
 			.then((response) => {
 				if (response && response.assets && response.assets.length) {
 					let assetLength: number = response.assets.length;
