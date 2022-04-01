@@ -21,8 +21,8 @@
 
 							<a-button
 								class="menu_option"
-								:type="isLinkActive(NavigationKey.ALL_DAO)"
-								@click="() => handleMenuClick(NavigationKey.ALL_DAO)"
+								:type="isLinkActive(NavigationKey.DAOs)"
+								@click="() => handleMenuClick(NavigationKey.DAOs)"
 								>All DAOs</a-button
 							>
 							<router-link :to="{ path: EndPoint.VOTE }">

@@ -14,7 +14,7 @@ export enum ASA {
 
 export enum NavigationKey {
 	CREATE_DAO,
-	ALL_DAO,
+	DAOS,
 	PROPOSALS,
 	ADD_PROPOSAL,
 }
