@@ -1,5 +1,5 @@
 <template>
-	<div class="top_index">
+	<template v-if="selectedWallet === WalletType.NONE">
 		<a-row>
 			<a-col>
 				<a-dropdown>
@@ -11,22 +11,38 @@
 						</a-menu>
 					</template>
 					<a-button>
-						{{ text }}
+						Connect Wallet
 						<DownOutlined />
 					</a-button>
 				</a-dropdown>
-				<a-button
-					v-if="selectedWallet !== WalletType.NONE"
-					type="primary"
-					@click="handleLogOut"
-				>
-					<template #icon>
-						<LogoutOutlined />
-					</template>
-				</a-button>
 			</a-col>
 		</a-row>
-	</div>
+	</template>
+	<template v-else>
+		<a-row class="wallet" v-if="walletAddress">
+			<a-card size="small">
+				<a-row align="middle">
+					<a-col :span="20">
+						<a-descriptions :column="1" size="small" class="ellipsis">
+							<a-descriptions-item label="Wallet">{{
+								walletAddress
+							}}</a-descriptions-item>
+							<a-descriptions-item label="Selected Wallet">
+								{{ selectedWallet }}
+							</a-descriptions-item>
+						</a-descriptions>
+					</a-col>
+					<a-col style="margin: auto">
+						<a-button type="primary" @click="handleLogOut">
+							<template #icon>
+								<LogoutOutlined />
+							</template>
+						</a-button>
+					</a-col>
+				</a-row>
+			</a-card>
+		</a-row>
+	</template>
 </template>
 
 <script lang="ts">
@@ -47,9 +63,9 @@ export default defineComponent({
 	},
 	data() {
 		return {
-			text: "Connect Wallet",
-			selectedWallet: WalletType.NONE,
 			WalletType,
+			selectedWallet: WalletType.NONE,
+			walletAddress: "",
 		};
 	},
 	mounted() {
@@ -76,6 +92,7 @@ export default defineComponent({
 		return {
 			initializeWebMode: walletStore.setWebMode,
 			setWalletType: walletStore.setWalletType,
+			setAddress: walletStore.setWalletAddress,
 		};
 	},
 	methods: {
@@ -108,12 +125,12 @@ export default defineComponent({
 				ledger: CHAIN_NAME,
 			});
 			if (userAccount && userAccount.length) {
-				this.updateWallet(userAccount[0].address, "AlgoSigner");
+				this.updateWallet(userAccount[0].address);
 			}
 		},
-		updateWallet(address: string, walletName: string) {
-			this.$emit("updateWalletAddress", address);
-			this.text = walletName;
+		updateWallet(address: string) {
+			this.walletAddress = address;
+			this.setAddress(address);
 		},
 		// eslint-disable-next-line
 		handleMenuClick(e: any) {
@@ -122,16 +139,10 @@ export default defineComponent({
 		},
 		handleLogOut() {
 			console.log("Wallet Disconnected");
-			this.updateWallet("", "Connect Wallet");
+			this.updateWallet("");
 			this.setWalletType(WalletType.NONE);
+			this.selectedWallet = WalletType.NONE;
 		},
 	},
 });
 </script>
-
-<style scoped>
-.top_index {
-	z-index: 99999;
-	background-color: white;
-}
-</style>

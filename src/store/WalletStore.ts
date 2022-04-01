@@ -7,6 +7,7 @@ export default defineStore("WalletStore", {
 		return {
 			walletKind: WalletType.NONE,
 			webMode: <WebMode>{},
+			address: "",
 		};
 	},
 	actions: {
@@ -15,6 +16,9 @@ export default defineStore("WalletStore", {
 		},
 		setWebMode(webMode: WebMode) {
 			console.log("WebMode Initialized", webMode);
+		},
+		setWalletAddress(address: string) {
+			this.address = address;
 		},
 	},
 });

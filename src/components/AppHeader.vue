@@ -1,38 +1,42 @@
 <template>
-	<!-- TODO: Update to ANTD menu and header -->
-	<div class="header" id="header">
-		<a-row class="veritcal_center">
-			<a-col :span="20">
-				<a-row class="veritcal_center">
-					<a-col :span="4">
-						<h1>SigmaDao</h1>
-					</a-col>
-					<a-col :span="8">
-						<div class="menu_id">
-							<label for="dao_id" style="padding-right: 10px">DAO ID</label>
-							<input id="dao_id" v-model="id" type="number" />
-						</div>
-					</a-col>
-					<a-col>
+	<div class="components-page-header-demo-responsive">
+		<a-page-header>
+			<template #title>
+				<img src="../assets/logo.png" class="logo" />
+			</template>
+			<template #extra>
+				<WalletConnect />
+			</template>
+			<div class="content">
+				<a-row align="middle" justify="center">
+					<a-col class="menu" :span="24">
 						<div>
-							<router-link :to="{ path: '/vote' }">
+							<!-- add route after page component is added  -->
+							<a-button
+								class="menu_option"
+								:type="isLinkActive(NavigationKey.CREATE_DAO)"
+								@click="() => handleMenuClick(NavigationKey.CREATE_DAO)"
+								>Create DAO</a-button
+							>
+
+							<a-button
+								class="menu_option"
+								:type="isLinkActive(NavigationKey.DAOs)"
+								@click="() => handleMenuClick(NavigationKey.DAOs)"
+								>All DAOs</a-button
+							>
+							<router-link :to="{ path: EndPoint.VOTE }">
 								<a-button
 									class="menu_option"
-									:type="
-										currentPageKey === NavigationKey.VOTE ? 'link' : 'text'
-									"
-									@click="() => handleMenuClick(NavigationKey.VOTE)"
+									:type="isLinkActive(NavigationKey.PROPOSALS)"
+									@click="() => handleMenuClick(NavigationKey.PROPOSALS)"
 									>Vote</a-button
 								>
 							</router-link>
-							<router-link :to="{ path: '/addProposal' }">
+							<router-link :to="{ path: EndPoint.ADD_PROPOSAL }">
 								<a-button
 									class="menu_option"
-									:type="
-										currentPageKey === NavigationKey.ADD_PROPOSAL
-											? 'link'
-											: 'text'
-									"
+									:type="isLinkActive(NavigationKey.ADD_PROPOSAL)"
 									@click="() => handleMenuClick(NavigationKey.ADD_PROPOSAL)"
 									>Add Proposal</a-button
 								>
@@ -40,24 +44,27 @@
 						</div>
 					</a-col>
 				</a-row>
-			</a-col>
-			<a-col :span="4">
-				<div>
-					<WalletConnect @updateWalletAddress="updateWalletAddress($event)" />
-				</div>
-			</a-col>
-		</a-row>
-		<a-row v-if="walletAddress" justify="end">
-			Address: <br />
-			{{ walletAddress }}
-		</a-row>
+				<a-row class="dao-table">
+					<a-col :span="24">
+						<a-descriptions :column="4" size="small" bordered layout="vertical">
+							<a-descriptions-item label="DAO Name">Name</a-descriptions-item>
+							<a-descriptions-item label="Govt Token ID">
+								421421
+							</a-descriptions-item>
+							<a-descriptions-item label="*available">2017</a-descriptions-item>
+							<a-descriptions-item label="*locked">2017</a-descriptions-item>
+						</a-descriptions>
+					</a-col>
+				</a-row>
+			</div>
+		</a-page-header>
 	</div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import WalletConnect from "./WalletConnect.vue";
-import { NavigationKey } from "../types/enum.types";
+import { NavigationKey, EndPoint } from "../types/enum.types";
 import DaoIDStore from "../store/DaoID";
 
 export default defineComponent({
@@ -66,18 +73,21 @@ export default defineComponent({
 	},
 	data() {
 		return {
-			walletAddress: "",
-			currentPageKey: "",
+			currentPageKey: 0,
 			NavigationKey: NavigationKey,
+			EndPoint,
 		};
 	},
 	methods: {
-		handleMenuClick(value: string) {
+		handleMenuClick(value: number) {
 			this.currentPageKey = value;
 			console.log(value);
 		},
-		updateWalletAddress(walletAddress: string) {
-			this.walletAddress = walletAddress;
+		isLinkActive(currentPage: number) {
+			if (this.currentPageKey === currentPage) {
+				return "link";
+			}
+			return "text";
 		},
 	},
 	setup() {
@@ -89,25 +99,3 @@ export default defineComponent({
 	},
 });
 </script>
-<style scoped>
-.header {
-	width: 1400px;
-	height: auto;
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
-	font-size: 15px !important;
-	padding: 10px;
-	margin: auto;
-}
-.veritcal_center {
-	align-items: center;
-}
-.flexbox {
-	display: flex;
-}
-.menu_option {
-	font-size: 20px;
-}
-.menu_id {
-	align-self: center;
-}
-</style>

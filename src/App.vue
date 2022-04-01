@@ -1,7 +1,11 @@
 <template>
-	<AppHeader />
-	<router-view />
-	<AppFooter />
+	<div class="app_root">
+		<AppHeader />
+		<div class="margin_top_sm">
+			<router-view />
+		</div>
+		<AppFooter />
+	</div>
 </template>
 
 <script lang="ts">
@@ -14,3 +18,7 @@ export default defineComponent({
 	components: { AppHeader, AppFooter },
 });
 </script>
+
+<style>
+@import "./styles/style.css";
+</style>

@@ -1,8 +1,8 @@
 export enum WalletType {
 	NONE,
-	ALGOSIGNER,
-	MY_ALGO,
-	WALLET_CONNECT,
+	ALGOSIGNER = "AlgoSigner",
+	MY_ALGO = "My Algo Connect",
+	WALLET_CONNECT = "Wallet Connect",
 }
 
 export enum ASA {
@@ -13,7 +13,9 @@ export enum ASA {
 }
 
 export enum NavigationKey {
-	VOTE,
+	CREATE_DAO,
+	DAOS,
+	PROPOSALS,
 	ADD_PROPOSAL,
 }
 
@@ -27,4 +29,9 @@ export enum ProposalType {
 	ALGO = "algo",
 	ASA = "asa",
 	MESSAGE = "msg",
+}
+
+export enum EndPoint {
+	VOTE = "/vote",
+	ADD_PROPOSAL = "/addProposal",
 }
