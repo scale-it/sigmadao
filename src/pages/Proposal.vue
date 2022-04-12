@@ -131,8 +131,8 @@
 </template>
 
 <script lang="ts">
-import { storeToRefs } from "pinia";
-import { defineComponent } from "vue";
+import { validateMessages } from "@/constants/constant";
+import { defineComponent, reactive } from "vue";
 import ProposalStore from "../store/ProposalStore";
 import { ProposalType } from "../types/enum.types";
 
@@ -143,25 +143,21 @@ export default defineComponent({
 			ProposalType,
 		};
 	},
-	setup() {
-		const formState = storeToRefs(ProposalStore());
-
-		const onFinish = (values: Event) => {
+	methods: {
+		onFinish(values: Event) {
 			console.log("Success:", values);
-		};
-		const onFinishFailed = (errorinfo: Event) => {
+		},
+		onFinishFailed(errorinfo: Event) {
 			console.warn("Failed:", errorinfo);
-		};
-		// eslint-disable-next-line
-		const disabledDate = (current: any) => {
+		},
+		disabledDate(current: any) {
 			// Can not select day before today
 			return (
 				current &&
 				current < new Date(new Date().valueOf() - 1000 * 60 * 60 * 24)
 			);
-		};
-
-		const range = (start: number, end: number) => {
+		},
+		range(start: number, end: number) {
 			const result = [];
 
 			for (let i = start; i < end; i++) {
@@ -169,31 +165,22 @@ export default defineComponent({
 			}
 
 			return result;
-		};
+		},
 		// eslint-disable-next-line
-		const disabledRangeTime = (_: any, type: "start" | "end") => {
+		disabledRangeTime(_: any, type: "start" | "end") {
 			if (type === "start") {
 				return {
-					disabledHours: () => range(0, 60).splice(4, 20),
-					disabledMinutes: () => range(30, 60),
+					disabledHours: () => this.range(0, 60).splice(4, 20),
+					disabledMinutes: () => this.range(30, 60),
 					disabledSeconds: () => [55, 56],
 				};
 			}
-		};
-
-		const validateMessages = {
-			required: "required!",
-			types: {
-				url: "It is not a valid url!",
-				number: "It is is not a valid number!",
-			},
-		};
+		},
+	},
+	setup() {
+		const formState = reactive(ProposalStore());
 		return {
 			formState,
-			disabledDate,
-			disabledRangeTime,
-			onFinish,
-			onFinishFailed,
 			validateMessages,
 		};
 	},

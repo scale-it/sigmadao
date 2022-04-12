@@ -28,33 +28,26 @@
 </template>
 
 <script lang="ts">
+import { validateMessages } from "@/constants/constant";
 import { searchForApplication } from "@/indexer";
-import { defineComponent } from "vue";
+import { defineComponent, reactive } from "vue";
 import DaoIDStore from "../store/DaoID";
 
 export default defineComponent({
 	name: "AllDao",
-	setup() {
-		const formState = DaoIDStore();
-
-		const onFinish = (values: any) => {
-			formState.setDaoID(+values.dao_id);
+	methods: {
+		onFinish(values: any) {
+			this.formState.setDaoID(+values.dao_id);
 			searchForApplication(+values.dao_id);
-		};
-		const onFinishFailed = (errorinfo: Event) => {
+		},
+		onFinishFailed(errorinfo: Event) {
 			console.warn("Failed:", errorinfo);
-		};
-
-		const validateMessages = {
-			required: "required!",
-			types: {
-				number: "It is is not a valid number!",
-			},
-		};
+		},
+	},
+	setup() {
+		const formState = reactive(DaoIDStore());
 
 		return {
-			onFinish,
-			onFinishFailed,
 			formState,
 			validateMessages,
 		};

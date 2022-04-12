@@ -39,8 +39,8 @@
 </template>
 
 <script lang="ts">
-import { storeToRefs } from "pinia";
-import { defineComponent } from "vue";
+import { validateMessages } from "@/constants/constant";
+import { defineComponent, reactive } from "vue";
 import VoteStore from "../store/VoteStore";
 import { VoteOptions } from "../types/enum.types";
 
@@ -51,26 +51,18 @@ export default defineComponent({
 			VoteOptions,
 		};
 	},
-	setup() {
-		const formState = storeToRefs(VoteStore());
-
-		const onFinish = (values: Event) => {
+	methods: {
+		onFinish(values: Event) {
 			console.log("Success:", values);
-		};
-		const onFinishFailed = (errorinfo: Event) => {
+		},
+		onFinishFailed(errorinfo: Event) {
 			console.warn("Failed:", errorinfo);
-		};
-
-		const validateMessages = {
-			required: "required!",
-			types: {
-				number: "It is is not a valid number!",
-			},
-		};
+		},
+	},
+	setup() {
+		const formState = reactive(VoteStore());
 
 		return {
-			onFinish,
-			onFinishFailed,
 			formState,
 			validateMessages,
 		};
