@@ -54,6 +54,7 @@ import { WebMode } from "@algo-builder/web";
 import WalletStore from "../store/WalletStore";
 import { searchForAssets } from "../indexer";
 import { GOV_TOKEN_ASSET } from "../constants/constant";
+import DaoID from "@/store/DaoID";
 declare var AlgoSigner: any; // eslint-disable-line
 
 export default defineComponent({
@@ -74,6 +75,7 @@ export default defineComponent({
 				if (response && response.assets && response.assets.length) {
 					let assetLength: number = response.assets.length;
 					if (response.assets[assetLength - 1].params) {
+						DaoID().setGovtId(response.assets[assetLength - 1].index);
 						console.log(
 							"Gov Token Info:",
 							response.assets[assetLength - 1].params

@@ -7,8 +7,12 @@ export interface WalletStoreState {
 	address: string;
 }
 
-export interface DaoID {
-	id: number | undefined;
+export interface DAO {
+	dao_id: number | undefined;
+	name: string;
+	govt_id: number | undefined;
+	available: number | undefined;
+	locked: number | undefined;
 }
 
 export interface VoteFormState {

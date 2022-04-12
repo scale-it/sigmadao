@@ -19,12 +19,14 @@
 								>Create DAO</a-button
 							>
 
-							<a-button
-								class="menu_option"
-								:type="isLinkActive(NavigationKey.DAOs)"
-								@click="() => handleMenuClick(NavigationKey.DAOs)"
-								>All DAOs</a-button
-							>
+							<router-link :to="{ path: EndPoint.ALL_DAO }">
+								<a-button
+									class="menu_option"
+									:type="isLinkActive(NavigationKey.DAOs)"
+									@click="() => handleMenuClick(NavigationKey.DAOs)"
+									>All DAOs</a-button
+								>
+							</router-link>
 							<router-link :to="{ path: EndPoint.VOTE }">
 								<a-button
 									class="menu_option"
@@ -46,13 +48,34 @@
 				</a-row>
 				<a-row class="dao-table">
 					<a-col :span="24">
-						<a-descriptions :column="4" size="small" bordered layout="vertical">
-							<a-descriptions-item label="DAO Name">Name</a-descriptions-item>
+						<a-descriptions :column="5" size="small" bordered layout="vertical">
+							<a-descriptions-item label="DAO App ID">
+								<div @click="handleIDListener">
+									<a-input
+										v-model:value="dao_id"
+										type="number"
+										v-if="showIDTextField"
+										@keyup.enter="searchID"
+										@blur="searchID"
+									/>
+									<div v-else>
+										<div v-if="dao_id">{{ dao_id }}</div>
+										<div v-else>Enter ID</div>
+									</div>
+								</div></a-descriptions-item
+							>
+							<a-descriptions-item label="DAO Name">{{
+								name
+							}}</a-descriptions-item>
 							<a-descriptions-item label="Govt Token ID">
-								421421
+								{{ govt_id }}
 							</a-descriptions-item>
-							<a-descriptions-item label="*available">2017</a-descriptions-item>
-							<a-descriptions-item label="*locked">2017</a-descriptions-item>
+							<a-descriptions-item label="*available">{{
+								availableTokens
+							}}</a-descriptions-item>
+							<a-descriptions-item label="*locked">{{
+								lockedTokens
+							}}</a-descriptions-item>
 						</a-descriptions>
 					</a-col>
 				</a-row>
@@ -66,16 +89,25 @@ import { defineComponent } from "vue";
 import WalletConnect from "./WalletConnect.vue";
 import { NavigationKey, EndPoint } from "../types/enum.types";
 import DaoIDStore from "../store/DaoID";
+import { searchForApplication } from "@/indexer";
+import { storeToRefs } from "pinia";
 
 export default defineComponent({
 	components: {
 		WalletConnect,
 	},
 	data() {
+		const daoIdStore = storeToRefs(DaoIDStore());
 		return {
 			currentPageKey: 0,
 			NavigationKey: NavigationKey,
 			EndPoint,
+			dao_id: daoIdStore.dao_id,
+			govt_id: daoIdStore.govt_id,
+			name: daoIdStore.name,
+			availableTokens: daoIdStore.available,
+			lockedTokens: daoIdStore.locked,
+			showIDTextField: false,
 		};
 	},
 	methods: {
@@ -89,13 +121,15 @@ export default defineComponent({
 			}
 			return "text";
 		},
-	},
-	setup() {
-		const daoIdStore = DaoIDStore();
-		const id = daoIdStore.id;
-		return {
-			id,
-		};
+		handleIDListener() {
+			this.showIDTextField = true;
+		},
+		searchID() {
+			this.showIDTextField = false;
+			if (this.dao_id) {
+				searchForApplication(+this.dao_id);
+			}
+		},
 	},
 });
 </script>

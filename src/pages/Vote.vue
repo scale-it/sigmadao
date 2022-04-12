@@ -39,6 +39,7 @@
 </template>
 
 <script lang="ts">
+import { storeToRefs } from "pinia";
 import { defineComponent } from "vue";
 import VoteStore from "../store/VoteStore";
 import { VoteOptions } from "../types/enum.types";
@@ -51,7 +52,7 @@ export default defineComponent({
 		};
 	},
 	setup() {
-		const formState = VoteStore();
+		const formState = storeToRefs(VoteStore());
 
 		const onFinish = (values: Event) => {
 			console.log("Success:", values);
@@ -67,12 +68,10 @@ export default defineComponent({
 			},
 		};
 
-		const headerHeight = document.getElementById("header")?.offsetHeight;
 		return {
 			onFinish,
 			onFinishFailed,
 			formState,
-			headerHeight,
 			validateMessages,
 		};
 	},

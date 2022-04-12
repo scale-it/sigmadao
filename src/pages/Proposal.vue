@@ -131,6 +131,7 @@
 </template>
 
 <script lang="ts">
+import { storeToRefs } from "pinia";
 import { defineComponent } from "vue";
 import ProposalStore from "../store/ProposalStore";
 import { ProposalType } from "../types/enum.types";
@@ -143,7 +144,7 @@ export default defineComponent({
 		};
 	},
 	setup() {
-		const formState = ProposalStore();
+		const formState = storeToRefs(ProposalStore());
 
 		const onFinish = (values: Event) => {
 			console.log("Success:", values);
@@ -187,15 +188,12 @@ export default defineComponent({
 				number: "It is is not a valid number!",
 			},
 		};
-		const headerHeight = document.getElementById("header")?.offsetHeight;
-
 		return {
 			formState,
 			disabledDate,
 			disabledRangeTime,
 			onFinish,
 			onFinishFailed,
-			headerHeight,
 			validateMessages,
 		};
 	},
