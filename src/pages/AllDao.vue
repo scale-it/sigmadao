@@ -1,6 +1,10 @@
 <template>
 	<a-row>
 		<a-col :span="12" :offset="6">
+			<div v-if="error">
+				<a-result status="error" title="Submission Failed" :sub-title="error">
+				</a-result>
+			</div>
 			<a-form
 				:label-col="{ span: 12 }"
 				:wrapper-col="{ span: 12 }"
@@ -31,21 +35,41 @@
 import { validateMessages } from "@/constants/constant";
 import { searchForApplication } from "@/indexer";
 import { defineComponent, reactive } from "vue";
-import DaoIDStore from "../store/DaoID";
+import DaoStore from "../store/DaoID";
 
 export default defineComponent({
 	name: "AllDao",
+	data() {
+		return {
+			error: "",
+		};
+	},
 	methods: {
 		onFinish(values: any) {
-			this.formState.setDaoID(+values.dao_id);
-			searchForApplication(+values.dao_id);
+			searchForApplication(+values.dao_id)
+				.then((response) => {
+					console.log("Global App Info:", response);
+					if (response) {
+						for (const a of response) {
+							this.formState.global_app_state?.push({
+								[a[0]]: a[1],
+							});
+						}
+					}
+				})
+				.catch((error) => {
+					this.error = error.message;
+					setTimeout(() => {
+						this.error = "";
+					}, 1500);
+				});
 		},
 		onFinishFailed(errorinfo: Event) {
 			console.warn("Failed:", errorinfo);
 		},
 	},
 	setup() {
-		const formState = reactive(DaoIDStore());
+		const formState = reactive(DaoStore());
 
 		return {
 			formState,

@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { DAO } from "../types";
 
-export default defineStore("DaoIDStore", {
+export default defineStore("DaoStore", {
 	state: (): DAO => {
 		return {
 			dao_id: undefined,
@@ -9,6 +9,7 @@ export default defineStore("DaoIDStore", {
 			name: "",
 			available: undefined,
 			locked: undefined,
+			global_app_state: [],
 		};
 	},
 	actions: {

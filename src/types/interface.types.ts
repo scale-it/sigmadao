@@ -13,6 +13,7 @@ export interface DAO {
 	govt_id: number | undefined;
 	available: number | undefined;
 	locked: number | undefined;
+	global_app_state: Array<GlobalAppMap> | undefined;
 }
 
 export interface VoteFormState {
@@ -32,4 +33,8 @@ export interface ProposalFormState {
 	amount: number | undefined;
 	asaId: number | undefined;
 	message: string;
+}
+
+export interface GlobalAppMap {
+	[key: string]: string | number | bigint;
 }

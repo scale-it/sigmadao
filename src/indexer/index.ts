@@ -26,12 +26,10 @@ export const searchForApplication = async (application_id: number) => {
 
 		const creator = applicationInfo.application.params.creator;
 		const globalState = await readAppGlobalState(creator, application_id);
-		console.log(globalState);
-		return JSON.parse(
-			JSON.stringify(applicationInfo.application.params.creator)
-		);
+		return globalState;
 	} catch (e) {
 		console.log(e);
+		throw e;
 	}
 };
 

@@ -88,7 +88,7 @@
 import { defineComponent } from "vue";
 import WalletConnect from "./WalletConnect.vue";
 import { NavigationKey, EndPoint } from "../types/enum.types";
-import DaoIDStore from "../store/DaoID";
+import DaoStore from "../store/DaoID";
 import { searchForApplication } from "@/indexer";
 import { storeToRefs } from "pinia";
 
@@ -97,16 +97,16 @@ export default defineComponent({
 		WalletConnect,
 	},
 	data() {
-		const daoIdStore = storeToRefs(DaoIDStore());
+		const Daostore = storeToRefs(DaoStore());
 		return {
 			currentPageKey: 0,
 			NavigationKey: NavigationKey,
 			EndPoint,
-			dao_id: daoIdStore.dao_id,
-			govt_id: daoIdStore.govt_id,
-			name: daoIdStore.name,
-			availableTokens: daoIdStore.available,
-			lockedTokens: daoIdStore.locked,
+			dao_id: Daostore.dao_id,
+			govt_id: Daostore.govt_id,
+			name: Daostore.name,
+			availableTokens: Daostore.available,
+			lockedTokens: Daostore.locked,
 			showIDTextField: false,
 		};
 	},
