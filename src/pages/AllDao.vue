@@ -33,7 +33,8 @@
 
 <script lang="ts">
 import { validateMessages } from "@/constants/constant";
-import { searchForApplication } from "@/indexer";
+import { searchForAccount, searchForApplication } from "@/indexer";
+import WalletStore from "@/store/WalletStore";
 import { defineComponent, reactive } from "vue";
 import DaoStore from "../store/DaoID";
 
@@ -63,6 +64,26 @@ export default defineComponent({
 						this.error = "";
 					}, 1500);
 				});
+			const walletStore = WalletStore();
+			if (walletStore.address) {
+				searchForAccount(walletStore.address, +values.dao_id)
+					.then((response) => {
+						if (response.localStateMap) {
+							for (const a of response.localStateMap) {
+								if (typeof a[1] === "number") {
+									this.formState.locked = a[1];
+									this.formState.available = response.total_amount - a[1];
+								}
+							}
+						}
+					})
+					.catch((error) => {
+						this.error = error.message;
+						setTimeout(() => {
+							this.error = "";
+						}, 1500);
+					});
+			}
 		},
 		onFinishFailed(errorinfo: Event) {
 			console.warn("Failed:", errorinfo);

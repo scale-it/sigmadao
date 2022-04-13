@@ -33,6 +33,24 @@ export const searchForApplication = async (application_id: number) => {
 	}
 };
 
+export const searchForAccount = async (
+	address: string,
+	application_id: number
+) => {
+	try {
+		const accountInfo = await indexerClient.lookupAccountByID(address).do();
+		console.log(
+			"Information for Account: " + JSON.stringify(accountInfo, undefined, 2)
+		);
+		const localStateMap = await readAppLocalState(address, application_id);
+		const total_amount = accountInfo.account.amount;
+		return { total_amount, localStateMap };
+	} catch (e) {
+		console.log(e);
+		throw e;
+	}
+};
+
 export async function readAppGlobalState(
 	creator: AccountAddress,
 	appID: number
@@ -52,6 +70,30 @@ export async function readAppGlobalState(
 				}
 			}
 			return globalStateMap;
+		}
+	}
+	return undefined;
+}
+
+export async function readAppLocalState(
+	account: AccountAddress,
+	appID: number
+): Promise<Map<Key, StateValue> | undefined> {
+	const accountInfoResponse = await algodClient
+		.accountInformation(account)
+		.do();
+	for (const app of accountInfoResponse["apps-local-state"]) {
+		if (app.id === appID) {
+			const localStateMap = new Map<Key, StateValue>();
+			for (const g of app[`key-value`]) {
+				const key = Buffer.from(g.key, "base64").toString();
+				if (g.value.type === 1) {
+					localStateMap.set(key, g.value.bytes);
+				} else {
+					localStateMap.set(key, g.value.uint);
+				}
+			}
+			return localStateMap;
 		}
 	}
 	return undefined;
