@@ -9,7 +9,7 @@ export default defineStore("DaoStore", {
 			name: "",
 			available: undefined,
 			locked: undefined,
-			global_app_state: [],
+			global_app_state: undefined,
 		};
 	},
 	actions: {

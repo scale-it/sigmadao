@@ -51,10 +51,9 @@ export default defineComponent({
 				.then((response) => {
 					console.log("Global App Info:", response);
 					if (response) {
+						this.formState.global_app_state = {};
 						for (const a of response) {
-							this.formState.global_app_state?.push({
-								[a[0]]: a[1],
-							});
+							this.formState.global_app_state[a[0]] = a[1];
 						}
 					}
 				})
