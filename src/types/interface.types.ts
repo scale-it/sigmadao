@@ -1,5 +1,6 @@
 import { WalletType } from "./enum.types";
 import { WebMode } from "@algo-builder/web";
+import { Key, StateValue } from "@algo-builder/algob/build/types";
 
 export interface WalletStoreState {
 	walletKind: WalletType;
@@ -13,7 +14,7 @@ export interface DAO {
 	govt_id: number | undefined;
 	available: number | undefined;
 	locked: number | undefined;
-	global_app_state: GlobalAppMap | undefined;
+	global_app_state: Map<Key, StateValue> | undefined;
 }
 
 export interface VoteFormState {
@@ -33,8 +34,4 @@ export interface ProposalFormState {
 	amount: number | undefined;
 	asaId: number | undefined;
 	message: string;
-}
-
-export interface GlobalAppMap {
-	[key: string]: string | number | bigint;
 }

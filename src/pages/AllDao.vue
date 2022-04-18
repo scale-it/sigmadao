@@ -51,10 +51,10 @@ export default defineComponent({
 				.then((response) => {
 					console.log("Global App Info:", response);
 					if (response) {
-						this.formState.global_app_state = {};
-						for (const a of response) {
-							this.formState.global_app_state[a[0]] = a[1];
-						}
+						this.formState.global_app_state = response;
+						this.formState.name = this.formState.global_app_state.get(
+							"dao_name"
+						) as string;
 					}
 				})
 				.catch((error) => {
@@ -68,12 +68,11 @@ export default defineComponent({
 				searchForAccount(walletStore.address, +values.dao_id)
 					.then((response) => {
 						if (response.localStateMap) {
-							for (const a of response.localStateMap) {
-								if (typeof a[1] === "number") {
-									this.formState.locked = a[1];
-									this.formState.available = response.total_amount - a[1];
-								}
-							}
+							this.formState.locked = response.localStateMap.get(
+								"deposit"
+							) as number;
+							this.formState.available =
+								response.total_amount - this.formState.locked;
 						}
 					})
 					.catch((error) => {

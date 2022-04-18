@@ -64,7 +64,10 @@ export async function readAppGlobalState(
 			for (const g of app.params["global-state"]) {
 				const key = Buffer.from(g.key, "base64").toString();
 				if (g.value.type === 1) {
-					globalStateMap.set(key, g.value.bytes);
+					globalStateMap.set(
+						key,
+						Buffer.from(g.value.bytes, "base64").toString("ascii")
+					);
 				} else {
 					globalStateMap.set(key, g.value.uint);
 				}
