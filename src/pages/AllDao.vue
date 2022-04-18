@@ -5,28 +5,30 @@
 				<a-result status="error" title="Submission Failed" :sub-title="error">
 				</a-result>
 			</div>
-			<a-form
-				:label-col="{ span: 12 }"
-				:wrapper-col="{ span: 12 }"
-				:model="formState"
-				name="All Dao"
-				autocomplete="off"
-				@finish="onFinish"
-				@finishFailed="onFinishFailed"
-				@validate-messages="validateMessages"
-			>
-				<a-form-item
-					label="Select DAO"
-					name="dao_id"
-					:rules="[{ required: true, type: 'number' }]"
+			<div v-else>
+				<a-form
+					:label-col="{ span: 12 }"
+					:wrapper-col="{ span: 12 }"
+					:model="formState"
+					name="All Dao"
+					autocomplete="off"
+					@finish="onFinish"
+					@finishFailed="onFinishFailed"
+					@validate-messages="validateMessages"
 				>
-					<a-input-number v-model:value="formState.dao_id" />
-				</a-form-item>
+					<a-form-item
+						label="Select DAO"
+						name="dao_id"
+						:rules="[{ required: true, type: 'number' }]"
+					>
+						<a-input-number v-model:value="formState.dao_id" />
+					</a-form-item>
 
-				<a-form-item :wrapper-col="{ offset: 10, span: 20 }">
-					<a-button type="primary" html-type="submit">Select</a-button>
-				</a-form-item>
-			</a-form>
+					<a-form-item :wrapper-col="{ offset: 10, span: 20 }">
+						<a-button type="primary" html-type="submit">Select</a-button>
+					</a-form-item>
+				</a-form>
+			</div>
 		</a-col>
 	</a-row>
 </template>
@@ -79,7 +81,7 @@ export default defineComponent({
 						this.error = error.message;
 						setTimeout(() => {
 							this.error = "";
-						}, 1500);
+						}, 2000);
 					});
 			}
 		},

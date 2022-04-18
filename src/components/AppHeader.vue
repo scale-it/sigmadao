@@ -129,6 +129,7 @@ export default defineComponent({
 		searchID() {
 			this.showIDTextField = false;
 			if (this.dao_id) {
+				this.dao_id = +this.dao_id;
 				searchForApplication(+this.dao_id)
 					.then((response) => {
 						if (response) {
