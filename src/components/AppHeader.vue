@@ -89,7 +89,8 @@ import { defineComponent } from "vue";
 import WalletConnect from "./WalletConnect.vue";
 import { NavigationKey, EndPoint } from "../types/enum.types";
 import DaoStore from "../store/DaoID";
-import { searchForApplication } from "@/indexer";
+import WalletStore from "../store/WalletStore";
+import { searchForAccount, searchForApplication } from "@/indexer";
 import { storeToRefs } from "pinia";
 
 export default defineComponent({
@@ -108,6 +109,7 @@ export default defineComponent({
 			availableTokens: Daostore.available,
 			lockedTokens: Daostore.locked,
 			showIDTextField: false,
+			global_app_state: Daostore.global_app_state,
 		};
 	},
 	methods: {
@@ -127,7 +129,30 @@ export default defineComponent({
 		searchID() {
 			this.showIDTextField = false;
 			if (this.dao_id) {
-				searchForApplication(+this.dao_id);
+				searchForApplication(+this.dao_id)
+					.then((response) => {
+						if (response) {
+							this.global_app_state = response;
+							this.name = this.global_app_state.get("dao_name") as string;
+						}
+					})
+					.catch((error) => console.log(error));
+				const walletStore = WalletStore();
+				if (walletStore.address) {
+					searchForAccount(walletStore.address, +this.dao_id)
+						.then((response) => {
+							if (response.localStateMap) {
+								this.lockedTokens = response.localStateMap.get(
+									"deposit"
+								) as number;
+								this.availableTokens =
+									response.total_amount - this.lockedTokens;
+							}
+						})
+						.catch((error) => {
+							console.log(error);
+						});
+				}
 			}
 		},
 	},
