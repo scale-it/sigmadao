@@ -151,7 +151,7 @@ export default defineComponent({
 		onFinishFailed(errorinfo: Event) {
 			console.warn("Failed:", errorinfo);
 		},
-		disabledDate(current: any) {
+		disabledDate(current: number | Date) {
 			// Can not select day before today
 			return (
 				current &&
