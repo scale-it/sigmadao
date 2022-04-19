@@ -39,7 +39,7 @@
 </template>
 
 <script lang="ts">
-import { validateMessages } from "@/constants/constant";
+import { VALIDATE_MESSAGES } from "@/constants/constant";
 import { defineComponent, reactive } from "vue";
 import VoteStore from "../store/VoteStore";
 import { VoteOptions } from "../types/enum.types";
@@ -64,7 +64,7 @@ export default defineComponent({
 
 		return {
 			formState,
-			validateMessages,
+			validateMessages: VALIDATE_MESSAGES,
 		};
 	},
 });

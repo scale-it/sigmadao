@@ -34,7 +34,11 @@
 </template>
 
 <script lang="ts">
-import { validateMessages } from "@/constants/constant";
+import {
+	GLOBAL_STATE_MAP_KEY,
+	LOCAL_STATE_MAP_KEY,
+	VALIDATE_MESSAGES,
+} from "@/constants/constant";
 import { searchForAccount, searchForApplication } from "@/indexer";
 import WalletStore from "@/store/WalletStore";
 import { defineComponent, reactive } from "vue";
@@ -55,7 +59,7 @@ export default defineComponent({
 					if (response) {
 						this.formState.global_app_state = response;
 						this.formState.name = this.formState.global_app_state.get(
-							"dao_name"
+							GLOBAL_STATE_MAP_KEY.DaoName
 						) as string;
 					}
 				})
@@ -71,7 +75,7 @@ export default defineComponent({
 					.then((response) => {
 						if (response.localStateMap) {
 							this.formState.locked = response.localStateMap.get(
-								"deposit"
+								LOCAL_STATE_MAP_KEY.Deposit
 							) as number;
 							this.formState.available =
 								response.total_amount - this.formState.locked;
@@ -94,7 +98,7 @@ export default defineComponent({
 
 		return {
 			formState,
-			validateMessages,
+			validateMessages: VALIDATE_MESSAGES,
 		};
 	},
 });

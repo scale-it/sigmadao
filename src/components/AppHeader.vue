@@ -92,24 +92,28 @@ import DaoStore from "../store/DaoID";
 import WalletStore from "../store/WalletStore";
 import { searchForAccount, searchForApplication } from "@/indexer";
 import { storeToRefs } from "pinia";
+import {
+	GLOBAL_STATE_MAP_KEY,
+	LOCAL_STATE_MAP_KEY,
+} from "@/constants/constant";
 
 export default defineComponent({
 	components: {
 		WalletConnect,
 	},
 	data() {
-		const Daostore = storeToRefs(DaoStore());
+		const daoStore = storeToRefs(DaoStore());
 		return {
 			currentPageKey: 0,
 			NavigationKey: NavigationKey,
 			EndPoint,
-			dao_id: Daostore.dao_id,
-			govt_id: Daostore.govt_id,
-			name: Daostore.name,
-			availableTokens: Daostore.available,
-			lockedTokens: Daostore.locked,
+			dao_id: daoStore.dao_id,
+			govt_id: daoStore.govt_id,
+			name: daoStore.name,
+			availableTokens: daoStore.available,
+			lockedTokens: daoStore.locked,
 			showIDTextField: false,
-			global_app_state: Daostore.global_app_state,
+			global_app_state: daoStore.global_app_state,
 		};
 	},
 	methods: {
@@ -134,7 +138,9 @@ export default defineComponent({
 					.then((response) => {
 						if (response) {
 							this.global_app_state = response;
-							this.name = this.global_app_state.get("dao_name") as string;
+							this.name = this.global_app_state.get(
+								GLOBAL_STATE_MAP_KEY.DaoName
+							) as string;
 						}
 					})
 					.catch((error) => console.log(error));
@@ -144,7 +150,7 @@ export default defineComponent({
 						.then((response) => {
 							if (response.localStateMap) {
 								this.lockedTokens = response.localStateMap.get(
-									"deposit"
+									LOCAL_STATE_MAP_KEY.Deposit
 								) as number;
 								this.availableTokens =
 									response.total_amount - this.lockedTokens;

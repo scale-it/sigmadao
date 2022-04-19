@@ -1,8 +1,21 @@
 export const GOV_TOKEN_ASSET = "gov-token";
-export const validateMessages = {
+export const VALIDATE_MESSAGES = {
 	required: "required!",
 	types: {
 		url: "It is not a valid url!",
 		number: "It is is not a valid number!",
 	},
 };
+
+export const LOCAL_STATE = "apps-local-state";
+export const GLOBAL_STATE = "created-apps";
+
+export const LOCAL_STATE_MAP_KEY = {
+	Deposit: "deposit",
+};
+
+export const GLOBAL_STATE_MAP_KEY = {
+	DaoName: "dao_name",
+};
+
+export const DAY_TO_MILLISECONDS = 1000 * 60 * 60 * 24;

@@ -131,7 +131,8 @@
 </template>
 
 <script lang="ts">
-import { validateMessages } from "@/constants/constant";
+import { DAY_TO_MILLISECONDS, VALIDATE_MESSAGES } from "@/constants/constant";
+import { DateRange } from "@/types";
 import { defineComponent, reactive } from "vue";
 import ProposalStore from "../store/ProposalStore";
 import { ProposalType } from "../types/enum.types";
@@ -154,7 +155,7 @@ export default defineComponent({
 			// Can not select day before today
 			return (
 				current &&
-				current < new Date(new Date().valueOf() - 1000 * 60 * 60 * 24)
+				current < new Date(new Date().valueOf() - DAY_TO_MILLISECONDS)
 			);
 		},
 		range(start: number, end: number) {
@@ -167,7 +168,7 @@ export default defineComponent({
 			return result;
 		},
 		// eslint-disable-next-line
-		disabledRangeTime(_: any, type: "start" | "end") {
+		disabledRangeTime(_: any, type: DateRange) {
 			if (type === "start") {
 				return {
 					disabledHours: () => this.range(0, 60).splice(4, 20),
@@ -181,7 +182,7 @@ export default defineComponent({
 		const formState = reactive(ProposalStore());
 		return {
 			formState,
-			validateMessages,
+			validateMessages: VALIDATE_MESSAGES,
 		};
 	},
 });
