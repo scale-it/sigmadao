@@ -1,5 +1,12 @@
 import { CHAIN_NAME } from "@/config/algosigner.config";
-import { GLOBAL_STATE, LOCAL_STATE } from "@/constants/constant";
+import {
+	GLOBAL_STATE,
+	GLOBAL_STATE_MAP_KEY,
+	LOCAL_STATE,
+	LOCAL_STATE_MAP_KEY,
+} from "@/constants/constant";
+import DaoID from "@/store/DaoID";
+import WalletStore from "@/store/WalletStore";
 import {
 	Key,
 	StateValue,
@@ -104,3 +111,37 @@ export async function readAppState(
 	}
 	return undefined;
 }
+
+export const searchApplicationAndAccount = async () => {
+	const daoIdStore = DaoID();
+	const walletStore = WalletStore();
+
+	const dao_id = daoIdStore.dao_id as number;
+	const application = await searchForApplication(dao_id).catch((error) => {
+		console.log(error);
+		throw error;
+	});
+
+	if (application) {
+		daoIdStore.global_app_state = application;
+		daoIdStore.name = daoIdStore.global_app_state.get(
+			GLOBAL_STATE_MAP_KEY.DaoName
+		) as string;
+	}
+
+	if (walletStore.address) {
+		const account = await searchForAccount(walletStore.address, dao_id).catch(
+			(error) => {
+				console.log(error);
+				throw error;
+			}
+		);
+
+		if (account && account.localStateMap) {
+			daoIdStore.locked = account.localStateMap.get(
+				LOCAL_STATE_MAP_KEY.Deposit
+			) as number;
+			daoIdStore.available = account.total_amount - daoIdStore.locked;
+		}
+	}
+};

@@ -34,13 +34,8 @@
 </template>
 
 <script lang="ts">
-import {
-	GLOBAL_STATE_MAP_KEY,
-	LOCAL_STATE_MAP_KEY,
-	VALIDATE_MESSAGES,
-} from "@/constants/constant";
-import { searchForAccount, searchForApplication } from "@/indexer";
-import WalletStore from "@/store/WalletStore";
+import { VALIDATE_MESSAGES } from "@/constants/constant";
+import { searchApplicationAndAccount } from "@/indexer";
 import { defineComponent, reactive } from "vue";
 import DaoStore from "../store/DaoID";
 
@@ -53,41 +48,12 @@ export default defineComponent({
 	},
 	methods: {
 		onFinish(values: any) {
-			searchForApplication(+values.dao_id)
-				.then((response) => {
-					console.log("Global App Info:", response);
-					if (response) {
-						this.formState.global_app_state = response;
-						this.formState.name = this.formState.global_app_state.get(
-							GLOBAL_STATE_MAP_KEY.DaoName
-						) as string;
-					}
-				})
-				.catch((error) => {
-					this.error = error.message;
-					setTimeout(() => {
-						this.error = "";
-					}, 1500);
-				});
-			const walletStore = WalletStore();
-			if (walletStore.address) {
-				searchForAccount(walletStore.address, +values.dao_id)
-					.then((response) => {
-						if (response.localStateMap) {
-							this.formState.locked = response.localStateMap.get(
-								LOCAL_STATE_MAP_KEY.Deposit
-							) as number;
-							this.formState.available =
-								response.total_amount - this.formState.locked;
-						}
-					})
-					.catch((error) => {
-						this.error = error.message;
-						setTimeout(() => {
-							this.error = "";
-						}, 2000);
-					});
-			}
+			searchApplicationAndAccount().catch((error) => {
+				this.error = error.message;
+				setTimeout(() => {
+					this.error = "";
+				}, 1500);
+			});
 		},
 		onFinishFailed(errorinfo: Event) {
 			console.warn("Failed:", errorinfo);
