@@ -52,14 +52,14 @@
 							<a-descriptions-item label="DAO App ID">
 								<div @click="handleIDListener">
 									<a-input
-										v-model:value="dao_id"
+										v-model:value="daoID"
 										type="number"
 										v-if="showIDTextField"
 										@keyup.enter="searchID"
 										@blur="searchID"
 									/>
 									<div v-else>
-										<div v-if="dao_id">{{ dao_id }}</div>
+										<div v-if="daoID">{{ daoID }}</div>
 										<div v-else>Enter ID</div>
 									</div>
 								</div></a-descriptions-item
@@ -68,7 +68,7 @@
 								name
 							}}</a-descriptions-item>
 							<a-descriptions-item label="Govt Token ID">
-								{{ govt_id }}
+								{{ govtId }}
 							</a-descriptions-item>
 							<a-descriptions-item label="*available">{{
 								availableTokens
@@ -102,13 +102,12 @@ export default defineComponent({
 			currentPageKey: 0,
 			NavigationKey: NavigationKey,
 			EndPoint,
-			dao_id: daoStore.dao_id,
-			govt_id: daoStore.govt_id,
+			daoID: daoStore.dao_id,
+			govtId: daoStore.govt_id,
 			name: daoStore.name,
 			availableTokens: daoStore.available,
 			lockedTokens: daoStore.locked,
 			showIDTextField: false,
-			global_app_state: daoStore.global_app_state,
 		};
 	},
 	methods: {
@@ -127,8 +126,8 @@ export default defineComponent({
 		},
 		async searchID() {
 			this.showIDTextField = false;
-			if (this.dao_id) {
-				this.dao_id = +this.dao_id;
+			if (this.daoID) {
+				this.daoID = +this.daoID;
 				searchApplicationAndAccount().catch((error) => console.log(error));
 			}
 		},

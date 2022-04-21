@@ -25,6 +25,7 @@ export const searchForAssets = async (
 		return JSON.parse(JSON.stringify(accountInfo));
 	} catch (e) {
 		console.log(e);
+		throw e;
 	}
 };
 
