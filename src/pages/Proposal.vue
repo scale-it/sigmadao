@@ -137,7 +137,7 @@
 <script lang="ts">
 import { DAY_TO_MILLISECONDS, VALIDATE_MESSAGES } from "@/constants/constant";
 import { DateRange } from "@/types";
-import { defineComponent, reactive, ref } from "vue";
+import { defineComponent, reactive } from "vue";
 import ProposalStore from "../store/ProposalStore";
 import { ProposalType } from "../types/enum.types";
 import WalletStore from "../store/WalletStore";
@@ -148,11 +148,8 @@ import algodClient from "@/config/algob.config";
 import * as algosdk from "algosdk";
 import { CHAIN_NAME } from "../config/algosigner.config";
 import { proposalLsig, daoFundLsig } from "../contract/dao";
-import { types as aTypes } from "@algo-builder/algob";
-import type { SelectProps } from "ant-design-vue";
 import { isAssetOpted } from "../indexer";
 const { getApplicationAddress } = require("algosdk");
-const WAIT_ROUNDS = 6;
 declare var AlgoSigner: any; // eslint-disable-line
 
 export default defineComponent({
@@ -166,17 +163,11 @@ export default defineComponent({
 		const formState = reactive(ProposalStore());
 		const walletStore = reactive(WalletStore());
 		const daoStore = reactive(DaoID());
-		const options = ref<SelectProps["options"]>([
-			{ value: ProposalType.ALGO_TRANSFER, label: "Algo Transfer" },
-			{ value: ProposalType.ASA_TRANSFER, label: "ASA Transfer" },
-			{ value: ProposalType.MESSAGE, label: "Message" },
-		]);
 
 		return {
 			formState,
 			walletStore,
 			daoStore,
-			options,
 			validateMessages: VALIDATE_MESSAGES,
 		};
 	},
@@ -196,20 +187,6 @@ export default defineComponent({
 					message,
 					asaId,
 				} = values;
-				console.log(
-					amount,
-					from,
-					proposal_address,
-					proposal_id,
-					recipient,
-					url,
-					url_hash,
-					proposal_type,
-					vote_date[0],
-					vote_date[1],
-					message,
-					asaId
-				);
 				if (typeof this.daoStore.dao_id === "undefined") {
 					console.error("appId not defined");
 					return;
@@ -362,25 +339,6 @@ export default defineComponent({
 			let lsig: LogicSigAccount = new algosdk.LogicSigAccount(program);
 			return lsig;
 		},
-		async waitForConfirmation(txId: string): Promise<aTypes.ConfirmedTxInfo> {
-			const pendingInfo = await algosdk.waitForConfirmation(
-				algodClient,
-				txId,
-				WAIT_ROUNDS
-			);
-			if (pendingInfo["pool-error"]) {
-				throw new Error(
-					`Transaction Pool Error: ${pendingInfo["pool-error"] as string}`
-				);
-			}
-			if (
-				pendingInfo["confirmed-round"] !== null &&
-				pendingInfo["confirmed-round"] > 0
-			) {
-				return pendingInfo as aTypes.ConfirmedTxInfo;
-			}
-			throw new Error("timeout");
-		},
 		async optInLsigToApp(lsig: LogicSigAccount) {
 			try {
 				if (typeof this.daoStore.dao_id === "undefined") {
@@ -426,7 +384,9 @@ export default defineComponent({
 				const txInfo = await algodClient
 					.sendRawTransaction(rawLsigSignedTx)
 					.do();
-				let optInResponse = await this.waitForConfirmation(txInfo.txId);
+				let optInResponse = await this.walletStore.webMode.waitForConfirmation(
+					txInfo.txId
+				);
 				console.log("optInResponse: ", optInResponse);
 			} catch (error) {
 				console.error(error);
