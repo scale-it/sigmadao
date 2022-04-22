@@ -23,7 +23,7 @@ export interface VoteFormState {
 }
 
 export interface ProposalFormState {
-	vote_type: string;
+	proposal_type: string;
 	url: string;
 	url_hash: string;
 	vote_date: [string, string];

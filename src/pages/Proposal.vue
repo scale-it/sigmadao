@@ -58,12 +58,12 @@
 					/>
 				</a-form-item>
 				<a-form-item
-					label="Vote"
-					name="vote_type"
+					label="Proposal Type"
+					name="proposal_type"
 					:rules="[{ required: true }]"
 				>
 					<a-select
-						v-model:value="formState.vote_type"
+						v-model:value="formState.proposal_type"
 						placeholder="Please select your vote type"
 					>
 						<a-select-option :value="ProposalType.ALGO_TRANSFER"
@@ -80,7 +80,8 @@
 				<div
 					class="flexBox"
 					v-if="
-						formState.vote_type && formState.vote_type !== ProposalType.MESSAGE
+						formState.proposal_type &&
+						formState.proposal_type !== ProposalType.MESSAGE
 					"
 				>
 					<a-form-item label="From" name="from" :rules="[{ required: true }]">
@@ -103,7 +104,7 @@
 				</div>
 				<div
 					class="flexBox"
-					v-if="formState.vote_type === ProposalType.ASA_TRANSFER"
+					v-if="formState.proposal_type === ProposalType.ASA_TRANSFER"
 				>
 					<a-form-item
 						label="ASA ID"
@@ -115,7 +116,7 @@
 				</div>
 				<div
 					class="flexBox"
-					v-if="formState.vote_type === ProposalType.MESSAGE"
+					v-if="formState.proposal_type === ProposalType.MESSAGE"
 				>
 					<a-form-item
 						label="Message"
@@ -190,7 +191,7 @@ export default defineComponent({
 					recipient,
 					url,
 					url_hash,
-					vote_type,
+					proposal_type,
 					vote_date,
 					message,
 					asaId,
@@ -203,7 +204,7 @@ export default defineComponent({
 					recipient,
 					url,
 					url_hash,
-					vote_type,
+					proposal_type,
 					vote_date[0],
 					vote_date[1],
 					message,
@@ -229,7 +230,7 @@ export default defineComponent({
 				const executeBefore = new Date(vote_date[1]).getTime() / 1000 + 7 * 60;
 				let asa_id = this.daoStore.govt_id;
 
-				switch (vote_type) {
+				switch (proposal_type) {
 					case ProposalType.ALGO_TRANSFER: {
 						break;
 					}
@@ -262,7 +263,7 @@ export default defineComponent({
 					`int:${startTime}`, // voting_start
 					`int:${endTime}`, // voting_end
 					`int:${executeBefore}`, // execute_before
-					`int:${vote_type}`, // type
+					`int:${proposal_type}`, // type
 					`addr:${daoLsig.address()}`, // from (DAO treasury)
 					`addr:${recipient}`, // recepient
 					`int:${amount}`, // amount (in microalgos)
