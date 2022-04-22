@@ -64,12 +64,12 @@
 				>
 					<a-select
 						v-model:value="formState.vote_type"
-						placeholder="Please select your type"
+						placeholder="Please select your vote type"
 					>
-						<a-select-option :value="ProposalType.ALGO"
+						<a-select-option :value="ProposalType.ALGO_TRANSFER"
 							>Algo Transfer</a-select-option
 						>
-						<a-select-option :value="ProposalType.ASA"
+						<a-select-option :value="ProposalType.ASA_TRANSFER"
 							>ASA Transfer</a-select-option
 						>
 						<a-select-option :value="ProposalType.MESSAGE"
@@ -101,7 +101,10 @@
 						<a-input-number v-model:value="formState.amount" />
 					</a-form-item>
 				</div>
-				<div class="flexBox" v-if="formState.vote_type === ProposalType.ASA">
+				<div
+					class="flexBox"
+					v-if="formState.vote_type === ProposalType.ASA_TRANSFER"
+				>
 					<a-form-item
 						label="ASA ID"
 						name="asaId"
@@ -133,9 +136,23 @@
 <script lang="ts">
 import { DAY_TO_MILLISECONDS, VALIDATE_MESSAGES } from "@/constants/constant";
 import { DateRange } from "@/types";
-import { defineComponent, reactive } from "vue";
+import { defineComponent, reactive, ref } from "vue";
 import ProposalStore from "../store/ProposalStore";
 import { ProposalType } from "../types/enum.types";
+import WalletStore from "../store/WalletStore";
+import DaoID from "../store/DaoID";
+import { types, tx as webTx, mkTxParams } from "@algo-builder/web";
+import type { LogicSigAccount } from "algosdk";
+import algodClient from "@/config/algob.config";
+import * as algosdk from "algosdk";
+import { CHAIN_NAME } from "../config/algosigner.config";
+import { proposalLsig, daoFundLsig } from "../contract/dao";
+import { types as aTypes } from "@algo-builder/algob";
+import type { SelectProps } from "ant-design-vue";
+import { isAssetOpted } from "../indexer";
+const { getApplicationAddress } = require("algosdk");
+const WAIT_ROUNDS = 6;
+declare var AlgoSigner: any; // eslint-disable-line
 
 export default defineComponent({
 	name: "AddProposal",
@@ -144,9 +161,140 @@ export default defineComponent({
 			ProposalType,
 		};
 	},
+	setup() {
+		const formState = reactive(ProposalStore());
+		const walletStore = reactive(WalletStore());
+		const daoStore = reactive(DaoID());
+		const options = ref<SelectProps["options"]>([
+			{ value: ProposalType.ALGO_TRANSFER, label: "Algo Transfer" },
+			{ value: ProposalType.ASA_TRANSFER, label: "ASA Transfer" },
+			{ value: ProposalType.MESSAGE, label: "Message" },
+		]);
+
+		return {
+			formState,
+			walletStore,
+			daoStore,
+			options,
+			validateMessages: VALIDATE_MESSAGES,
+		};
+	},
 	methods: {
-		onFinish(values: Event) {
-			console.log("Success:", values);
+		async onFinish(values: any) {
+			try {
+				let {
+					amount,
+					from,
+					proposal_address,
+					proposal_id,
+					recipient,
+					url,
+					url_hash,
+					vote_type,
+					vote_date,
+					message,
+					asaId,
+				} = values;
+				console.log(
+					amount,
+					from,
+					proposal_address,
+					proposal_id,
+					recipient,
+					url,
+					url_hash,
+					vote_type,
+					vote_date[0],
+					vote_date[1],
+					message,
+					asaId
+				);
+				if (typeof this.daoStore.dao_id === "undefined") {
+					console.error("appId not defined");
+					return;
+				}
+				if (typeof this.daoStore.govt_id === "undefined") {
+					console.error("govt_id not defined");
+					return;
+				}
+				let lsig: LogicSigAccount = await this.getProposalLsig(
+					this.daoStore.dao_id,
+					this.walletStore.address
+				);
+				let daoLsig: LogicSigAccount = await this.getDaoFundLSig(
+					this.daoStore.dao_id
+				);
+				const startTime = new Date(vote_date[0]).getTime() / 1000;
+				const endTime = new Date(vote_date[1]).getTime() / 1000;
+				const executeBefore = new Date(vote_date[1]).getTime() / 1000 + 7 * 60;
+				let asa_id = this.daoStore.govt_id;
+
+				switch (vote_type) {
+					case ProposalType.ALGO_TRANSFER: {
+						break;
+					}
+					case ProposalType.ASA_TRANSFER: {
+						asa_id = asaId;
+						break;
+					}
+					case ProposalType.MESSAGE: {
+						recipient = this.walletStore.address;
+						amount = 2e6;
+						break;
+					}
+				}
+				// check if asset is already opted
+				const isAssetAlreadyOpted = await isAssetOpted(
+					this.walletStore.address,
+					asa_id
+				);
+				if (!isAssetAlreadyOpted) {
+					// opt in lsig to app
+					this.optInLsigToApp(lsig);
+				}
+				const proposalParams = [
+					`str:add_proposal`,
+					`str:my-custom-proposal`, // name
+					`str:${url}`, // url
+					`str:${url_hash}`, // url_hash
+					"str:", // hash_algo (passing null)
+					`str:${message}`,
+					`int:${startTime}`, // voting_start
+					`int:${endTime}`, // voting_end
+					`int:${executeBefore}`, // execute_before
+					`int:${vote_type}`, // type
+					`addr:${daoLsig.address()}`, // from (DAO treasury)
+					`addr:${recipient}`, // recepient
+					`int:${amount}`, // amount (in microalgos)
+				];
+				const addProposalTx: types.ExecParams[] = [
+					{
+						type: types.TransactionType.CallApp,
+						sign: types.SignType.LogicSignature,
+						fromAccountAddr: lsig.address(),
+						appID: this.daoStore.dao_id,
+						lsig: lsig,
+						payFlags: {},
+						appArgs: proposalParams,
+					},
+					{
+						type: types.TransactionType.TransferAsset,
+						sign: types.SignType.SecretKey,
+						fromAccount: {
+							addr: this.walletStore.address,
+							sk: new Uint8Array(0),
+						},
+						toAccountAddr: getApplicationAddress(this.daoStore.dao_id),
+						amount: 15,
+						assetID: asa_id,
+						payFlags: { totalFee: 1000 },
+					},
+				];
+				let response = await this.walletStore.webMode.executeTx(addProposalTx);
+				console.log(response);
+			} catch (error) {
+				console.error(error);
+			}
 		},
 		onFinishFailed(errorinfo: Event) {
 			console.warn("Failed:", errorinfo);
@@ -177,13 +325,112 @@ export default defineComponent({
 				};
 			}
 		},
-	},
-	setup() {
-		const formState = reactive(ProposalStore());
-		return {
-			formState,
-			validateMessages: VALIDATE_MESSAGES,
-		};
+		async getProposalLsig(
+			app_id: number,
+			addr: string,
+			args?: (Uint8Array | Buffer)[]
+		) {
+			const proposal_src = proposalLsig(app_id, addr);
+			const response = await AlgoSigner.algod({
+				ledger: CHAIN_NAME,
+				path: "/v2/teal/compile",
+				body: proposal_src,
+				method: "POST",
+				contentType: "text/plain",
+			});
+			if (!response["hash"]) {
+				throw Error();
+			}
+			const program = new Uint8Array(Buffer.from(response["result"], "base64"));
+			let lsig: LogicSigAccount = new algosdk.LogicSigAccount(program, args);
+			return lsig;
+		},
+		async getDaoFundLSig(app_id: number) {
+			const escrow_src = daoFundLsig(app_id);
+			const response = await AlgoSigner.algod({
+				ledger: CHAIN_NAME,
+				path: "/v2/teal/compile",
+				body: escrow_src,
+				method: "POST",
+				contentType: "text/plain",
+			});
+			if (!response["hash"]) {
+				throw Error();
+			}
+			const program = new Uint8Array(Buffer.from(response["result"], "base64"));
+			let lsig: LogicSigAccount = new algosdk.LogicSigAccount(program);
+			return lsig;
+		},
+		async waitForConfirmation(txId: string): Promise<aTypes.ConfirmedTxInfo> {
+			const pendingInfo = await algosdk.waitForConfirmation(
+				algodClient,
+				txId,
+				WAIT_ROUNDS
+			);
+			if (pendingInfo["pool-error"]) {
+				throw new Error(
+					`Transaction Pool Error: ${pendingInfo["pool-error"] as string}`
+				);
+			}
+			if (
+				pendingInfo["confirmed-round"] !== null &&
+				pendingInfo["confirmed-round"] > 0
+			) {
+				return pendingInfo as aTypes.ConfirmedTxInfo;
+			}
+			throw new Error("timeout");
+		},
+		async optInLsigToApp(lsig: LogicSigAccount) {
+			try {
+				if (typeof this.daoStore.dao_id === "undefined") {
+					console.log("appId not defined");
+					return;
+				}
+				if (typeof this.daoStore.govt_id === "undefined") {
+					console.log("govt_id not defined");
+					return;
+				}
+				// fund lsig
+				const txParamss: types.ExecParams[] = [
+					{
+						type: types.TransactionType.TransferAlgo,
+						sign: types.SignType.SecretKey,
+						fromAccount: {
+							addr: this.walletStore.address,
+							sk: new Uint8Array(0),
+						},
+						toAccountAddr: lsig.address(),
+						amountMicroAlgos: 2e6,
+						payFlags: { totalFee: 1000 },
+					},
+				];
+				let response = await this.walletStore.webMode.executeTx(txParamss);
+				console.log("lsig funded: ", response);
+
+				// optin to lsig
+				const params = await mkTxParams(algodClient, {});
+				const execParam: types.ExecParams = {
+					type: types.TransactionType.OptInToApp,
+					sign: types.SignType.LogicSignature,
+					fromAccountAddr: lsig.address(),
+					lsig: lsig,
+					appID: this.daoStore.dao_id,
+					payFlags: {},
+				};
+				const optInLsigToAppTx = await webTx.mkTransaction(execParam, params);
+				const rawLsigSignedTx = algosdk.signLogicSigTransactionObject(
+					optInLsigToAppTx,
+					lsig
+				).blob;
+				const txInfo = await algodClient
+					.sendRawTransaction(rawLsigSignedTx)
+					.do();
+				let optInResponse = await this.waitForConfirmation(txInfo.txId);
+				console.log("optInResponse: ", optInResponse);
+			} catch (error) {
+				console.error(error);
+			}
+		},
 	},
 });
 </script>

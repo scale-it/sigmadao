@@ -20,15 +20,15 @@ export enum NavigationKey {
 }
 
 export enum VoteOptions {
-	ABSTAIN,
-	YES,
-	NO,
+	ABSTAIN = "Abstain",
+	YES = "Yes",
+	NO = "No",
 }
 
 export enum ProposalType {
-	ALGO = "algo",
-	ASA = "asa",
-	MESSAGE = "msg",
+	ALGO_TRANSFER,
+	ASA_TRANSFER,
+	MESSAGE,
 }
 
 export enum EndPoint {

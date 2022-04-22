@@ -2,6 +2,7 @@ node_modules
 /dist
 *.log
 .env
+.yalc/
 
 .yarn/cache
 .yarn/install-state.gz
