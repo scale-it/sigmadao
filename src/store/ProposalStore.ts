@@ -1,7 +1,6 @@
 import { defineStore } from "pinia";
 import { ProposalFormState } from "../types";
 
-// const store = DaoIDStore();
 export default defineStore("ProposalStore", {
 	state: (): ProposalFormState => {
 		return {

@@ -34,4 +34,5 @@ export enum ProposalType {
 export enum EndPoint {
 	VOTE = "/vote",
 	ADD_PROPOSAL = "/addProposal",
+	ALL_DAO = "/allDao",
 }

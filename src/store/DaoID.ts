@@ -1,15 +1,23 @@
 import { defineStore } from "pinia";
-import { DaoID } from "../types";
+import { DAO } from "../types";
 
-export default defineStore("DaoIDStore", {
-	state: (): DaoID => {
+export default defineStore("DaoStore", {
+	state: (): DAO => {
 		return {
-			id: undefined,
+			dao_id: undefined,
+			govt_id: undefined,
+			name: "",
+			available: undefined,
+			locked: undefined,
+			global_app_state: undefined,
 		};
 	},
 	actions: {
 		setDaoID(value: number) {
-			this.id = value;
+			this.dao_id = +value;
+		},
+		setGovtId(value: number) {
+			this.govt_id = +value;
 		},
 	},
 });

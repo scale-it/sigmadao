@@ -39,7 +39,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { VALIDATE_MESSAGES } from "@/constants/constant";
+import { defineComponent, reactive } from "vue";
 import VoteStore from "../store/VoteStore";
 import { VoteOptions } from "../types/enum.types";
 
@@ -50,30 +51,20 @@ export default defineComponent({
 			VoteOptions,
 		};
 	},
-	setup() {
-		const formState = VoteStore();
-
-		const onFinish = (values: Event) => {
+	methods: {
+		onFinish(values: Event) {
 			console.log("Success:", values);
-		};
-		const onFinishFailed = (errorinfo: Event) => {
+		},
+		onFinishFailed(errorinfo: Event) {
 			console.warn("Failed:", errorinfo);
-		};
+		},
+	},
+	setup() {
+		const formState = reactive(VoteStore());
 
-		const validateMessages = {
-			required: "required!",
-			types: {
-				number: "It is is not a valid number!",
-			},
-		};
-
-		const headerHeight = document.getElementById("header")?.offsetHeight;
 		return {
-			onFinish,
-			onFinishFailed,
 			formState,
-			headerHeight,
-			validateMessages,
+			validateMessages: VALIDATE_MESSAGES,
 		};
 	},
 });
