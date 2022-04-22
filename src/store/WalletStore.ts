@@ -12,15 +12,15 @@ export default defineStore("WalletStore", {
 	},
 	getters: {
 		getWebMode(state) {
-			return state.webMode
-		}
+			return state.webMode;
+		},
 	},
 	actions: {
 		setWalletType(walletType: WalletType) {
 			this.walletKind = walletType;
 		},
 		setWebMode(webMode: WebMode) {
-			this.webMode = webMode
+			this.webMode = webMode;
 		},
 		setWalletAddress(address: string) {
 			this.address = address;

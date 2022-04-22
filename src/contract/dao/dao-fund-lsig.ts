@@ -77,4 +77,4 @@ export const daoFundLsig = (app_id: number) => {
     main_l5:
     return
     `
-}
+};

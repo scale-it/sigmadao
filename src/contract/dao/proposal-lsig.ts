@@ -161,4 +161,4 @@ export const proposalLsig = (app_id: number, addr: string) => {
     main_l5:
     return
     `
-}
+};

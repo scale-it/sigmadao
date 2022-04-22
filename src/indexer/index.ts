@@ -146,3 +146,28 @@ export const searchApplicationAndAccount = async () => {
 		}
 	}
 };
+
+/**
+ * Check if given asset is opted in given address
+ * @param addres Account address
+ * @param asset_id asset id
+ */
+export const isAssetOpted = async (address: string, asset_id: number) => {
+	try {
+		const optedAssetInfo = await AlgoSigner.indexer({
+			ledger: CHAIN_NAME,
+			path: `/v2/accounts/${address}/assets`,
+		});
+		const parsedOptedAssetInfo = JSON.parse(JSON.stringify(optedAssetInfo));
+		if (parsedOptedAssetInfo && parsedOptedAssetInfo.assets) {
+			const isGivenAssetOpted = parsedOptedAssetInfo.assets.find(
+				(element: any) => element["asset-id"] === asset_id
+			);
+			if (isGivenAssetOpted) return true;
+		}
+		return false;
+	} catch (e) {
+		console.error(e);
+		throw e;
+	}
+};
