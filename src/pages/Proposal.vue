@@ -37,13 +37,6 @@
 					<a-input v-model:value="formState.proposal_address" />
 				</a-form-item>
 				<a-form-item
-					label="Proposal ID"
-					name="proposal_id"
-					:rules="[{ required: true, type: 'number' }]"
-				>
-					<a-input-number v-model:value="formState.proposal_id" />
-				</a-form-item>
-				<a-form-item
 					label="Voting Date"
 					name="vote_date"
 					:rules="[{ required: true }]"
@@ -137,7 +130,7 @@ import {
 	VALIDATE_MESSAGES,
 	ProposalType,
 } from "@/constants/constant";
-import { DateRange } from "@/types";
+import { DateRange, DAOActions } from "@/types";
 import { defineComponent, reactive } from "vue";
 import ProposalStore from "../store/ProposalStore";
 import WalletStore from "../store/WalletStore";
@@ -173,8 +166,6 @@ export default defineComponent({
 			try {
 				let {
 					amount,
-					proposal_address,
-					proposal_id,
 					recipient,
 					url,
 					url_hash,
@@ -201,43 +192,53 @@ export default defineComponent({
 				const startTime = convertToSeconds(vote_date[0]);
 				const endTime = convertToSeconds(vote_date[1]);
 				const executeBefore = endTime + 7 * 60; // end time + 7 minutes in seconds
-				let asa_id = this.daoStore.govt_id;
+
+				// Default proposal params. Other params are added based on proposal type in below switch case.
+				const proposalParams = [
+					DAOActions.ADD_PROPOSAL,
+					`str:my-custom-proposal`, // name
+					`str:${url}`, // url
+					`str:${url_hash}`, // url_hash
+					"str:", // hash_algo (passing null)
+					`int:${startTime}`, // voting_start
+					`int:${endTime}`, // voting_end
+					`int:${executeBefore}`, // execute_before
+					`int:${proposal_type}`, // type
+				];
 
 				switch (proposal_type) {
+					case ProposalType.ALGO_TRANSFER: {
+						proposalParams.push(
+							`addr:${daoLsig.address()}`, // from
+							`addr:${recipient}`, // recipient
+							`int:${amount}` // amount
+						);
+						break;
+					}
 					case ProposalType.ASA_TRANSFER: {
-						asa_id = asaId;
+						proposalParams.push(
+							`addr:${daoLsig.address()}`, // from
+							`int:${asaId}`, // asaId
+							`addr:${recipient}`, // recipient
+							`int:${amount}` // amount
+						);
 						break;
 					}
 					case ProposalType.MESSAGE: {
-						recipient = this.walletStore.address;
-						amount = 2e6;
+						proposalParams.push(`str:${message}`); // message
 						break;
 					}
 				}
 				// check if asset is already opted
 				const isAssetAlreadyOpted = await isAssetOpted(
 					this.walletStore.address,
-					asa_id
+					this.daoStore.govt_id
 				);
 				if (!isAssetAlreadyOpted) {
 					// opt in lsig to app if not already opted
 					await this.optInLsigToApp(lsig);
 				}
-				const proposalParams = [
-					`str:add_proposal`,
-					`str:my-custom-proposal`, // name
-					`str:${url}`, // url
-					`str:${url_hash}`, // url_hash
-					"str:", // hash_algo (passing null)
-					`str:${message}`,
-					`int:${startTime}`, // voting_start
-					`int:${endTime}`, // voting_end
-					`int:${executeBefore}`, // execute_before
-					`int:${proposal_type}`, // type
-					`addr:${daoLsig.address()}`, // from (DAO treasury)
-					`addr:${recipient}`, // recepient
-					`int:${amount}`, // amount (in microalgos)
-				];
+
 				const addProposalTx: types.ExecParams[] = [
 					{
 						type: types.TransactionType.CallApp,
@@ -257,7 +258,7 @@ export default defineComponent({
 						},
 						toAccountAddr: getApplicationAddress(this.daoStore.dao_id),
 						amount: 15,
-						assetID: asa_id,
+						assetID: this.daoStore.govt_id,
 						payFlags: { totalFee: 1000 },
 					},
 				];

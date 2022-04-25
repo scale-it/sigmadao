@@ -28,7 +28,6 @@ export interface ProposalFormState {
 	url_hash: string;
 	vote_date: [string, string];
 	proposal_address: string;
-	proposal_id?: number;
 	recipient: string;
 	amount?: number;
 	asaId?: number;
