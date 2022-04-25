@@ -132,11 +132,14 @@
 </template>
 
 <script lang="ts">
-import { DAY_TO_MILLISECONDS, VALIDATE_MESSAGES } from "@/constants/constant";
+import {
+	DAY_TO_MILLISECONDS,
+	VALIDATE_MESSAGES,
+	ProposalType,
+} from "@/constants/constant";
 import { DateRange } from "@/types";
 import { defineComponent, reactive } from "vue";
 import ProposalStore from "../store/ProposalStore";
-import { ProposalType } from "../constants/constant";
 import WalletStore from "../store/WalletStore";
 import DaoID from "../store/DaoID";
 import { types, tx as webTx, mkTxParams } from "@algo-builder/web";
@@ -145,8 +148,7 @@ import algodClient from "@/config/algob.config";
 import * as algosdk from "algosdk";
 import { getProposalLsig, getDaoFundLSig } from "../contract/dao";
 import { isAssetOpted } from "../indexer";
-import { fundAmount } from "../utility";
-import { convertToSeconds } from "../utility";
+import { fundAmount, convertToSeconds } from "../utility";
 const { getApplicationAddress } = require("algosdk");
 
 export default defineComponent({
