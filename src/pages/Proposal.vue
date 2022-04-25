@@ -142,13 +142,11 @@ import { defineComponent, reactive } from "vue";
 import ProposalStore from "../store/ProposalStore";
 import WalletStore from "../store/WalletStore";
 import DaoID from "../store/DaoID";
-import { types, tx as webTx, mkTxParams } from "@algo-builder/web";
+import { types } from "@algo-builder/web";
 import type { LogicSigAccount } from "algosdk";
-import algodClient from "@/config/algob.config";
-import * as algosdk from "algosdk";
 import { getProposalLsig, getDaoFundLSig } from "../contract/dao";
 import { isAssetOpted } from "../indexer";
-import { fundAmount, convertToSeconds } from "../utility";
+import { fundAmount, convertToSeconds, optInToApp } from "../utility";
 const { getApplicationAddress } = require("algosdk");
 
 export default defineComponent({
@@ -223,7 +221,7 @@ export default defineComponent({
 				);
 				if (!isAssetAlreadyOpted) {
 					// opt in lsig to app if not already opted
-					this.optInLsigToApp(lsig);
+					await this.optInLsigToApp(lsig);
 				}
 				const proposalParams = [
 					`str:add_proposal`,
@@ -309,14 +307,13 @@ export default defineComponent({
 					return;
 				}
 				// fund lsig
-				fundAmount(
+				await fundAmount(
 					this.walletStore.address,
 					lsig.address(),
 					2e6,
 					this.walletStore.webMode
 				);
-				// optin to lsig
-				const params = await mkTxParams(algodClient, {});
+				// optin to app
 				const execParam: types.ExecParams = {
 					type: types.TransactionType.OptInToApp,
 					sign: types.SignType.LogicSignature,
@@ -325,18 +322,7 @@ export default defineComponent({
 					appID: this.daoStore.dao_id,
 					payFlags: {},
 				};
-				const optInLsigToAppTx = await webTx.mkTransaction(execParam, params);
-				const rawLsigSignedTx = algosdk.signLogicSigTransactionObject(
-					optInLsigToAppTx,
-					lsig
-				).blob;
-				const txInfo = await algodClient
-					.sendRawTransaction(rawLsigSignedTx)
-					.do();
-				let optInResponse = await this.walletStore.webMode.waitForConfirmation(
-					txInfo.txId
-				);
-				console.log("optInResponse: ", optInResponse);
+				optInToApp(lsig, execParam, this.walletStore.webMode);
 			} catch (error) {
 				console.error(error);
 			}
