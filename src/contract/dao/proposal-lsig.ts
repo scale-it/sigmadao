@@ -1,5 +1,10 @@
-export const proposalLsig = (app_id: number, addr: string) => {
-    return `#pragma version 4
+import type { LogicSigAccount } from "algosdk";
+import * as algosdk from "algosdk";
+import { CHAIN_NAME } from "../../config/algosigner.config";
+declare var AlgoSigner: any; // eslint-disable-line
+
+const proposalLsig = (app_id: number, addr: string) => {
+	return `#pragma version 4
     global GroupSize
     int 1
     ==
@@ -160,5 +165,26 @@ export const proposalLsig = (app_id: number, addr: string) => {
     ||
     main_l5:
     return
-    `
+    `;
+};
+
+export const getProposalLsig = async (
+	app_id: number,
+	addr: string,
+	args?: (Uint8Array | Buffer)[]
+) => {
+	const proposal_src = proposalLsig(app_id, addr);
+	const response = await AlgoSigner.algod({
+		ledger: CHAIN_NAME,
+		path: "/v2/teal/compile",
+		body: proposal_src,
+		method: "POST",
+		contentType: "text/plain",
+	});
+	if (!response["hash"]) {
+		throw Error();
+	}
+	const program = new Uint8Array(Buffer.from(response["result"], "base64"));
+	const lsig: LogicSigAccount = new algosdk.LogicSigAccount(program, args);
+	return lsig;
 };

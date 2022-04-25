@@ -146,11 +146,9 @@ import { types, tx as webTx, mkTxParams } from "@algo-builder/web";
 import type { LogicSigAccount } from "algosdk";
 import algodClient from "@/config/algob.config";
 import * as algosdk from "algosdk";
-import { CHAIN_NAME } from "../config/algosigner.config";
-import { proposalLsig, daoFundLsig } from "../contract/dao";
+import { getProposalLsig, getDaoFundLSig } from "../contract/dao";
 import { isAssetOpted } from "../indexer";
 const { getApplicationAddress } = require("algosdk");
-declare var AlgoSigner: any; // eslint-disable-line
 
 export default defineComponent({
 	name: "AddProposal",
@@ -195,11 +193,11 @@ export default defineComponent({
 					console.error("govt_id not defined");
 					return;
 				}
-				let lsig: LogicSigAccount = await this.getProposalLsig(
+				let lsig: LogicSigAccount = await getProposalLsig(
 					this.daoStore.dao_id,
 					this.walletStore.address
 				);
-				let daoLsig: LogicSigAccount = await this.getDaoFundLSig(
+				let daoLsig: LogicSigAccount = await getDaoFundLSig(
 					this.daoStore.dao_id
 				);
 				const startTime = new Date(vote_date[0]).getTime() / 1000;
@@ -302,42 +300,6 @@ export default defineComponent({
 					disabledSeconds: () => [55, 56],
 				};
 			}
-		},
-		async getProposalLsig(
-			app_id: number,
-			addr: string,
-			args?: (Uint8Array | Buffer)[]
-		) {
-			const proposal_src = proposalLsig(app_id, addr);
-			const response = await AlgoSigner.algod({
-				ledger: CHAIN_NAME,
-				path: "/v2/teal/compile",
-				body: proposal_src,
-				method: "POST",
-				contentType: "text/plain",
-			});
-			if (!response["hash"]) {
-				throw Error();
-			}
-			const program = new Uint8Array(Buffer.from(response["result"], "base64"));
-			let lsig: LogicSigAccount = new algosdk.LogicSigAccount(program, args);
-			return lsig;
-		},
-		async getDaoFundLSig(app_id: number) {
-			const escrow_src = daoFundLsig(app_id);
-			const response = await AlgoSigner.algod({
-				ledger: CHAIN_NAME,
-				path: "/v2/teal/compile",
-				body: escrow_src,
-				method: "POST",
-				contentType: "text/plain",
-			});
-			if (!response["hash"]) {
-				throw Error();
-			}
-			const program = new Uint8Array(Buffer.from(response["result"], "base64"));
-			let lsig: LogicSigAccount = new algosdk.LogicSigAccount(program);
-			return lsig;
 		},
 		async optInLsigToApp(lsig: LogicSigAccount) {
 			try {
