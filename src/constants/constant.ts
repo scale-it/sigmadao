@@ -19,3 +19,9 @@ export const GLOBAL_STATE_MAP_KEY = {
 };
 
 export const DAY_TO_MILLISECONDS = 1000 * 60 * 60 * 24;
+
+export const ProposalType = {
+	ALGO_TRANSFER: 1,
+	ASA_TRANSFER: 2,
+	MESSAGE: 3,
+};

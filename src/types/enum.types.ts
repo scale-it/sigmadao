@@ -25,12 +25,6 @@ export enum VoteOptions {
 	NO = "No",
 }
 
-export enum ProposalType {
-	ALGO_TRANSFER,
-	ASA_TRANSFER,
-	MESSAGE,
-}
-
 export enum EndPoint {
 	VOTE = "/vote",
 	ADD_PROPOSAL = "/addProposal",

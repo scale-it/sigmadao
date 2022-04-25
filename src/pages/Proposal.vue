@@ -139,7 +139,7 @@ import { DAY_TO_MILLISECONDS, VALIDATE_MESSAGES } from "@/constants/constant";
 import { DateRange } from "@/types";
 import { defineComponent, reactive } from "vue";
 import ProposalStore from "../store/ProposalStore";
-import { ProposalType } from "../types/enum.types";
+import { ProposalType } from "../constants/constant";
 import WalletStore from "../store/WalletStore";
 import DaoID from "../store/DaoID";
 import { types, tx as webTx, mkTxParams } from "@algo-builder/web";
