@@ -34,7 +34,10 @@
 						},
 					]"
 				>
-					<a-input v-model:value="formState.proposal_address" />
+					<a-input
+						v-model:value="formState.proposal_address"
+						:disabled="true"
+					/>
 				</a-form-item>
 				<a-form-item
 					label="Voting Date"

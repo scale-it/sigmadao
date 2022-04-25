@@ -28,5 +28,8 @@ export default defineStore("ProposalStore", {
 			this.message = value.message;
 			console.log("state", this.$state);
 		},
+		setProposalAddr(value: string) {
+			this.proposal_address = value;
+		},
 	},
 });

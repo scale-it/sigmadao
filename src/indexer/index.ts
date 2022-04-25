@@ -7,11 +7,14 @@ import {
 } from "@/constants/constant";
 import DaoID from "@/store/DaoID";
 import WalletStore from "@/store/WalletStore";
+import ProposalStore from "@/store/ProposalStore";
 import {
 	Key,
 	StateValue,
 	AccountAddress,
 } from "@algo-builder/algob/build/types";
+import type { LogicSigAccount } from "algosdk";
+import { getProposalLsig } from "../contract/dao";
 declare var AlgoSigner: any; // eslint-disable-line
 
 export const searchForAssets = async (
@@ -116,6 +119,7 @@ export async function readAppState(
 export const searchApplicationAndAccount = async () => {
 	const daoIdStore = DaoID();
 	const walletStore = WalletStore();
+	const proposalStore = ProposalStore();
 
 	const dao_id = daoIdStore.dao_id as number;
 	const application = await searchForApplication(dao_id).catch((error) => {
@@ -137,6 +141,11 @@ export const searchApplicationAndAccount = async () => {
 				throw error;
 			}
 		);
+		const lsig: LogicSigAccount = await getProposalLsig(
+			dao_id,
+			walletStore.address
+		);
+		proposalStore.setProposalAddr(lsig.address());
 
 		if (account && account.localStateMap) {
 			daoIdStore.locked = account.localStateMap.get(
