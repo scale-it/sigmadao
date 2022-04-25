@@ -172,7 +172,6 @@ export default defineComponent({
 			try {
 				let {
 					amount,
-					from,
 					proposal_address,
 					proposal_id,
 					recipient,
