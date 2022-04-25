@@ -84,9 +84,6 @@
 						formState.proposal_type !== ProposalType.MESSAGE
 					"
 				>
-					<a-form-item label="From" name="from" :rules="[{ required: true }]">
-						<a-input v-model:value="formState.from" />
-					</a-form-item>
 					<a-form-item
 						label="Recipient"
 						name="recipient"

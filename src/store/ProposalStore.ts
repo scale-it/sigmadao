@@ -10,7 +10,6 @@ export default defineStore("ProposalStore", {
 			vote_date: ["", ""],
 			proposal_address: "",
 			proposal_id: undefined,
-			from: "",
 			recipient: "",
 			amount: undefined,
 			asaId: undefined,
@@ -25,7 +24,6 @@ export default defineStore("ProposalStore", {
 			this.vote_date = value.vote_date;
 			this.proposal_address = value.proposal_address;
 			this.proposal_id = value.proposal_id;
-			this.from = value.from;
 			this.recipient = value.recipient;
 			this.amount = value.amount;
 			this.asaId = value.asaId;
