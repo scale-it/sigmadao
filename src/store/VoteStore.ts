@@ -4,14 +4,12 @@ import { VoteFormState } from "../types";
 export default defineStore("VoteStore", {
 	state: (): VoteFormState => {
 		return {
-			vote: undefined,
-			proposal_id: undefined,
+			vote_type: undefined,
 		};
 	},
 	actions: {
 		setFormValue(value: VoteFormState) {
-			this.vote = value.vote;
-			this.proposal_id = value.proposal_id;
+			this.vote_type = value.vote_type;
 		},
 	},
 });

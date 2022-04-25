@@ -15,6 +15,7 @@ export default defineStore("WalletStore", {
 			this.walletKind = walletType;
 		},
 		setWebMode(webMode: WebMode) {
+			this.webMode = webMode;
 			console.log("WebMode Initialized", webMode);
 		},
 		setWalletAddress(address: string) {

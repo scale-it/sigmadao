@@ -1,6 +1,9 @@
 <template>
 	<a-row>
 		<a-col :span="12" :offset="6">
+			<div v-if="error">
+				<a-alert message="Error" :description="error" type="error" show-icon />
+			</div>
 			<a-form
 				:label-col="{ span: 12 }"
 				:wrapper-col="{ span: 12 }"
@@ -12,15 +15,12 @@
 				@validate-messages="validateMessages"
 			>
 				<a-form-item
-					label="Proposal ID"
-					name="proposal_id"
-					:rules="[{ required: true, type: 'number' }]"
+					label="Vote"
+					name="vote_type"
+					:rules="[{ required: true }]"
 				>
-					<a-input-number v-model:value="formState.proposal_id" />
-				</a-form-item>
-				<a-form-item label="Vote" name="vote" :rules="[{ required: true }]">
 					<a-select
-						v-model:value="formState.vote"
+						v-model:value="formState.vote_type"
 						placeholder="Please select your option"
 					>
 						<a-select-option :value="VoteOptions.ABSTAIN"
@@ -40,32 +40,84 @@
 
 <script lang="ts">
 import { VALIDATE_MESSAGES } from "@/constants/constant";
+import DaoID from "@/store/DaoID";
+import WalletStore from "@/store/WalletStore";
+import { types } from "@algo-builder/web";
+import { LogicSigAccount } from "algosdk";
 import { defineComponent, reactive } from "vue";
 import VoteStore from "../store/VoteStore";
 import { VoteOptions } from "../types/enum.types";
+import { getProposalLsig } from "../contract/dao";
 
 export default defineComponent({
 	name: "AddProposal",
 	data() {
 		return {
 			VoteOptions,
+			error: "",
+		};
+	},
+	setup() {
+		const formState = reactive(VoteStore());
+		const daoIDStore = reactive(DaoID());
+		const walletStore = reactive(WalletStore());
+		return {
+			formState,
+			daoIDStore,
+			walletStore,
+			validateMessages: VALIDATE_MESSAGES,
 		};
 	},
 	methods: {
-		onFinish(values: Event) {
-			console.log("Success:", values);
+		onFinish(values: any) {
+			this.registerVote();
 		},
 		onFinishFailed(errorinfo: Event) {
 			console.warn("Failed:", errorinfo);
 		},
-	},
-	setup() {
-		const formState = reactive(VoteStore());
-
-		return {
-			formState,
-			validateMessages: VALIDATE_MESSAGES,
-		};
+		async registerVote() {
+			if (typeof this.daoIDStore.dao_id === "undefined") {
+				this.error = "Please add DAO App ID";
+				setTimeout(() => {
+					this.error = "";
+				}, 2000);
+				return;
+			}
+			if (!this.walletStore.address.length) {
+				this.error = "Please connect to your Wallet";
+				setTimeout(() => {
+					this.error = "";
+				}, 2000);
+				return;
+			}
+			let lsig: LogicSigAccount = await getProposalLsig(
+				this.daoIDStore.dao_id,
+				this.walletStore.address
+			);
+			console.log(`* Register votes by ${this.walletStore.address} *`);
+			// call to DAO app by voter (to register deposited votes)
+			const registerVoteParam: types.ExecParams = {
+				type: types.TransactionType.CallApp,
+				sign: types.SignType.SecretKey,
+				fromAccount: {
+					addr: this.walletStore.address,
+					sk: new Uint8Array(0),
+				},
+				appID: this.daoIDStore.dao_id,
+				payFlags: { totalFee: 2000 },
+				appArgs: ["str:register_vote", `str:${this.formState.vote_type}`],
+				accounts: [lsig.address()],
+			};
+			try {
+				await this.walletStore.webMode.executeTransaction(registerVoteParam);
+			} catch (error) {
+				this.error = error.message;
+				setTimeout(() => {
+					this.error = "";
+				}, 5000);
+				console.error("Transaction Failed", error);
+			}
+		},
 	},
 });
 </script>

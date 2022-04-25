@@ -18,8 +18,7 @@ export interface DAO {
 }
 
 export interface VoteFormState {
-	proposal_id?: number;
-	vote?: number;
+	vote_type?: number;
 }
 
 export interface ProposalFormState {
