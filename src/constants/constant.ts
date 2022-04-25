@@ -25,3 +25,5 @@ export const ProposalType = {
 	ASA_TRANSFER: 2,
 	MESSAGE: 3,
 };
+
+export const MILLI_SECOND = 1000;

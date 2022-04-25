@@ -146,6 +146,7 @@ import * as algosdk from "algosdk";
 import { getProposalLsig, getDaoFundLSig } from "../contract/dao";
 import { isAssetOpted } from "../indexer";
 import { fundAmount } from "../utility";
+import { convertToSeconds } from "../utility";
 const { getApplicationAddress } = require("algosdk");
 
 export default defineComponent({
@@ -197,15 +198,12 @@ export default defineComponent({
 				let daoLsig: LogicSigAccount = await getDaoFundLSig(
 					this.daoStore.dao_id
 				);
-				const startTime = new Date(vote_date[0]).getTime() / 1000;
-				const endTime = new Date(vote_date[1]).getTime() / 1000;
-				const executeBefore = new Date(vote_date[1]).getTime() / 1000 + 7 * 60;
+				const startTime = convertToSeconds(vote_date[0]);
+				const endTime = convertToSeconds(vote_date[1]);
+				const executeBefore = endTime + 7 * 60; // end time + 7 minutes in seconds
 				let asa_id = this.daoStore.govt_id;
 
 				switch (proposal_type) {
-					case ProposalType.ALGO_TRANSFER: {
-						break;
-					}
 					case ProposalType.ASA_TRANSFER: {
 						asa_id = asaId;
 						break;
@@ -222,7 +220,7 @@ export default defineComponent({
 					asa_id
 				);
 				if (!isAssetAlreadyOpted) {
-					// opt in lsig to app
+					// opt in lsig to app if not already opted
 					this.optInLsigToApp(lsig);
 				}
 				const proposalParams = [
