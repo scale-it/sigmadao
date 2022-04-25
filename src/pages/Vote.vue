@@ -15,6 +15,13 @@
 				@validate-messages="validateMessages"
 			>
 				<a-form-item
+					label="Deposit Amount"
+					name="deposit_amt"
+					:rules="[{ required: true, type: 'number' }]"
+				>
+					<a-input-number v-model:value="formState.deposit_amt" />
+				</a-form-item>
+				<a-form-item
 					label="Vote"
 					name="vote_type"
 					:rules="[{ required: true }]"
@@ -43,7 +50,7 @@ import { VALIDATE_MESSAGES } from "@/constants/constant";
 import DaoID from "@/store/DaoID";
 import WalletStore from "@/store/WalletStore";
 import { types } from "@algo-builder/web";
-import { LogicSigAccount } from "algosdk";
+import { getApplicationAddress, LogicSigAccount } from "algosdk";
 import { defineComponent, reactive } from "vue";
 import VoteStore from "../store/VoteStore";
 import { VoteOptions } from "../types/enum.types";
@@ -70,14 +77,15 @@ export default defineComponent({
 	},
 	methods: {
 		onFinish(values: any) {
-			this.registerVote();
-		},
-		onFinishFailed(errorinfo: Event) {
-			console.warn("Failed:", errorinfo);
-		},
-		async registerVote() {
 			if (typeof this.daoIDStore.dao_id === "undefined") {
 				this.error = "Please add DAO App ID";
+				setTimeout(() => {
+					this.error = "";
+				}, 2000);
+				return;
+			}
+			if (typeof this.daoIDStore.govt_id === "undefined") {
+				this.error = "Govt token not found";
 				setTimeout(() => {
 					this.error = "";
 				}, 2000);
@@ -90,8 +98,66 @@ export default defineComponent({
 				}, 2000);
 				return;
 			}
+			this.depositVote();
+		},
+		onFinishFailed(errorinfo: Event) {
+			console.warn("Failed:", errorinfo);
+		},
+		async depositVote() {
+			// opt-in to App by voterAcc
+			// try {
+			// 	await deployer.optInAccountToApp(voterAcc, daoAppInfo.appID, {}, {});
+			// } catch (e) {
+			// 	console.log(e.message); // already opted in
+			// }
+
+			console.log(
+				`* Deposit ${this.formState.deposit_amt} votes by ${this.walletStore.address} *`
+			);
+
+			const depositVoteParam: types.ExecParams[] = [
+				// tx0: call to DAO App with arg 'deposit_vote_token'
+				{
+					type: types.TransactionType.CallApp,
+					sign: types.SignType.SecretKey,
+					fromAccount: {
+						addr: this.walletStore.address,
+						sk: new Uint8Array(0),
+					},
+					appID: this.daoIDStore.dao_id as number,
+					payFlags: { totalFee: 1000 },
+					appArgs: ["str:deposit_vote_token"],
+				},
+				// tx1: deposit votes (each token == 1 vote)
+				{
+					type: types.TransactionType.TransferAsset,
+					sign: types.SignType.SecretKey,
+					fromAccount: {
+						addr: getApplicationAddress(this.daoIDStore.dao_id as number),
+						sk: new Uint8Array(0),
+					},
+					toAccountAddr: getApplicationAddress(
+						this.daoIDStore.dao_id as number
+					),
+					amount: this.formState.deposit_amt as number,
+					assetID: this.daoIDStore.govt_id as number,
+					payFlags: { totalFee: 1000 },
+				},
+			];
+
+			try {
+				await this.walletStore.webMode.executeTransaction(depositVoteParam);
+			} catch (error) {
+				this.error = error.message;
+				setTimeout(() => {
+					this.error = "";
+				}, 5000);
+				console.error("Transaction Failed", error);
+			}
+		},
+		async registerVote() {
 			let lsig: LogicSigAccount = await getProposalLsig(
-				this.daoIDStore.dao_id,
+				this.daoIDStore.dao_id as number,
 				this.walletStore.address
 			);
 			console.log(`* Register votes by ${this.walletStore.address} *`);
@@ -103,7 +169,7 @@ export default defineComponent({
 					addr: this.walletStore.address,
 					sk: new Uint8Array(0),
 				},
-				appID: this.daoIDStore.dao_id,
+				appID: this.daoIDStore.dao_id as number,
 				payFlags: { totalFee: 2000 },
 				appArgs: ["str:register_vote", `str:${this.formState.vote_type}`],
 				accounts: [lsig.address()],
