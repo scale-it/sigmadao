@@ -148,6 +148,7 @@ import algodClient from "@/config/algob.config";
 import * as algosdk from "algosdk";
 import { getProposalLsig, getDaoFundLSig } from "../contract/dao";
 import { isAssetOpted } from "../indexer";
+import { fundAmount } from "../utility";
 const { getApplicationAddress } = require("algosdk");
 
 export default defineComponent({
@@ -312,22 +313,12 @@ export default defineComponent({
 					return;
 				}
 				// fund lsig
-				const txParamss: types.ExecParams[] = [
-					{
-						type: types.TransactionType.TransferAlgo,
-						sign: types.SignType.SecretKey,
-						fromAccount: {
-							addr: this.walletStore.address,
-							sk: new Uint8Array(0),
-						},
-						toAccountAddr: lsig.address(),
-						amountMicroAlgos: 2e6,
-						payFlags: { totalFee: 1000 },
-					},
-				];
-				let response = await this.walletStore.webMode.executeTx(txParamss);
-				console.log("lsig funded: ", response);
-
+				fundAmount(
+					this.walletStore.address,
+					lsig.address(),
+					2e6,
+					this.walletStore.webMode
+				);
 				// optin to lsig
 				const params = await mkTxParams(algodClient, {});
 				const execParam: types.ExecParams = {
