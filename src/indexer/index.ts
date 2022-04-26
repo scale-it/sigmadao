@@ -148,11 +148,12 @@ export const searchApplicationAndAccount = async () => {
 		proposalStore.setProposalAddr(lsig.address());
 
 		if (account && account.localStateMap) {
-			daoIdStore.locked = account.localStateMap.get(
-				LOCAL_STATE_MAP_KEY.Deposit
-			) as number;
-			daoIdStore.available = account.total_amount - daoIdStore.locked;
+			daoIdStore.locked =
+				(account.localStateMap.get(LOCAL_STATE_MAP_KEY.Deposit) as number) ?? 0;
+		} else {
+			daoIdStore.locked = 0;
 		}
+		daoIdStore.available = account.total_amount - daoIdStore.locked;
 	}
 };
 
@@ -173,6 +174,34 @@ export const isAssetOpted = async (address: string, asset_id: number) => {
 				(element: any) => element["asset-id"] === asset_id
 			);
 			if (isGivenAssetOpted) return true;
+		}
+		return false;
+	} catch (e) {
+		console.error(e);
+		throw e;
+	}
+};
+
+export const isApplicationOpted = async (
+	address: string,
+	application_id: number
+) => {
+	try {
+		const optedApplicationInfo = await AlgoSigner.indexer({
+			ledger: CHAIN_NAME,
+			path: `/v2/accounts/${address}/apps-local-state`,
+		});
+		const parsedOptedApplicationInfo = JSON.parse(
+			JSON.stringify(optedApplicationInfo)
+		);
+		if (
+			parsedOptedApplicationInfo &&
+			parsedOptedApplicationInfo["apps-local-states"]
+		) {
+			const isGivenApplicationOpted = parsedOptedApplicationInfo[
+				"apps-local-states"
+			].find((element: any) => element["id"] === application_id);
+			if (isGivenApplicationOpted) return true;
 		}
 		return false;
 	} catch (e) {

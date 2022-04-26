@@ -20,6 +20,7 @@ export interface DAO {
 export interface VoteFormState {
 	vote_type?: number;
 	deposit_amt?: number;
+	withdraw_amt?: number;
 }
 
 export interface ProposalFormState {

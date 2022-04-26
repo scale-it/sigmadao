@@ -27,20 +27,28 @@
 									>All DAOs</a-button
 								>
 							</router-link>
-							<router-link :to="{ path: EndPoint.VOTE }">
-								<a-button
-									class="menu_option"
-									:type="isLinkActive(NavigationKey.PROPOSALS)"
-									@click="() => handleMenuClick(NavigationKey.PROPOSALS)"
-									>Vote</a-button
-								>
-							</router-link>
 							<router-link :to="{ path: EndPoint.ADD_PROPOSAL }">
 								<a-button
 									class="menu_option"
 									:type="isLinkActive(NavigationKey.ADD_PROPOSAL)"
 									@click="() => handleMenuClick(NavigationKey.ADD_PROPOSAL)"
 									>Add Proposal</a-button
+								>
+							</router-link>
+							<router-link :to="{ path: EndPoint.TOKEN }">
+								<a-button
+									class="menu_option"
+									:type="isLinkActive(NavigationKey.TOKEN)"
+									@click="() => handleMenuClick(NavigationKey.TOKEN)"
+									>Tokens</a-button
+								>
+							</router-link>
+							<router-link :to="{ path: EndPoint.VOTE }">
+								<a-button
+									class="menu_option"
+									:type="isLinkActive(NavigationKey.PROPOSALS)"
+									@click="() => handleMenuClick(NavigationKey.PROPOSALS)"
+									>Vote</a-button
 								>
 							</router-link>
 						</div>
