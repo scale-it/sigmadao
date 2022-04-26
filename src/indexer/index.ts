@@ -7,11 +7,14 @@ import {
 } from "@/constants/constant";
 import DaoID from "@/store/DaoID";
 import WalletStore from "@/store/WalletStore";
+import ProposalStore from "@/store/ProposalStore";
 import {
 	Key,
 	StateValue,
 	AccountAddress,
 } from "@algo-builder/algob/build/types";
+import type { LogicSigAccount } from "algosdk";
+import { getProposalLsig } from "../contract/dao";
 declare var AlgoSigner: any; // eslint-disable-line
 
 export const searchForAssets = async (
@@ -116,6 +119,7 @@ export async function readAppState(
 export const searchApplicationAndAccount = async () => {
 	const daoIdStore = DaoID();
 	const walletStore = WalletStore();
+	const proposalStore = ProposalStore();
 
 	const dao_id = daoIdStore.dao_id as number;
 	const application = await searchForApplication(dao_id).catch((error) => {
@@ -137,6 +141,11 @@ export const searchApplicationAndAccount = async () => {
 				throw error;
 			}
 		);
+		const lsig: LogicSigAccount = await getProposalLsig(
+			dao_id,
+			walletStore.address
+		);
+		proposalStore.setProposalAddr(lsig.address());
 
 		if (account && account.localStateMap) {
 			daoIdStore.locked = account.localStateMap.get(
@@ -144,5 +153,30 @@ export const searchApplicationAndAccount = async () => {
 			) as number;
 			daoIdStore.available = account.total_amount - daoIdStore.locked;
 		}
+	}
+};
+
+/**
+ * Check if given asset is opted in given address
+ * @param addres Account address
+ * @param asset_id asset id
+ */
+export const isAssetOpted = async (address: string, asset_id: number) => {
+	try {
+		const optedAssetInfo = await AlgoSigner.indexer({
+			ledger: CHAIN_NAME,
+			path: `/v2/accounts/${address}/assets`,
+		});
+		const parsedOptedAssetInfo = JSON.parse(JSON.stringify(optedAssetInfo));
+		if (parsedOptedAssetInfo && parsedOptedAssetInfo.assets) {
+			const isGivenAssetOpted = parsedOptedAssetInfo.assets.find(
+				(element: any) => element["asset-id"] === asset_id
+			);
+			if (isGivenAssetOpted) return true;
+		}
+		return false;
+	} catch (e) {
+		console.error(e);
+		throw e;
 	}
 };

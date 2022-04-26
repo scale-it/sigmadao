@@ -55,6 +55,8 @@ import { defineComponent, reactive } from "vue";
 import VoteStore from "../store/VoteStore";
 import { VoteOptions } from "../types/enum.types";
 import { getProposalLsig } from "../contract/dao";
+import { optInToApp } from "@/utility";
+import { isAssetOpted } from "@/indexer";
 
 export default defineComponent({
 	name: "AddProposal",
@@ -76,7 +78,7 @@ export default defineComponent({
 		};
 	},
 	methods: {
-		onFinish(values: any) {
+		async onFinish() {
 			if (typeof this.daoIDStore.dao_id === "undefined") {
 				this.error = "Please add DAO App ID";
 				setTimeout(() => {
@@ -98,18 +100,27 @@ export default defineComponent({
 				}, 2000);
 				return;
 			}
-			this.depositVote();
-		},
-		onFinishFailed(errorinfo: Event) {
-			console.warn("Failed:", errorinfo);
-		},
-		async depositVote() {
-			// opt-in to App by voterAcc
-			// try {
-			// 	await deployer.optInAccountToApp(voterAcc, daoAppInfo.appID, {}, {});
-			// } catch (e) {
-			// 	console.log(e.message); // already opted in
-			// }
+			let lsig: LogicSigAccount = await getProposalLsig(
+				this.daoIDStore.dao_id,
+				this.walletStore.address
+			);
+			// check if asset is already opted
+			const isAssetAlreadyOpted = await isAssetOpted(
+				this.walletStore.address,
+				this.daoIDStore.govt_id
+			);
+			if (!isAssetAlreadyOpted) {
+				// opt in lsig to app if not already opted
+				const execParam: types.ExecParams = {
+					type: types.TransactionType.OptInToApp,
+					sign: types.SignType.LogicSignature,
+					fromAccountAddr: lsig.address(),
+					lsig: lsig,
+					appID: this.daoIDStore.dao_id,
+					payFlags: {},
+				};
+				optInToApp(lsig, execParam, this.walletStore.webMode);
+			}
 
 			console.log(
 				`* Deposit ${this.formState.deposit_amt} votes by ${this.walletStore.address} *`
@@ -124,7 +135,7 @@ export default defineComponent({
 						addr: this.walletStore.address,
 						sk: new Uint8Array(0),
 					},
-					appID: this.daoIDStore.dao_id as number,
+					appID: this.daoIDStore.dao_id,
 					payFlags: { totalFee: 1000 },
 					appArgs: ["str:deposit_vote_token"],
 				},
@@ -133,14 +144,12 @@ export default defineComponent({
 					type: types.TransactionType.TransferAsset,
 					sign: types.SignType.SecretKey,
 					fromAccount: {
-						addr: getApplicationAddress(this.daoIDStore.dao_id as number),
+						addr: getApplicationAddress(this.daoIDStore.dao_id),
 						sk: new Uint8Array(0),
 					},
-					toAccountAddr: getApplicationAddress(
-						this.daoIDStore.dao_id as number
-					),
+					toAccountAddr: getApplicationAddress(this.daoIDStore.dao_id),
 					amount: this.formState.deposit_amt as number,
-					assetID: this.daoIDStore.govt_id as number,
+					assetID: this.daoIDStore.govt_id,
 					payFlags: { totalFee: 1000 },
 				},
 			];
@@ -154,12 +163,7 @@ export default defineComponent({
 				}, 5000);
 				console.error("Transaction Failed", error);
 			}
-		},
-		async registerVote() {
-			let lsig: LogicSigAccount = await getProposalLsig(
-				this.daoIDStore.dao_id as number,
-				this.walletStore.address
-			);
+
 			console.log(`* Register votes by ${this.walletStore.address} *`);
 			// call to DAO app by voter (to register deposited votes)
 			const registerVoteParam: types.ExecParams = {
@@ -169,7 +173,7 @@ export default defineComponent({
 					addr: this.walletStore.address,
 					sk: new Uint8Array(0),
 				},
-				appID: this.daoIDStore.dao_id as number,
+				appID: this.daoIDStore.dao_id,
 				payFlags: { totalFee: 2000 },
 				appArgs: ["str:register_vote", `str:${this.formState.vote_type}`],
 				accounts: [lsig.address()],
@@ -183,6 +187,9 @@ export default defineComponent({
 				}, 5000);
 				console.error("Transaction Failed", error);
 			}
+		},
+		onFinishFailed(errorinfo: Event) {
+			console.warn("Failed:", errorinfo);
 		},
 	},
 });

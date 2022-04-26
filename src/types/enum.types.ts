@@ -20,19 +20,23 @@ export enum NavigationKey {
 }
 
 export enum VoteOptions {
-	ABSTAIN,
-	YES,
-	NO,
-}
-
-export enum ProposalType {
-	ALGO = "algo",
-	ASA = "asa",
-	MESSAGE = "msg",
+	ABSTAIN = "Abstain",
+	YES = "Yes",
+	NO = "No",
 }
 
 export enum EndPoint {
 	VOTE = "/vote",
 	ADD_PROPOSAL = "/addProposal",
 	ALL_DAO = "/allDao",
+}
+
+export enum DAOActions {
+	ADD_PROPOSAL = "str:add_proposal",
+	DEPOSIT_VOTE_TOKEN = "str:deposit_vote_token",
+	REGISTER_VOTE = "str:register_vote",
+	EXECUTE = "str:execute",
+	WITHDRAW_VOTE_DEPOSIT = "str:withdraw_vote_deposit",
+	CLEAR_VOTE_RECORD = "str:clear_vote_record",
+	CLOASE_PROPOSAL = "str:close_proposal",
 }
