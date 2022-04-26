@@ -35,12 +35,12 @@
 									>Add Proposal</a-button
 								>
 							</router-link>
-							<router-link :to="{ path: EndPoint.TOKEN }">
+							<router-link :to="{ path: EndPoint.VOTE_TOKEN }">
 								<a-button
 									class="menu_option"
-									:type="isLinkActive(NavigationKey.TOKEN)"
-									@click="() => handleMenuClick(NavigationKey.TOKEN)"
-									>Tokens</a-button
+									:type="isLinkActive(NavigationKey.VOTE_TOKEN)"
+									@click="() => handleMenuClick(NavigationKey.VOTE_TOKEN)"
+									>Vote Tokens</a-button
 								>
 							</router-link>
 							<router-link :to="{ path: EndPoint.VOTE }">

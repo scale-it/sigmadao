@@ -17,10 +17,10 @@ export enum NavigationKey {
 	DAOS,
 	PROPOSALS,
 	ADD_PROPOSAL,
-	TOKEN,
+	VOTE_TOKEN,
 }
 
-export enum TokenType {
+export enum VoteTokenType {
 	DEPOSIT_TOKEN = "1",
 	WITHDRAW_TOKEN = "2",
 }
@@ -35,7 +35,7 @@ export enum EndPoint {
 	VOTE = "/vote",
 	ADD_PROPOSAL = "/addProposal",
 	ALL_DAO = "/allDao",
-	TOKEN = "/tokens",
+	VOTE_TOKEN = "/voteTokens",
 }
 
 export enum DAOActions {
