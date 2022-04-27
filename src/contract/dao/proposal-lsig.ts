@@ -185,6 +185,5 @@ export const getProposalLsig = async (
 		throw Error();
 	}
 	const program = new Uint8Array(Buffer.from(response["result"], "base64"));
-	const lsig: LogicSigAccount = new algosdk.LogicSigAccount(program, args);
-	return lsig;
+	return new algosdk.LogicSigAccount(program, args);
 };

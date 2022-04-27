@@ -253,7 +253,7 @@ export default defineComponent({
 						toAccountAddr: getApplicationAddress(this.daoStore.dao_id),
 						amount: 15,
 						assetID: this.daoStore.govt_id,
-						payFlags: { totalFee: 1000 },
+						payFlags: {},
 					},
 				];
 				let response = await this.walletStore.webMode.executeTx(addProposalTx);
