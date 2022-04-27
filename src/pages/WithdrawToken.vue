@@ -22,7 +22,7 @@
 					<a-input-number v-model:value="formState.withdraw_amt" />
 				</a-form-item>
 
-				<a-form-item :wrapper-col="{ offset: 10, span: 20 }">
+				<a-form-item :wrapper-col="{ offset: 12, span: 20 }">
 					<a-button type="primary" html-type="submit">Submit</a-button>
 				</a-form-item>
 			</a-form>

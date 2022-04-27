@@ -142,6 +142,7 @@ export default defineComponent({
 		handleLogOut() {
 			console.log("Wallet Disconnected");
 			this.updateWallet("");
+			DaoID().handleLogOut();
 			this.setWalletType(WalletType.NONE);
 			this.selectedWallet = WalletType.NONE;
 		},
