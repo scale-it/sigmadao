@@ -26,9 +26,9 @@ export enum VoteTokenType {
 }
 
 export enum VoteOptions {
-	ABSTAIN = "Abstain",
-	YES = "Yes",
-	NO = "No",
+	YES = "yes",
+	NO = "no",
+	ABSTAIN = "abstain",
 }
 
 export enum EndPoint {
