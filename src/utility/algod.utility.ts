@@ -1,7 +1,9 @@
 import { types, tx as webTx, mkTxParams, WebMode } from "@algo-builder/web";
+import { types as aTypes } from "@algo-builder/algob";
 import algodClient from "@/config/algob.config";
 import type { LogicSigAccount } from "algosdk";
 import algosdk from "algosdk";
+const confirmedRound = "confirmed-round";
 
 export const fundAmount = async (
 	from: string,
@@ -28,8 +30,7 @@ export const fundAmount = async (
 
 export const optInToApp = async (
 	lsig: LogicSigAccount,
-	execParam: types.ExecParams,
-	webMode: WebMode
+	execParam: types.ExecParams
 ) => {
 	try {
 		const params = await mkTxParams(algodClient, {});
@@ -39,9 +40,22 @@ export const optInToApp = async (
 			lsig
 		).blob;
 		const txInfo = await algodClient.sendRawTransaction(rawLsigSignedTx).do();
-		const optInResponse = await webMode.waitForConfirmation(txInfo.txId);
-		console.log("optInResponse: ", optInResponse);
+		const confirmationWait = await waitForConfirmation(txInfo.txId);
+		console.log("optInResponse: ", confirmationWait);
 	} catch (error) {
 		console.error(error);
 	}
+};
+
+const waitForConfirmation = async (txId: string) => {
+	const pendingInfo = await algosdk.waitForConfirmation(algodClient, txId, 6);
+	if (pendingInfo["pool-error"]) {
+		throw new Error(
+			`Transaction Pool Error: ${pendingInfo["pool-error"] as string}`
+		);
+	}
+	if (pendingInfo[confirmedRound] !== null && pendingInfo[confirmedRound] > 0) {
+		return pendingInfo as aTypes.ConfirmedTxInfo;
+	}
+	throw new Error("timeout");
 };
