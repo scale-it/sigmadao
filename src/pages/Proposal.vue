@@ -141,7 +141,6 @@ import DaoID from "../store/DaoID";
 import { types } from "@algo-builder/web";
 import type { LogicSigAccount } from "algosdk";
 import { getProposalLsig, getDaoFundLSig } from "../contract/dao";
-import { isAssetOpted } from "../indexer";
 import { fundAmount, convertToSeconds, optInToApp } from "../utility";
 const { getApplicationAddress } = require("algosdk");
 
@@ -232,16 +231,8 @@ export default defineComponent({
 						break;
 					}
 				}
-				// check if asset is already opted
-				const isAssetAlreadyOpted = await isAssetOpted(
-					this.walletStore.address,
-					this.daoStore.govt_id
-				);
-				if (!isAssetAlreadyOpted) {
-					// opt in lsig to app if not already opted
-					await this.optInLsigToApp(lsig);
-				}
-
+				// optin
+				await this.optInLsigToApp(lsig);
 				const addProposalTx: types.ExecParams[] = [
 					{
 						type: types.TransactionType.CallApp,
@@ -326,7 +317,8 @@ export default defineComponent({
 					appID: this.daoStore.dao_id,
 					payFlags: {},
 				};
-				optInToApp(lsig, execParam, this.walletStore.webMode);
+				let response = await optInToApp(lsig, execParam);
+				console.log(response);
 			} catch (error) {
 				console.error(error);
 			}
