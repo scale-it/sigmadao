@@ -35,11 +35,10 @@ import { VALIDATE_MESSAGES } from "@/constants/constant";
 import DaoID from "@/store/DaoID";
 import WalletStore from "@/store/WalletStore";
 import { types } from "@algo-builder/web";
-import { getApplicationAddress } from "algosdk";
 import { defineComponent, reactive } from "vue";
 import VoteStore from "../store/VoteStore";
 import { DAOActions } from "../types/enum.types";
-import { isApplicationOpted, searchApplicationAndAccount } from "@/indexer";
+import { searchApplicationAndAccount } from "@/indexer";
 
 export default defineComponent({
 	name: "WithdrawToken",
@@ -104,7 +103,7 @@ export default defineComponent({
 			};
 
 			try {
-				await this.walletStore.webMode.executeTx(withdrawVoteParam);
+				await this.walletStore.webMode.executeTx([withdrawVoteParam]);
 				searchApplicationAndAccount(); // to update locked and available token on UI
 			} catch (error) {
 				this.error = error.message;

@@ -111,7 +111,7 @@ export default defineComponent({
 				accounts: [lsig.address()],
 			};
 			try {
-				await this.walletStore.webMode.executeTransaction(registerVoteParam);
+				await this.walletStore.webMode.executeTx([registerVoteParam]);
 			} catch (error) {
 				this.error = error.message;
 				setTimeout(() => {

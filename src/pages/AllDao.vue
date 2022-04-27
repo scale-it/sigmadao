@@ -47,7 +47,7 @@ export default defineComponent({
 		};
 	},
 	methods: {
-		onFinish(values: any) {
+		onFinish() {
 			searchApplicationAndAccount().catch((error) => {
 				this.error = error.message;
 				setTimeout(() => {

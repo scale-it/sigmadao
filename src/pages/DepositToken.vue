@@ -90,17 +90,17 @@ export default defineComponent({
 
 			if (!isApplicationAlreadyOpted) {
 				const execParam: types.ExecParams = {
-					type: types.TransactionType.OptInASA,
+					type: types.TransactionType.OptInToApp,
 					sign: types.SignType.SecretKey,
 					fromAccount: {
 						addr: this.walletStore.address,
 						sk: new Uint8Array(0),
 					},
-					assetID: this.daoIDStore.dao_id,
+					appID: this.daoIDStore.dao_id,
 					payFlags: {},
 				};
 				try {
-					await this.walletStore.webMode.executeTx(execParam);
+					await this.walletStore.webMode.executeTx([execParam]);
 				} catch (error) {
 					this.error = error.message;
 					setTimeout(() => {
