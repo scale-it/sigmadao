@@ -1,6 +1,9 @@
 <template>
 	<a-row>
 		<a-col :span="12" :offset="6">
+			<div v-if="error">
+				<a-alert message="Error" :description="error" type="error" show-icon />
+			</div>
 			<a-form
 				:label-col="{ span: 10 }"
 				:wrapper-col="{ span: 20 }"
@@ -142,6 +145,7 @@ import { types } from "@algo-builder/web";
 import type { LogicSigAccount } from "algosdk";
 import { getProposalLsig, getDaoFundLSig } from "../contract/dao";
 import { fundAmount, convertToSeconds, optInToApp } from "../utility";
+import { APP_NOT_FOUND, TOKEN_NOT_FOUND } from "@/constants";
 const { getApplicationAddress } = require("algosdk");
 
 export default defineComponent({
@@ -149,6 +153,7 @@ export default defineComponent({
 	data() {
 		return {
 			ProposalType,
+			error: "",
 		};
 	},
 	setup() {
@@ -177,11 +182,17 @@ export default defineComponent({
 					asaId,
 				} = values;
 				if (typeof this.daoStore.dao_id === "undefined") {
-					console.error("appId not defined");
+					this.error = APP_NOT_FOUND;
+					setTimeout(() => {
+						this.error = "";
+					}, 2000);
 					return;
 				}
 				if (typeof this.daoStore.govt_id === "undefined") {
-					console.error("govt_id not defined");
+					this.error = TOKEN_NOT_FOUND;
+					setTimeout(() => {
+						this.error = "";
+					}, 2000);
 					return;
 				}
 				let lsig: LogicSigAccount = await getProposalLsig(
@@ -264,6 +275,20 @@ export default defineComponent({
 		},
 		onFinishFailed(errorinfo: Event) {
 			console.warn("Failed:", errorinfo);
+			if (typeof this.daoStore.dao_id === "undefined") {
+				this.error = APP_NOT_FOUND;
+				setTimeout(() => {
+					this.error = "";
+				}, 2000);
+				return;
+			}
+			if (typeof this.daoStore.govt_id === "undefined") {
+				this.error = TOKEN_NOT_FOUND;
+				setTimeout(() => {
+					this.error = "";
+				}, 2000);
+				return;
+			}
 		},
 		disabledDate(current: number | Date) {
 			// Can not select day before today
@@ -294,11 +319,17 @@ export default defineComponent({
 		async optInLsigToApp(lsig: LogicSigAccount) {
 			try {
 				if (typeof this.daoStore.dao_id === "undefined") {
-					console.log("appId not defined");
+					this.error = APP_NOT_FOUND;
+					setTimeout(() => {
+						this.error = "";
+					}, 2000);
 					return;
 				}
 				if (typeof this.daoStore.govt_id === "undefined") {
-					console.log("govt_id not defined");
+					this.error = TOKEN_NOT_FOUND;
+					setTimeout(() => {
+						this.error = "";
+					}, 2000);
 					return;
 				}
 				// fund lsig

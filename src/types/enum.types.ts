@@ -38,5 +38,5 @@ export enum DAOActions {
 	EXECUTE = "str:execute",
 	WITHDRAW_VOTE_DEPOSIT = "str:withdraw_vote_deposit",
 	CLEAR_VOTE_RECORD = "str:clear_vote_record",
-	CLOASE_PROPOSAL = "str:close_proposal",
+	CLOSE_PROPOSAL = "str:close_proposal",
 }
