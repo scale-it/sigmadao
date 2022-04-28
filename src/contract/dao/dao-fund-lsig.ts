@@ -1,7 +1,4 @@
-import type { LogicSigAccount } from "algosdk";
-import * as algosdk from "algosdk";
-import { CHAIN_NAME } from "../../config/algosigner.config";
-declare var AlgoSigner: any; // eslint-disable-line
+import { compileSignature } from "@/utility";
 
 const daoFundLsig = (app_id: number) => {
 	return `#pragma version 4
@@ -85,18 +82,6 @@ const daoFundLsig = (app_id: number) => {
 };
 
 export const getDaoFundLSig = async (app_id: number) => {
-	const escrow_src = daoFundLsig(app_id);
-	const response = await AlgoSigner.algod({
-		ledger: CHAIN_NAME,
-		path: "/v2/teal/compile",
-		body: escrow_src,
-		method: "POST",
-		contentType: "text/plain",
-	});
-	if (!response["hash"]) {
-		throw Error();
-	}
-	const program = new Uint8Array(Buffer.from(response["result"], "base64"));
-	const lsig: LogicSigAccount = new algosdk.LogicSigAccount(program);
-	return lsig;
+	const proposalSrc = daoFundLsig(app_id);
+	return await compileSignature(proposalSrc);
 };

@@ -3,6 +3,8 @@ import { types as aTypes } from "@algo-builder/algob";
 import algodClient from "@/config/algob.config";
 import type { LogicSigAccount } from "algosdk";
 import algosdk from "algosdk";
+import { CHAIN_NAME } from "../config/algosigner.config";
+declare var AlgoSigner: any; // eslint-disable-line
 const confirmedRound = "confirmed-round";
 
 export const fundAmount = async (
@@ -58,4 +60,19 @@ const waitForConfirmation = async (txId: string) => {
 		return pendingInfo as aTypes.ConfirmedTxInfo;
 	}
 	throw new Error("timeout");
+};
+
+export const compileSignature = async (proposalSrc: string) => {
+	const response = await AlgoSigner.algod({
+		ledger: CHAIN_NAME,
+		path: "/v2/teal/compile",
+		body: proposalSrc,
+		method: "POST",
+		contentType: "text/plain",
+	});
+	if (!response["hash"]) {
+		throw Error();
+	}
+	const program = new Uint8Array(Buffer.from(response["result"], "base64"));
+	return new algosdk.LogicSigAccount(program);
 };
