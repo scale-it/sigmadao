@@ -180,3 +180,31 @@ export const isAssetOpted = async (address: string, asset_id: number) => {
 		throw e;
 	}
 };
+
+export const isApplicationOpted = async (
+	address: string,
+	application_id: number
+) => {
+	try {
+		const optedApplicationInfo = await AlgoSigner.indexer({
+			ledger: CHAIN_NAME,
+			path: `/v2/accounts/${address}/apps-local-state`,
+		});
+		const parsedOptedApplicationInfo = JSON.parse(
+			JSON.stringify(optedApplicationInfo)
+		);
+		if (
+			parsedOptedApplicationInfo &&
+			parsedOptedApplicationInfo["apps-local-states"]
+		) {
+			const isGivenApplicationOpted = parsedOptedApplicationInfo[
+				"apps-local-states"
+			].find((element: any) => element["id"] === application_id);
+			if (isGivenApplicationOpted) return true;
+		}
+		return false;
+	} catch (e) {
+		console.error(e);
+		throw e;
+	}
+};

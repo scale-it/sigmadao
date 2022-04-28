@@ -143,6 +143,7 @@ import type { LogicSigAccount } from "algosdk";
 import { getProposalLsig, getDaoFundLSig } from "../contract/dao";
 import { fundAmount, convertToSeconds, optInToApp } from "../utility";
 import { APP_NOT_FOUND, TOKEN_NOT_FOUND } from "@/constants";
+import { isApplicationOpted } from "@/indexer";
 const { getApplicationAddress } = require("algosdk");
 
 export default defineComponent({
@@ -240,7 +241,9 @@ export default defineComponent({
 					}
 				}
 				// optin
-				await this.optInLsigToApp(lsig);
+				if (!isApplicationOpted(lsig.address(), this.daoStore.dao_id)) {
+					await this.optInLsigToApp(lsig);
+				}
 				const addProposalTx: types.ExecParams[] = [
 					{
 						type: types.TransactionType.CallApp,
