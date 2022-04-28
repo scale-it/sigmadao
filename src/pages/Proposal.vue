@@ -30,17 +30,14 @@
 				</a-form-item>
 				<a-form-item
 					label="Proposal Account Address"
-					name="proposal_address"
+					name="proposalAddress"
 					:rules="[
 						{
 							required: true,
 						},
 					]"
 				>
-					<a-input
-						v-model:value="formState.proposal_address"
-						:disabled="true"
-					/>
+					<a-input v-model:value="formState.proposalAddress" :disabled="true" />
 				</a-form-item>
 				<a-form-item
 					label="Voting Date"
