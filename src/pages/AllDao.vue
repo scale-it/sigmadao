@@ -1,7 +1,7 @@
 <template>
 	<a-row>
 		<a-col :span="12" :offset="6">
-			<div v-if="error">
+			<div v-if="error" class="margin_bottom_sm">
 				<a-alert
 					message="Error"
 					:description="error"
@@ -11,7 +11,7 @@
 					@close="error = ''"
 				/>
 			</div>
-			<div v-else>
+			<div>
 				<a-form
 					:label-col="{ span: 12 }"
 					:wrapper-col="{ span: 12 }"
@@ -40,7 +40,10 @@
 </template>
 
 <script lang="ts">
-import { VALIDATE_MESSAGES } from "@/constants/constant";
+import {
+	openSuccessNotificationWithIcon,
+	VALIDATE_MESSAGES,
+} from "@/constants/constant";
 import { searchApplicationAndAccount } from "@/indexer";
 import { defineComponent, reactive } from "vue";
 import DaoStore from "../store/DaoID";
@@ -54,9 +57,16 @@ export default defineComponent({
 	},
 	methods: {
 		onFinish() {
-			searchApplicationAndAccount().catch((error) => {
-				this.error = error.message;
-			});
+			searchApplicationAndAccount()
+				.then(() =>
+					openSuccessNotificationWithIcon(
+						"Success",
+						`Your DAO App of ID ${this.formState.dao_id} is selected.`
+					)
+				)
+				.catch((error) => {
+					this.error = error.message;
+				});
 		},
 		onFinishFailed(errorinfo: Event) {
 			console.warn("Failed:", errorinfo);

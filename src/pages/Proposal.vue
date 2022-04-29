@@ -1,6 +1,16 @@
 <template>
 	<a-row>
 		<a-col :span="12" :offset="6">
+			<div v-if="error" class="margin_bottom_sm">
+				<a-alert
+					message="Error"
+					:description="error"
+					type="error"
+					show-icon
+					closable
+					@close="error = ''"
+				/>
+			</div>
 			<a-form
 				:label-col="{ span: 10 }"
 				:wrapper-col="{ span: 20 }"
@@ -27,17 +37,14 @@
 				</a-form-item>
 				<a-form-item
 					label="Proposal Account Address"
-					name="proposal_address"
+					name="proposalAddress"
 					:rules="[
 						{
 							required: true,
 						},
 					]"
 				>
-					<a-input
-						v-model:value="formState.proposal_address"
-						:disabled="true"
-					/>
+					<a-input v-model:value="formState.proposalAddress" :disabled="true" />
 				</a-form-item>
 				<a-form-item
 					label="Voting Date"
@@ -132,6 +139,7 @@ import {
 	DAY_TO_MILLISECONDS,
 	VALIDATE_MESSAGES,
 	ProposalType,
+	openSuccessNotificationWithIcon,
 } from "@/constants/constant";
 import { DateRange, DAOActions } from "@/types";
 import { defineComponent, reactive } from "vue";
@@ -142,6 +150,8 @@ import { types } from "@algo-builder/web";
 import type { LogicSigAccount } from "algosdk";
 import { getProposalLsig, getDaoFundLSig } from "../contract/dao";
 import { fundAmount, convertToSeconds, optInToApp } from "../utility";
+import { APP_NOT_FOUND, TOKEN_NOT_FOUND } from "@/constants";
+import { isApplicationOpted } from "@/indexer";
 const { getApplicationAddress } = require("algosdk");
 
 export default defineComponent({
@@ -149,6 +159,7 @@ export default defineComponent({
 	data() {
 		return {
 			ProposalType,
+			error: "",
 		};
 	},
 	setup() {
@@ -177,11 +188,11 @@ export default defineComponent({
 					asaId,
 				} = values;
 				if (typeof this.daoStore.dao_id === "undefined") {
-					console.error("appId not defined");
+					this.error = APP_NOT_FOUND;
 					return;
 				}
 				if (typeof this.daoStore.govt_id === "undefined") {
-					console.error("govt_id not defined");
+					this.error = TOKEN_NOT_FOUND;
 					return;
 				}
 				let lsig: LogicSigAccount = await getProposalLsig(
@@ -232,7 +243,9 @@ export default defineComponent({
 					}
 				}
 				// optin
-				await this.optInLsigToApp(lsig);
+				if (!isApplicationOpted(lsig.address(), this.daoStore.dao_id)) {
+					await this.optInLsigToApp(lsig);
+				}
 				const addProposalTx: types.ExecParams[] = [
 					{
 						type: types.TransactionType.CallApp,
@@ -253,10 +266,14 @@ export default defineComponent({
 						toAccountAddr: getApplicationAddress(this.daoStore.dao_id),
 						amount: 15,
 						assetID: this.daoStore.govt_id,
-						payFlags: { totalFee: 1000 },
+						payFlags: {},
 					},
 				];
 				let response = await this.walletStore.webMode.executeTx(addProposalTx);
+				openSuccessNotificationWithIcon(
+					"Success",
+					"Your Proposal has benn created."
+				);
 				console.log(response);
 			} catch (error) {
 				console.error(error);
@@ -294,11 +311,11 @@ export default defineComponent({
 		async optInLsigToApp(lsig: LogicSigAccount) {
 			try {
 				if (typeof this.daoStore.dao_id === "undefined") {
-					console.log("appId not defined");
+					this.error = APP_NOT_FOUND;
 					return;
 				}
 				if (typeof this.daoStore.govt_id === "undefined") {
-					console.log("govt_id not defined");
+					this.error = TOKEN_NOT_FOUND;
 					return;
 				}
 				// fund lsig

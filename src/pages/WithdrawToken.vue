@@ -39,9 +39,12 @@
 
 <script lang="ts">
 import {
+	APP_NOT_FOUND,
 	openSuccessNotificationWithIcon,
+	TOKEN_NOT_FOUND,
 	VALIDATE_MESSAGES,
-} from "@/constants/constant";
+	WALLET_NOT_CONNECT,
+} from "@/constants";
 import DaoID from "@/store/DaoID";
 import WalletStore from "@/store/WalletStore";
 import { types } from "@algo-builder/web";
@@ -71,15 +74,15 @@ export default defineComponent({
 	methods: {
 		async onFinish() {
 			if (typeof this.daoIDStore.dao_id === "undefined") {
-				this.error = "Please add DAO App ID";
+				this.error = APP_NOT_FOUND;
 				return;
 			}
 			if (typeof this.daoIDStore.govt_id === "undefined") {
-				this.error = "Govt token not found";
+				this.error = TOKEN_NOT_FOUND;
 				return;
 			}
 			if (!this.walletStore.address.length) {
-				this.error = "Please connect to your Wallet";
+				this.error = WALLET_NOT_CONNECT;
 				return;
 			}
 

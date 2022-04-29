@@ -8,7 +8,7 @@ export default defineStore("ProposalStore", {
 			url: "",
 			url_hash: "",
 			vote_date: ["", ""],
-			proposal_address: "",
+			proposalAddress: "",
 			recipient: "",
 			amount: undefined,
 			asaId: undefined,
@@ -21,7 +21,7 @@ export default defineStore("ProposalStore", {
 			this.url = value.url;
 			this.url_hash = value.url_hash;
 			this.vote_date = value.vote_date;
-			this.proposal_address = value.proposal_address;
+			this.proposalAddress = value.proposalAddress;
 			this.recipient = value.recipient;
 			this.amount = value.amount;
 			this.asaId = value.asaId;
@@ -29,7 +29,7 @@ export default defineStore("ProposalStore", {
 			console.log("state", this.$state);
 		},
 		setProposalAddr(value: string) {
-			this.proposal_address = value;
+			this.proposalAddress = value;
 		},
 	},
 });
