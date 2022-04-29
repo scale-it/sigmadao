@@ -242,8 +242,13 @@ export default defineComponent({
 						break;
 					}
 				}
+				// check if asset is already opted
+				const isApplicationAlreadyOpted = await isApplicationOpted(
+					this.walletStore.address,
+					this.daoStore.dao_id
+				);
 				// optin
-				if (!isApplicationOpted(lsig.address(), this.daoStore.dao_id)) {
+				if (!isApplicationAlreadyOpted) {
 					await this.optInLsigToApp(lsig);
 				}
 				const addProposalTx: types.ExecParams[] = [
