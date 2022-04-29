@@ -2,8 +2,14 @@
 	<a-row>
 		<a-col :span="12" :offset="6">
 			<div v-if="error">
-				<a-result status="error" title="Submission Failed" :sub-title="error">
-				</a-result>
+				<a-alert
+					message="Error"
+					:description="error"
+					type="error"
+					show-icon
+					closable
+					@close="error = ''"
+				/>
 			</div>
 			<div v-else>
 				<a-form
@@ -50,9 +56,6 @@ export default defineComponent({
 		onFinish() {
 			searchApplicationAndAccount().catch((error) => {
 				this.error = error.message;
-				setTimeout(() => {
-					this.error = "";
-				}, 1500);
 			});
 		},
 		onFinishFailed(errorinfo: Event) {

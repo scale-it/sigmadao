@@ -146,7 +146,7 @@ export const searchApplicationAndAccount = async () => {
 			walletStore.address
 		);
 		proposalStore.setProposalAddr(lsig.address());
-
+		searchForGovASAToken();
 		if (account && account.localStateMap) {
 			daoIdStore.locked =
 				(account.localStateMap.get(LOCAL_STATE_MAP_KEY.Deposit) as number) ?? 0;
@@ -159,20 +159,21 @@ export const searchApplicationAndAccount = async () => {
 
 /**
  * Check if given asset is opted in given address
- * @param addres Account address
+ * @param address Account address
  * @param asset_id asset id
  */
-export const isAssetOpted = async (address: string, asset_id: number) => {
+export const isAssetOpted = async (
+	address: string,
+	asset_id: number
+): Promise<boolean> => {
 	try {
-		const optedAssetInfo = await AlgoSigner.indexer({
+		const optedAssetInfo = await AlgoSigner.algod({
 			ledger: CHAIN_NAME,
-			path: `/v2/accounts/${address}/assets`,
+			path: `/v2/accounts/${address}/assets/${asset_id}`,
 		});
-		const parsedOptedAssetInfo = JSON.parse(JSON.stringify(optedAssetInfo));
-		if (parsedOptedAssetInfo && parsedOptedAssetInfo.assets) {
-			const isGivenAssetOpted = parsedOptedAssetInfo.assets.find(
-				(element: any) => element["asset-id"] === asset_id
-			);
+		if (optedAssetInfo && optedAssetInfo["asset-holding"]) {
+			const isGivenAssetOpted =
+				optedAssetInfo["asset-holding"]["asset-id"] === asset_id;
 			if (isGivenAssetOpted) return true;
 		}
 		return false;
@@ -182,30 +183,50 @@ export const isAssetOpted = async (address: string, asset_id: number) => {
 	}
 };
 
+/**
+ * Check if given application is opted in given address
+ * @param address Account address
+ * @param application_id application id
+ */
 export const isApplicationOpted = async (
 	address: string,
 	application_id: number
-) => {
+): Promise<boolean> => {
 	try {
-		const optedApplicationInfo = await AlgoSigner.indexer({
+		const optedApplicationInfo = await AlgoSigner.algod({
 			ledger: CHAIN_NAME,
-			path: `/v2/accounts/${address}/apps-local-state`,
+			path: `/v2/accounts/${address}/applications/${application_id}`,
 		});
-		const parsedOptedApplicationInfo = JSON.parse(
-			JSON.stringify(optedApplicationInfo)
-		);
-		if (
-			parsedOptedApplicationInfo &&
-			parsedOptedApplicationInfo["apps-local-states"]
-		) {
-			const isGivenApplicationOpted = parsedOptedApplicationInfo[
-				"apps-local-states"
-			].find((element: any) => element["id"] === application_id);
+		if (optedApplicationInfo && optedApplicationInfo["app-local-state"]) {
+			const isGivenApplicationOpted =
+				optedApplicationInfo["app-local-state"].id === application_id;
 			if (isGivenApplicationOpted) return true;
 		}
 		return false;
 	} catch (e) {
 		console.error(e);
 		throw e;
+	}
+};
+
+export const searchForGovASAToken = async () => {
+	const daoIdStore = DaoID();
+	const walletStore = WalletStore();
+	const govtID = DaoID().govt_id;
+	if (walletStore.address && govtID) {
+		try {
+			const accountInfo = await AlgoSigner.algod({
+				ledger: CHAIN_NAME,
+				path: `/v2/accounts/${walletStore.address}/assets/${govtID}`,
+			});
+			let amount = 0;
+			if (accountInfo["asset-holding"].amount) {
+				amount = accountInfo["asset-holding"].amount;
+			}
+			daoIdStore.available = amount;
+		} catch (e) {
+			console.log(e);
+			throw e;
+		}
 	}
 };

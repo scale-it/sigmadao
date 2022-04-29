@@ -1,8 +1,15 @@
 <template>
 	<a-row>
 		<a-col :span="12" :offset="6">
-			<div v-if="error">
-				<a-alert message="Error" :description="error" type="error" show-icon />
+			<div v-if="error" class="margin_bottom_sm">
+				<a-alert
+					message="Error"
+					:description="error"
+					type="error"
+					show-icon
+					closable
+					@close="error = ''"
+				/>
 			</div>
 			<a-form
 				:label-col="{ span: 12 }"
@@ -31,7 +38,10 @@
 </template>
 
 <script lang="ts">
-import { VALIDATE_MESSAGES } from "@/constants/constant";
+import {
+	openSuccessNotificationWithIcon,
+	VALIDATE_MESSAGES,
+} from "@/constants/constant";
 import DaoID from "@/store/DaoID";
 import WalletStore from "@/store/WalletStore";
 import { types } from "@algo-builder/web";
@@ -62,23 +72,14 @@ export default defineComponent({
 		async onFinish() {
 			if (typeof this.daoIDStore.dao_id === "undefined") {
 				this.error = "Please add DAO App ID";
-				setTimeout(() => {
-					this.error = "";
-				}, 2000);
 				return;
 			}
 			if (typeof this.daoIDStore.govt_id === "undefined") {
 				this.error = "Govt token not found";
-				setTimeout(() => {
-					this.error = "";
-				}, 2000);
 				return;
 			}
 			if (!this.walletStore.address.length) {
 				this.error = "Please connect to your Wallet";
-				setTimeout(() => {
-					this.error = "";
-				}, 2000);
 				return;
 			}
 
@@ -105,11 +106,12 @@ export default defineComponent({
 			try {
 				await this.walletStore.webMode.executeTx([withdrawVoteParam]);
 				searchApplicationAndAccount(); // to update locked and available token on UI
+				openSuccessNotificationWithIcon(
+					"Success",
+					`Your ${this.formState.withdraw_amt} tokens have been withdrawn.`
+				);
 			} catch (error) {
 				this.error = error.message;
-				setTimeout(() => {
-					this.error = "";
-				}, 5000);
 				console.error("Transaction Failed", error);
 			}
 		},
