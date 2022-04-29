@@ -3703,13 +3703,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ant-design-vue@npm:3.1.0-rc.0":
-  version: 3.1.0-rc.0
-  resolution: "ant-design-vue@npm:3.1.0-rc.0"
+"ant-design-vue@npm:3.2.0":
+  version: 3.2.0
+  resolution: "ant-design-vue@npm:3.2.0"
   dependencies:
     "@ant-design/colors": ^6.0.0
     "@ant-design/icons-vue": ^6.1.0
     "@babel/runtime": ^7.10.5
+    "@ctrl/tinycolor": ^3.4.0
     "@simonwep/pickr": ~1.8.0
     array-tree-filter: ^2.1.0
     async-validator: ^4.0.0
@@ -3725,7 +3726,7 @@ __metadata:
     warning: ^4.0.0
   peerDependencies:
     vue: ">=3.2.0"
-  checksum: 418ab6c6dbe1d397801db6633be2a976f5b1e06e571259eba5ec61624a47c4e154d0ceb99936a919a4b3d0cec38110d87565ce1c5613e415fbe6c74733083c8e
+  checksum: abaea659cb25c70a2735d03cc69b0a4a76b71aa3e5502a356c23a4711b6a95b09b9638d3911a7eab15a5a3234c8efd28c652efc2c8a2ddcd76badc126a3fcd15
   languageName: node
   linkType: hard
 
@@ -11960,7 +11961,7 @@ __metadata:
     "@vue/compiler-sfc": ^3.2.31
     "@vue/eslint-config-typescript": ^10.0.0
     algosdk: ^1.14.0
-    ant-design-vue: 3.1.0-rc.0
+    ant-design-vue: 3.2.0
     core-js: ^3.21.1
     crypto-browserify: ^3.12.0
     eslint: ^8.11.0

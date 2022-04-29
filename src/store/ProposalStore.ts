@@ -4,13 +4,11 @@ import { ProposalFormState } from "../types";
 export default defineStore("ProposalStore", {
 	state: (): ProposalFormState => {
 		return {
-			vote_type: "",
+			proposal_type: "",
 			url: "",
 			url_hash: "",
 			vote_date: ["", ""],
-			proposal_address: "",
-			proposal_id: undefined,
-			from: "",
+			proposalAddress: "",
 			recipient: "",
 			amount: undefined,
 			asaId: undefined,
@@ -19,18 +17,19 @@ export default defineStore("ProposalStore", {
 	},
 	actions: {
 		setFormValue(value: ProposalFormState) {
-			this.vote_type = value.vote_type;
+			this.proposal_type = value.proposal_type;
 			this.url = value.url;
 			this.url_hash = value.url_hash;
 			this.vote_date = value.vote_date;
-			this.proposal_address = value.proposal_address;
-			this.proposal_id = value.proposal_id;
-			this.from = value.from;
+			this.proposalAddress = value.proposalAddress;
 			this.recipient = value.recipient;
 			this.amount = value.amount;
 			this.asaId = value.asaId;
 			this.message = value.message;
 			console.log("state", this.$state);
+		},
+		setProposalAddr(value: string) {
+			this.proposalAddress = value;
 		},
 	},
 });

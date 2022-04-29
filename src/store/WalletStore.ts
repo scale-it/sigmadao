@@ -10,12 +10,17 @@ export default defineStore("WalletStore", {
 			address: "",
 		};
 	},
+	getters: {
+		getWebMode(state) {
+			return state.webMode;
+		},
+	},
 	actions: {
 		setWalletType(walletType: WalletType) {
 			this.walletKind = walletType;
 		},
 		setWebMode(webMode: WebMode) {
-			console.log("WebMode Initialized", webMode);
+			this.webMode = webMode;
 		},
 		setWalletAddress(address: string) {
 			this.address = address;

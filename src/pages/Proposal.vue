@@ -1,6 +1,9 @@
 <template>
 	<a-row>
 		<a-col :span="12" :offset="6">
+			<div v-if="error">
+				<a-alert message="Error" :description="error" type="error" show-icon />
+			</div>
 			<a-form
 				:label-col="{ span: 10 }"
 				:wrapper-col="{ span: 20 }"
@@ -27,21 +30,14 @@
 				</a-form-item>
 				<a-form-item
 					label="Proposal Account Address"
-					name="proposal_address"
+					name="proposalAddress"
 					:rules="[
 						{
 							required: true,
 						},
 					]"
 				>
-					<a-input v-model:value="formState.proposal_address" />
-				</a-form-item>
-				<a-form-item
-					label="Proposal ID"
-					name="proposal_id"
-					:rules="[{ required: true, type: 'number' }]"
-				>
-					<a-input-number v-model:value="formState.proposal_id" />
+					<a-input v-model:value="formState.proposalAddress" :disabled="true" />
 				</a-form-item>
 				<a-form-item
 					label="Voting Date"
@@ -58,18 +54,18 @@
 					/>
 				</a-form-item>
 				<a-form-item
-					label="Vote"
-					name="vote_type"
+					label="Proposal Type"
+					name="proposal_type"
 					:rules="[{ required: true }]"
 				>
 					<a-select
-						v-model:value="formState.vote_type"
-						placeholder="Please select your type"
+						v-model:value="formState.proposal_type"
+						placeholder="Please select your vote type"
 					>
-						<a-select-option :value="ProposalType.ALGO"
+						<a-select-option :value="ProposalType.ALGO_TRANSFER"
 							>Algo Transfer</a-select-option
 						>
-						<a-select-option :value="ProposalType.ASA"
+						<a-select-option :value="ProposalType.ASA_TRANSFER"
 							>ASA Transfer</a-select-option
 						>
 						<a-select-option :value="ProposalType.MESSAGE"
@@ -80,12 +76,10 @@
 				<div
 					class="flexBox"
 					v-if="
-						formState.vote_type && formState.vote_type !== ProposalType.MESSAGE
+						formState.proposal_type &&
+						formState.proposal_type !== ProposalType.MESSAGE
 					"
 				>
-					<a-form-item label="From" name="from" :rules="[{ required: true }]">
-						<a-input v-model:value="formState.from" />
-					</a-form-item>
 					<a-form-item
 						label="Recipient"
 						name="recipient"
@@ -101,7 +95,10 @@
 						<a-input-number v-model:value="formState.amount" />
 					</a-form-item>
 				</div>
-				<div class="flexBox" v-if="formState.vote_type === ProposalType.ASA">
+				<div
+					class="flexBox"
+					v-if="formState.proposal_type === ProposalType.ASA_TRANSFER"
+				>
 					<a-form-item
 						label="ASA ID"
 						name="asaId"
@@ -112,7 +109,7 @@
 				</div>
 				<div
 					class="flexBox"
-					v-if="formState.vote_type === ProposalType.MESSAGE"
+					v-if="formState.proposal_type === ProposalType.MESSAGE"
 				>
 					<a-form-item
 						label="Message"
@@ -131,25 +128,167 @@
 </template>
 
 <script lang="ts">
-import { DAY_TO_MILLISECONDS, VALIDATE_MESSAGES } from "@/constants/constant";
-import { DateRange } from "@/types";
+import {
+	DAY_TO_MILLISECONDS,
+	VALIDATE_MESSAGES,
+	ProposalType,
+} from "@/constants/constant";
+import { DateRange, DAOActions } from "@/types";
 import { defineComponent, reactive } from "vue";
 import ProposalStore from "../store/ProposalStore";
-import { ProposalType } from "../types/enum.types";
+import WalletStore from "../store/WalletStore";
+import DaoID from "../store/DaoID";
+import { types } from "@algo-builder/web";
+import type { LogicSigAccount } from "algosdk";
+import { getProposalLsig, getDaoFundLSig } from "../contract/dao";
+import { fundAmount, convertToSeconds, optInToApp } from "../utility";
+import { APP_NOT_FOUND, TOKEN_NOT_FOUND } from "@/constants";
+import { isApplicationOpted } from "@/indexer";
+const { getApplicationAddress } = require("algosdk");
 
 export default defineComponent({
 	name: "AddProposal",
 	data() {
 		return {
 			ProposalType,
+			error: "",
+		};
+	},
+	setup() {
+		const formState = reactive(ProposalStore());
+		const walletStore = reactive(WalletStore());
+		const daoStore = reactive(DaoID());
+
+		return {
+			formState,
+			walletStore,
+			daoStore,
+			validateMessages: VALIDATE_MESSAGES,
 		};
 	},
 	methods: {
-		onFinish(values: Event) {
-			console.log("Success:", values);
+		async onFinish(values: any) {
+			try {
+				let {
+					amount,
+					recipient,
+					url,
+					url_hash,
+					proposal_type,
+					vote_date,
+					message,
+					asaId,
+				} = values;
+				if (typeof this.daoStore.dao_id === "undefined") {
+					this.error = APP_NOT_FOUND;
+					setTimeout(() => {
+						this.error = "";
+					}, 2000);
+					return;
+				}
+				if (typeof this.daoStore.govt_id === "undefined") {
+					this.error = TOKEN_NOT_FOUND;
+					setTimeout(() => {
+						this.error = "";
+					}, 2000);
+					return;
+				}
+				let lsig: LogicSigAccount = await getProposalLsig(
+					this.daoStore.dao_id,
+					this.walletStore.address
+				);
+				let daoLsig: LogicSigAccount = await getDaoFundLSig(
+					this.daoStore.dao_id
+				);
+				const startTime = convertToSeconds(vote_date[0]);
+				const endTime = convertToSeconds(vote_date[1]);
+				const executeBefore = endTime + 7 * 60; // end time + 7 minutes in seconds
+
+				// Default proposal params. Other params are added based on proposal type in below switch case.
+				const proposalParams = [
+					DAOActions.ADD_PROPOSAL,
+					`str:my-custom-proposal`, // name
+					`str:${url}`, // url
+					`str:${url_hash}`, // url_hash
+					"str:", // hash_algo (passing null)
+					`int:${startTime}`, // voting_start
+					`int:${endTime}`, // voting_end
+					`int:${executeBefore}`, // execute_before
+					`int:${proposal_type}`, // type
+				];
+
+				switch (proposal_type) {
+					case ProposalType.ALGO_TRANSFER: {
+						proposalParams.push(
+							`addr:${daoLsig.address()}`, // from
+							`addr:${recipient}`, // recipient
+							`int:${amount}` // amount
+						);
+						break;
+					}
+					case ProposalType.ASA_TRANSFER: {
+						proposalParams.push(
+							`addr:${daoLsig.address()}`, // from
+							`int:${asaId}`, // asaId
+							`addr:${recipient}`, // recipient
+							`int:${amount}` // amount
+						);
+						break;
+					}
+					case ProposalType.MESSAGE: {
+						proposalParams.push(`str:${message}`); // message
+						break;
+					}
+				}
+				// optin
+				if (!isApplicationOpted(lsig.address(), this.daoStore.dao_id)) {
+					await this.optInLsigToApp(lsig);
+				}
+				const addProposalTx: types.ExecParams[] = [
+					{
+						type: types.TransactionType.CallApp,
+						sign: types.SignType.LogicSignature,
+						fromAccountAddr: lsig.address(),
+						appID: this.daoStore.dao_id,
+						lsig: lsig,
+						payFlags: {},
+						appArgs: proposalParams,
+					},
+					{
+						type: types.TransactionType.TransferAsset,
+						sign: types.SignType.SecretKey,
+						fromAccount: {
+							addr: this.walletStore.address,
+							sk: new Uint8Array(0),
+						},
+						toAccountAddr: getApplicationAddress(this.daoStore.dao_id),
+						amount: 15,
+						assetID: this.daoStore.govt_id,
+						payFlags: {},
+					},
+				];
+				let response = await this.walletStore.webMode.executeTx(addProposalTx);
+				console.log(response);
+			} catch (error) {
+				console.error(error);
+			}
 		},
 		onFinishFailed(errorinfo: Event) {
 			console.warn("Failed:", errorinfo);
+			if (typeof this.daoStore.dao_id === "undefined") {
+				this.error = APP_NOT_FOUND;
+				setTimeout(() => {
+					this.error = "";
+				}, 2000);
+				return;
+			}
+			if (typeof this.daoStore.govt_id === "undefined") {
+				this.error = TOKEN_NOT_FOUND;
+				setTimeout(() => {
+					this.error = "";
+				}, 2000);
+				return;
+			}
 		},
 		disabledDate(current: number | Date) {
 			// Can not select day before today
@@ -177,13 +316,44 @@ export default defineComponent({
 				};
 			}
 		},
-	},
-	setup() {
-		const formState = reactive(ProposalStore());
-		return {
-			formState,
-			validateMessages: VALIDATE_MESSAGES,
-		};
+		async optInLsigToApp(lsig: LogicSigAccount) {
+			try {
+				if (typeof this.daoStore.dao_id === "undefined") {
+					this.error = APP_NOT_FOUND;
+					setTimeout(() => {
+						this.error = "";
+					}, 2000);
+					return;
+				}
+				if (typeof this.daoStore.govt_id === "undefined") {
+					this.error = TOKEN_NOT_FOUND;
+					setTimeout(() => {
+						this.error = "";
+					}, 2000);
+					return;
+				}
+				// fund lsig
+				await fundAmount(
+					this.walletStore.address,
+					lsig.address(),
+					2e6,
+					this.walletStore.webMode
+				);
+				// optin to app
+				const execParam: types.ExecParams = {
+					type: types.TransactionType.OptInToApp,
+					sign: types.SignType.LogicSignature,
+					fromAccountAddr: lsig.address(),
+					lsig: lsig,
+					appID: this.daoStore.dao_id,
+					payFlags: {},
+				};
+				let response = await optInToApp(lsig, execParam);
+				console.log(response);
+			} catch (error) {
+				console.error(error);
+			}
+		},
 	},
 });
 </script>
