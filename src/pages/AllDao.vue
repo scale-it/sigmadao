@@ -43,7 +43,7 @@
 import {
 	openSuccessNotificationWithIcon,
 	VALIDATE_MESSAGES,
-} from "@/constants/constant";
+} from "@/constants";
 import { searchApplicationAndAccount } from "@/indexer";
 import { defineComponent, reactive } from "vue";
 import DaoStore from "../store/DaoID";

@@ -153,7 +153,6 @@ export const searchApplicationAndAccount = async () => {
 		} else {
 			daoIdStore.locked = 0;
 		}
-		daoIdStore.available = account.total_amount - daoIdStore.locked;
 	}
 };
 
@@ -172,9 +171,7 @@ export const isAssetOpted = async (
 			path: `/v2/accounts/${address}/assets/${asset_id}`,
 		});
 		if (optedAssetInfo && optedAssetInfo["asset-holding"]) {
-			const isGivenAssetOpted =
-				optedAssetInfo["asset-holding"]["asset-id"] === asset_id;
-			if (isGivenAssetOpted) return true;
+			return optedAssetInfo["asset-holding"]["asset-id"] === asset_id;
 		}
 		return false;
 	} catch (e) {
@@ -198,9 +195,7 @@ export const isApplicationOpted = async (
 			path: `/v2/accounts/${address}/applications/${application_id}`,
 		});
 		if (optedApplicationInfo && optedApplicationInfo["app-local-state"]) {
-			const isGivenApplicationOpted =
-				optedApplicationInfo["app-local-state"].id === application_id;
-			if (isGivenApplicationOpted) return true;
+			return optedApplicationInfo["app-local-state"].id === application_id;
 		}
 		return false;
 	} catch (e) {

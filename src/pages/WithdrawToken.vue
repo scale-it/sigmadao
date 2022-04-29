@@ -39,11 +39,9 @@
 
 <script lang="ts">
 import {
-	APP_NOT_FOUND,
 	openSuccessNotificationWithIcon,
-	TOKEN_NOT_FOUND,
+	OverallErrorCheck,
 	VALIDATE_MESSAGES,
-	WALLET_NOT_CONNECT,
 } from "@/constants";
 import DaoID from "@/store/DaoID";
 import WalletStore from "@/store/WalletStore";
@@ -73,49 +71,39 @@ export default defineComponent({
 	},
 	methods: {
 		async onFinish() {
-			if (typeof this.daoIDStore.dao_id === "undefined") {
-				this.error = APP_NOT_FOUND;
-				return;
-			}
-			if (typeof this.daoIDStore.govt_id === "undefined") {
-				this.error = TOKEN_NOT_FOUND;
-				return;
-			}
-			if (!this.walletStore.address.length) {
-				this.error = WALLET_NOT_CONNECT;
-				return;
-			}
-
-			console.log(
-				`* Withrawing ${this.formState.deposit_amt} votes by ${this.walletStore.address} *`
-			);
-
-			const withdrawVoteParam: types.ExecParams = {
-				type: types.TransactionType.CallApp,
-				sign: types.SignType.SecretKey,
-				fromAccount: {
-					addr: this.walletStore.address,
-					sk: new Uint8Array(0),
-				},
-				appID: this.daoIDStore.dao_id,
-				payFlags: { totalFee: 2000 },
-				appArgs: [
-					DAOActions.WITHDRAW_VOTE_DEPOSIT,
-					`int:${this.formState.withdraw_amt}`,
-				],
-				foreignAssets: [this.daoIDStore.govt_id],
-			};
-
-			try {
-				await this.walletStore.webMode.executeTx([withdrawVoteParam]);
-				searchApplicationAndAccount(); // to update locked and available token on UI
-				openSuccessNotificationWithIcon(
-					"Success",
-					`Your ${this.formState.withdraw_amt} tokens have been withdrawn.`
+			this.error = OverallErrorCheck();
+			if (!this.error) {
+				console.log(
+					`* Withrawing ${this.formState.deposit_amt} votes by ${this.walletStore.address} *`
 				);
-			} catch (error) {
-				this.error = error.message;
-				console.error("Transaction Failed", error);
+
+				const withdrawVoteParam: types.ExecParams = {
+					type: types.TransactionType.CallApp,
+					sign: types.SignType.SecretKey,
+					fromAccount: {
+						addr: this.walletStore.address,
+						sk: new Uint8Array(0),
+					},
+					appID: this.daoIDStore.dao_id as number,
+					payFlags: { totalFee: 2000 },
+					appArgs: [
+						DAOActions.WITHDRAW_VOTE_DEPOSIT,
+						`int:${this.formState.withdraw_amt}`,
+					],
+					foreignAssets: [this.daoIDStore.govt_id as number],
+				};
+
+				try {
+					await this.walletStore.webMode.executeTx([withdrawVoteParam]);
+					searchApplicationAndAccount(); // to update locked and available token on UI
+					openSuccessNotificationWithIcon(
+						"Success",
+						`Your ${this.formState.withdraw_amt} tokens have been withdrawn.`
+					);
+				} catch (error) {
+					this.error = error.message;
+					console.error("Transaction Failed", error);
+				}
 			}
 		},
 		onFinishFailed(errorinfo: Event) {

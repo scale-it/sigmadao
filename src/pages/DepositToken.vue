@@ -41,9 +41,7 @@
 import {
 	openSuccessNotificationWithIcon,
 	VALIDATE_MESSAGES,
-	APP_NOT_FOUND,
-	TOKEN_NOT_FOUND,
-	WALLET_NOT_CONNECT,
+	OverallErrorCheck,
 } from "@/constants";
 import DaoID from "@/store/DaoID";
 import WalletStore from "@/store/WalletStore";
@@ -74,84 +72,77 @@ export default defineComponent({
 	},
 	methods: {
 		async onFinish() {
-			if (typeof this.daoIDStore.dao_id === "undefined") {
-				this.error = APP_NOT_FOUND;
-				return;
-			}
-			if (typeof this.daoIDStore.govt_id === "undefined") {
-				this.error = TOKEN_NOT_FOUND;
-				return;
-			}
-			if (!this.walletStore.address.length) {
-				this.error = WALLET_NOT_CONNECT;
-				return;
-			}
-			// check if asset is already opted
-			const isApplicationAlreadyOpted = await isApplicationOpted(
-				this.walletStore.address,
-				this.daoIDStore.dao_id
-			);
+			this.error = OverallErrorCheck();
+			if (!this.error) {
+				// check if asset is already opted
+				const isApplicationAlreadyOpted = await isApplicationOpted(
+					this.walletStore.address,
+					this.daoIDStore.dao_id as number
+				);
 
-			if (!isApplicationAlreadyOpted) {
-				const execParam: types.ExecParams = {
-					type: types.TransactionType.OptInToApp,
-					sign: types.SignType.SecretKey,
-					fromAccount: {
-						addr: this.walletStore.address,
-						sk: new Uint8Array(0),
+				if (!isApplicationAlreadyOpted) {
+					const execParam: types.ExecParams = {
+						type: types.TransactionType.OptInToApp,
+						sign: types.SignType.SecretKey,
+						fromAccount: {
+							addr: this.walletStore.address,
+							sk: new Uint8Array(0),
+						},
+						appID: this.daoIDStore.dao_id as number,
+						payFlags: {},
+					};
+					try {
+						await this.walletStore.webMode.executeTx([execParam]);
+					} catch (error) {
+						this.error = error.message;
+						console.error("Transaction Failed", error);
+					}
+				}
+
+				console.log(
+					`* Deposit ${this.formState.deposit_amt} votes by ${this.walletStore.address} *`
+				);
+
+				const depositVoteParam: types.ExecParams[] = [
+					// tx0: call to DAO App with arg 'DEPOSIT_TOKEN'
+					{
+						type: types.TransactionType.CallApp,
+						sign: types.SignType.SecretKey,
+						fromAccount: {
+							addr: this.walletStore.address,
+							sk: new Uint8Array(0),
+						},
+						appID: this.daoIDStore.dao_id as number,
+						payFlags: { totalFee: 1000 },
+						appArgs: [DAOActions.DEPOSIT_VOTE_TOKEN],
 					},
-					appID: this.daoIDStore.dao_id,
-					payFlags: {},
-				};
+					// tx1: deposit votes (each token == 1 vote)
+					{
+						type: types.TransactionType.TransferAsset,
+						sign: types.SignType.SecretKey,
+						fromAccount: {
+							addr: this.walletStore.address,
+							sk: new Uint8Array(0),
+						},
+						toAccountAddr: getApplicationAddress(
+							this.daoIDStore.dao_id as number
+						),
+						amount: this.formState.deposit_amt as number,
+						assetID: this.daoIDStore.govt_id as number,
+						payFlags: { totalFee: 1000 },
+					},
+				];
 				try {
-					await this.walletStore.webMode.executeTx([execParam]);
+					await this.walletStore.webMode.executeTx(depositVoteParam);
+					searchApplicationAndAccount(); // to update locked and available token on UI
+					openSuccessNotificationWithIcon(
+						"Success",
+						`Your ${this.formState.deposit_amt} tokens have been deposited.`
+					);
 				} catch (error) {
 					this.error = error.message;
 					console.error("Transaction Failed", error);
 				}
-			}
-
-			console.log(
-				`* Deposit ${this.formState.deposit_amt} votes by ${this.walletStore.address} *`
-			);
-
-			const depositVoteParam: types.ExecParams[] = [
-				// tx0: call to DAO App with arg 'DEPOSIT_TOKEN'
-				{
-					type: types.TransactionType.CallApp,
-					sign: types.SignType.SecretKey,
-					fromAccount: {
-						addr: this.walletStore.address,
-						sk: new Uint8Array(0),
-					},
-					appID: this.daoIDStore.dao_id,
-					payFlags: { totalFee: 1000 },
-					appArgs: [DAOActions.DEPOSIT_VOTE_TOKEN],
-				},
-				// tx1: deposit votes (each token == 1 vote)
-				{
-					type: types.TransactionType.TransferAsset,
-					sign: types.SignType.SecretKey,
-					fromAccount: {
-						addr: this.walletStore.address,
-						sk: new Uint8Array(0),
-					},
-					toAccountAddr: getApplicationAddress(this.daoIDStore.dao_id),
-					amount: this.formState.deposit_amt as number,
-					assetID: this.daoIDStore.govt_id,
-					payFlags: { totalFee: 1000 },
-				},
-			];
-			try {
-				await this.walletStore.webMode.executeTx(depositVoteParam);
-				searchApplicationAndAccount(); // to update locked and available token on UI
-				openSuccessNotificationWithIcon(
-					"Success",
-					`Your ${this.formState.deposit_amt} tokens have been deposited.`
-				);
-			} catch (error) {
-				this.error = error.message;
-				console.error("Transaction Failed", error);
 			}
 		},
 		onFinishFailed(errorinfo: Event) {

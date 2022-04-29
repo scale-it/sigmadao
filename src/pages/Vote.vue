@@ -47,11 +47,9 @@
 
 <script lang="ts">
 import {
-	APP_NOT_FOUND,
 	openSuccessNotificationWithIcon,
-	TOKEN_NOT_FOUND,
+	OverallErrorCheck,
 	VALIDATE_MESSAGES,
-	WALLET_NOT_CONNECT,
 } from "@/constants";
 import DaoID from "@/store/DaoID";
 import WalletStore from "@/store/WalletStore";
@@ -83,43 +81,40 @@ export default defineComponent({
 	},
 	methods: {
 		async onFinish() {
-			if (typeof this.daoIDStore.dao_id === "undefined") {
-				this.error = APP_NOT_FOUND;
-				return;
-			}
-			if (typeof this.daoIDStore.govt_id === "undefined") {
-				this.error = TOKEN_NOT_FOUND;
-				return;
-			}
-			if (!this.walletStore.address.length) {
-				this.error = WALLET_NOT_CONNECT;
-				return;
-			}
-			let lsig: LogicSigAccount = await getProposalLsig(
-				this.daoIDStore.dao_id,
-				this.walletStore.address // need to update it as per proposer address
-			);
+			this.error = OverallErrorCheck();
+			if (!this.error) {
+				let lsig: LogicSigAccount = await getProposalLsig(
+					this.daoIDStore.dao_id as number,
+					this.walletStore.address // need to update it as per proposer address
+				);
 
-			console.log(`* Register votes by ${this.walletStore.address} *`);
-			// call to DAO app by voter (to register deposited votes)
-			const registerVoteParam: types.ExecParams = {
-				type: types.TransactionType.CallApp,
-				sign: types.SignType.SecretKey,
-				fromAccount: {
-					addr: this.walletStore.address,
-					sk: new Uint8Array(0),
-				},
-				appID: this.daoIDStore.dao_id,
-				payFlags: { totalFee: 2000 },
-				appArgs: [DAOActions.REGISTER_VOTE, `str:${this.formState.vote_type}`],
-				accounts: [lsig.address()],
-			};
-			try {
-				await this.walletStore.webMode.executeTx([registerVoteParam]);
-				openSuccessNotificationWithIcon("Success", "Your vote is registered ");
-			} catch (error) {
-				this.error = error.message;
-				console.error("Transaction Failed", error);
+				console.log(`* Register votes by ${this.walletStore.address} *`);
+				// call to DAO app by voter (to register deposited votes)
+				const registerVoteParam: types.ExecParams = {
+					type: types.TransactionType.CallApp,
+					sign: types.SignType.SecretKey,
+					fromAccount: {
+						addr: this.walletStore.address,
+						sk: new Uint8Array(0),
+					},
+					appID: this.daoIDStore.dao_id as number,
+					payFlags: { totalFee: 2000 },
+					appArgs: [
+						DAOActions.REGISTER_VOTE,
+						`str:${this.formState.vote_type}`,
+					],
+					accounts: [lsig.address()],
+				};
+				try {
+					await this.walletStore.webMode.executeTx([registerVoteParam]);
+					openSuccessNotificationWithIcon(
+						"Success",
+						"Your vote is registered "
+					);
+				} catch (error) {
+					this.error = error.message;
+					console.error("Transaction Failed", error);
+				}
 			}
 		},
 		onFinishFailed(errorinfo: Event) {

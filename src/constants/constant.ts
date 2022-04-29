@@ -1,5 +1,3 @@
-import { notification } from "ant-design-vue";
-
 export const GOV_TOKEN_ASSET = "gov-token";
 export const VALIDATE_MESSAGES = {
 	required: "required!",
@@ -29,15 +27,3 @@ export const ProposalType = {
 };
 
 export const MILLI_SECOND = 1000;
-
-export const openSuccessNotificationWithIcon = (
-	message: string,
-	description: string
-) => {
-	notification["success"]({
-		message: message,
-		description: description,
-		duration: 0, // to close only when user prompts close button
-		onClose: () => notification.close(""),
-	});
-};
