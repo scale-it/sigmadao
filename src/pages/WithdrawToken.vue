@@ -15,28 +15,20 @@
 				:label-col="{ span: 12 }"
 				:wrapper-col="{ span: 12 }"
 				:model="formState"
-				name="Vote"
+				name="WithdrawToken"
 				autocomplete="off"
 				@finish="onFinish"
 				@finishFailed="onFinishFailed"
 				@validate-messages="validateMessages"
 			>
 				<a-form-item
-					label="Vote"
-					name="vote_type"
-					:rules="[{ required: true }]"
+					label="Withdraw Amount"
+					name="withdraw_amt"
+					:rules="[{ required: true, type: 'number' }]"
 				>
-					<a-select
-						v-model:value="formState.vote_type"
-						placeholder="Please select your option"
-					>
-						<a-select-option :value="VoteOptions.ABSTAIN"
-							>Abstain</a-select-option
-						>
-						<a-select-option :value="VoteOptions.YES">Yes</a-select-option>
-						<a-select-option :value="VoteOptions.NO">No</a-select-option>
-					</a-select>
+					<a-input-number v-model:value="formState.withdraw_amt" />
 				</a-form-item>
+
 				<a-form-item :wrapper-col="{ offset: 12, span: 20 }">
 					<a-button type="primary" html-type="submit">Submit</a-button>
 				</a-form-item>
@@ -57,19 +49,17 @@ import {
 import DaoID from "@/store/DaoID";
 import WalletStore from "@/store/WalletStore";
 import { types } from "@algo-builder/web";
-import { LogicSigAccount } from "algosdk";
 import { defineComponent, reactive } from "vue";
 import VoteStore from "../store/VoteStore";
-import { DAOActions, VoteOptions } from "../types/enum.types";
-import { getProposalLsig } from "../contract/dao";
+import { DAOActions } from "../types/enum.types";
+import { searchApplicationAndAccount } from "@/indexer";
 
 export default defineComponent({
-	name: "VotePage",
+	name: "WithdrawToken",
 	data() {
 		return {
-			VoteOptions,
 			error: "",
-			key: "VoteKey",
+			key: "WithdrawKey",
 		};
 	},
 	setup() {
@@ -88,14 +78,11 @@ export default defineComponent({
 			this.error = overallErrorCheck();
 			if (!this.error) {
 				loadingMessage(this.key);
-				let lsig: LogicSigAccount = await getProposalLsig(
-					this.daoIDStore.dao_id as number,
-					this.walletStore.address // need to update it as per proposer address
+				console.log(
+					`* Withrawing ${this.formState.deposit_amt} votes by ${this.walletStore.address} *`
 				);
 
-				console.log(`* Register votes by ${this.walletStore.address} *`);
-				// call to DAO app by voter (to register deposited votes)
-				const registerVoteParam: types.ExecParams = {
+				const withdrawVoteParam: types.ExecParams = {
 					type: types.TransactionType.CallApp,
 					sign: types.SignType.SecretKey,
 					fromAccount: {
@@ -105,21 +92,23 @@ export default defineComponent({
 					appID: this.daoIDStore.dao_id as number,
 					payFlags: { totalFee: 2000 },
 					appArgs: [
-						DAOActions.REGISTER_VOTE,
-						`str:${this.formState.vote_type}`,
+						DAOActions.WITHDRAW_VOTE_DEPOSIT,
+						`int:${this.formState.withdraw_amt}`,
 					],
-					accounts: [lsig.address()],
+					foreignAssets: [this.daoIDStore.govt_id as number],
 				};
+
 				try {
-					await this.walletStore.webMode.executeTx([registerVoteParam]);
+					await this.walletStore.webMode.executeTx([withdrawVoteParam]);
+					searchApplicationAndAccount(); // to update locked and available token on UI
+					successMessage(this.key);
 					openSuccessNotificationWithIcon(
 						"Success",
-						"Your vote is registered "
+						`Your ${this.formState.withdraw_amt} tokens have been withdrawn.`
 					);
-					successMessage(this.key);
 				} catch (error) {
-					this.error = error.message;
 					errorMessage(this.key);
+					this.error = error.message;
 					console.error("Transaction Failed", error);
 				}
 			}

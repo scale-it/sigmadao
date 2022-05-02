@@ -19,5 +19,10 @@ export default defineStore("DaoStore", {
 		setGovtId(value: number) {
 			this.govt_id = +value;
 		},
+		handleLogOut() {
+			// removes token from UI if user log out of wallet
+			this.available = undefined;
+			this.locked = undefined;
+		},
 	},
 });

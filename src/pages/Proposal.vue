@@ -1,8 +1,15 @@
 <template>
 	<a-row>
 		<a-col :span="12" :offset="6">
-			<div v-if="error">
-				<a-alert message="Error" :description="error" type="error" show-icon />
+			<div v-if="error" class="margin_bottom_sm">
+				<a-alert
+					message="Error"
+					:description="error"
+					type="error"
+					show-icon
+					closable
+					@close="error = ''"
+				/>
 			</div>
 			<a-form
 				:label-col="{ span: 10 }"
@@ -132,7 +139,12 @@ import {
 	DAY_TO_MILLISECONDS,
 	VALIDATE_MESSAGES,
 	ProposalType,
-} from "@/constants/constant";
+	openSuccessNotificationWithIcon,
+	overallErrorCheck,
+	loadingMessage,
+	successMessage,
+	errorMessage,
+} from "@/constants";
 import { DateRange, DAOActions } from "@/types";
 import { defineComponent, reactive } from "vue";
 import ProposalStore from "../store/ProposalStore";
@@ -152,6 +164,7 @@ export default defineComponent({
 		return {
 			ProposalType,
 			error: "",
+			key: "ProposalKey",
 		};
 	},
 	setup() {
@@ -179,116 +192,106 @@ export default defineComponent({
 					message,
 					asaId,
 				} = values;
-				if (typeof this.daoStore.dao_id === "undefined") {
-					this.error = APP_NOT_FOUND;
-					setTimeout(() => {
-						this.error = "";
-					}, 2000);
-					return;
-				}
-				if (typeof this.daoStore.govt_id === "undefined") {
-					this.error = TOKEN_NOT_FOUND;
-					setTimeout(() => {
-						this.error = "";
-					}, 2000);
-					return;
-				}
-				let lsig: LogicSigAccount = await getProposalLsig(
-					this.daoStore.dao_id,
-					this.walletStore.address
-				);
-				let daoLsig: LogicSigAccount = await getDaoFundLSig(
-					this.daoStore.dao_id
-				);
-				const startTime = convertToSeconds(vote_date[0]);
-				const endTime = convertToSeconds(vote_date[1]);
-				const executeBefore = endTime + 7 * 60; // end time + 7 minutes in seconds
+				this.error = overallErrorCheck();
+				if (!this.error) {
+					loadingMessage(this.key);
+					let lsig: LogicSigAccount = await getProposalLsig(
+						this.daoStore.dao_id as number,
+						this.walletStore.address
+					);
+					let daoLsig: LogicSigAccount = await getDaoFundLSig(
+						this.daoStore.dao_id as number
+					);
+					const startTime = convertToSeconds(vote_date[0]);
+					const endTime = convertToSeconds(vote_date[1]);
+					const executeBefore = endTime + 7 * 60; // end time + 7 minutes in seconds
 
-				// Default proposal params. Other params are added based on proposal type in below switch case.
-				const proposalParams = [
-					DAOActions.ADD_PROPOSAL,
-					`str:my-custom-proposal`, // name
-					`str:${url}`, // url
-					`str:${url_hash}`, // url_hash
-					"str:", // hash_algo (passing null)
-					`int:${startTime}`, // voting_start
-					`int:${endTime}`, // voting_end
-					`int:${executeBefore}`, // execute_before
-					`int:${proposal_type}`, // type
-				];
+					// Default proposal params. Other params are added based on proposal type in below switch case.
+					const proposalParams = [
+						DAOActions.ADD_PROPOSAL,
+						`str:my-custom-proposal`, // name
+						`str:${url}`, // url
+						`str:${url_hash}`, // url_hash
+						"str:", // hash_algo (passing null)
+						`int:${startTime}`, // voting_start
+						`int:${endTime}`, // voting_end
+						`int:${executeBefore}`, // execute_before
+						`int:${proposal_type}`, // type
+					];
 
-				switch (proposal_type) {
-					case ProposalType.ALGO_TRANSFER: {
-						proposalParams.push(
-							`addr:${daoLsig.address()}`, // from
-							`addr:${recipient}`, // recipient
-							`int:${amount}` // amount
-						);
-						break;
+					switch (proposal_type) {
+						case ProposalType.ALGO_TRANSFER: {
+							proposalParams.push(
+								`addr:${daoLsig.address()}`, // from
+								`addr:${recipient}`, // recipient
+								`int:${amount}` // amount
+							);
+							break;
+						}
+						case ProposalType.ASA_TRANSFER: {
+							proposalParams.push(
+								`addr:${daoLsig.address()}`, // from
+								`int:${asaId}`, // asaId
+								`addr:${recipient}`, // recipient
+								`int:${amount}` // amount
+							);
+							break;
+						}
+						case ProposalType.MESSAGE: {
+							proposalParams.push(`str:${message}`); // message
+							break;
+						}
 					}
-					case ProposalType.ASA_TRANSFER: {
-						proposalParams.push(
-							`addr:${daoLsig.address()}`, // from
-							`int:${asaId}`, // asaId
-							`addr:${recipient}`, // recipient
-							`int:${amount}` // amount
-						);
-						break;
+
+					// check if asset is already opted
+					const isApplicationAlreadyOpted = await isApplicationOpted(
+						this.walletStore.address,
+						this.daoStore.dao_id as number
+					);
+					// optin
+					if (!isApplicationAlreadyOpted) {
+						await this.optInLsigToApp(lsig);
 					}
-					case ProposalType.MESSAGE: {
-						proposalParams.push(`str:${message}`); // message
-						break;
-					}
-				}
-				// optin
-				if (!isApplicationOpted(lsig.address(), this.daoStore.dao_id)) {
-					await this.optInLsigToApp(lsig);
-				}
-				const addProposalTx: types.ExecParams[] = [
-					{
-						type: types.TransactionType.CallApp,
-						sign: types.SignType.LogicSignature,
-						fromAccountAddr: lsig.address(),
-						appID: this.daoStore.dao_id,
-						lsig: lsig,
-						payFlags: {},
-						appArgs: proposalParams,
-					},
-					{
-						type: types.TransactionType.TransferAsset,
-						sign: types.SignType.SecretKey,
-						fromAccount: {
-							addr: this.walletStore.address,
-							sk: new Uint8Array(0),
+					const addProposalTx: types.ExecParams[] = [
+						{
+							type: types.TransactionType.CallApp,
+							sign: types.SignType.LogicSignature,
+							fromAccountAddr: lsig.address(),
+							appID: this.daoStore.dao_id as number,
+							lsig: lsig,
+							payFlags: {},
+							appArgs: proposalParams,
 						},
-						toAccountAddr: getApplicationAddress(this.daoStore.dao_id),
-						amount: 15,
-						assetID: this.daoStore.govt_id,
-						payFlags: {},
-					},
-				];
-				let response = await this.walletStore.webMode.executeTx(addProposalTx);
-				console.log(response);
+						{
+							type: types.TransactionType.TransferAsset,
+							sign: types.SignType.SecretKey,
+							fromAccount: {
+								addr: this.walletStore.address,
+								sk: new Uint8Array(0),
+							},
+							toAccountAddr: getApplicationAddress(this.daoStore.dao_id),
+							amount: 15,
+							assetID: this.daoStore.govt_id as number,
+							payFlags: {},
+						},
+					];
+					let response = await this.walletStore.webMode.executeTx(
+						addProposalTx
+					);
+					successMessage(this.key);
+					openSuccessNotificationWithIcon(
+						"Success",
+						"Your Proposal has been created."
+					);
+					console.log(response);
+				}
 			} catch (error) {
+				errorMessage(this.key);
 				console.error(error);
 			}
 		},
 		onFinishFailed(errorinfo: Event) {
 			console.warn("Failed:", errorinfo);
-			if (typeof this.daoStore.dao_id === "undefined") {
-				this.error = APP_NOT_FOUND;
-				setTimeout(() => {
-					this.error = "";
-				}, 2000);
-				return;
-			}
-			if (typeof this.daoStore.govt_id === "undefined") {
-				this.error = TOKEN_NOT_FOUND;
-				setTimeout(() => {
-					this.error = "";
-				}, 2000);
-				return;
-			}
 		},
 		disabledDate(current: number | Date) {
 			// Can not select day before today
@@ -320,16 +323,10 @@ export default defineComponent({
 			try {
 				if (typeof this.daoStore.dao_id === "undefined") {
 					this.error = APP_NOT_FOUND;
-					setTimeout(() => {
-						this.error = "";
-					}, 2000);
 					return;
 				}
 				if (typeof this.daoStore.govt_id === "undefined") {
 					this.error = TOKEN_NOT_FOUND;
-					setTimeout(() => {
-						this.error = "";
-					}, 2000);
 					return;
 				}
 				// fund lsig
@@ -351,6 +348,7 @@ export default defineComponent({
 				let response = await optInToApp(lsig, execParam);
 				console.log(response);
 			} catch (error) {
+				errorMessage(this.key);
 				console.error(error);
 			}
 		},

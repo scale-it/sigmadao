@@ -27,20 +27,28 @@
 									>All DAOs</a-button
 								>
 							</router-link>
-							<router-link :to="{ path: EndPoint.VOTE }">
-								<a-button
-									class="menu_option"
-									:type="isLinkActive(NavigationKey.PROPOSALS)"
-									@click="() => handleMenuClick(NavigationKey.PROPOSALS)"
-									>Vote</a-button
-								>
-							</router-link>
 							<router-link :to="{ path: EndPoint.ADD_PROPOSAL }">
 								<a-button
 									class="menu_option"
 									:type="isLinkActive(NavigationKey.ADD_PROPOSAL)"
 									@click="() => handleMenuClick(NavigationKey.ADD_PROPOSAL)"
 									>Add Proposal</a-button
+								>
+							</router-link>
+							<router-link :to="{ path: EndPoint.VOTE_TOKEN }">
+								<a-button
+									class="menu_option"
+									:type="isLinkActive(NavigationKey.VOTE_TOKEN)"
+									@click="() => handleMenuClick(NavigationKey.VOTE_TOKEN)"
+									>Vote Tokens</a-button
+								>
+							</router-link>
+							<router-link :to="{ path: EndPoint.VOTE }">
+								<a-button
+									class="menu_option"
+									:type="isLinkActive(NavigationKey.PROPOSALS)"
+									@click="() => handleMenuClick(NavigationKey.PROPOSALS)"
+									>Vote</a-button
 								>
 							</router-link>
 						</div>
@@ -91,6 +99,13 @@ import { NavigationKey, EndPoint } from "../types/enum.types";
 import DaoStore from "../store/DaoID";
 import { searchApplicationAndAccount } from "@/indexer";
 import { storeToRefs } from "pinia";
+import {
+	errorMessage,
+	loadingMessage,
+	openErrorNotificationWithIcon,
+	openSuccessNotificationWithIcon,
+	successMessage,
+} from "@/constants";
 
 export default defineComponent({
 	components: {
@@ -108,6 +123,7 @@ export default defineComponent({
 			availableTokens: daoStore.available,
 			lockedTokens: daoStore.locked,
 			showIDTextField: false,
+			key: "HeaderKey",
 		};
 	},
 	methods: {
@@ -128,7 +144,19 @@ export default defineComponent({
 			this.showIDTextField = false;
 			if (this.daoID) {
 				this.daoID = +this.daoID;
-				searchApplicationAndAccount().catch((error) => console.log(error));
+				loadingMessage(this.key);
+				searchApplicationAndAccount()
+					.then(() => {
+						successMessage(this.key);
+						openSuccessNotificationWithIcon(
+							"Successful",
+							`Your DAO App of ID ${this.daoID} is selected.`
+						);
+					})
+					.catch((error) => {
+						errorMessage(this.key);
+						openErrorNotificationWithIcon("Unsuccessful", error.message);
+					});
 			}
 		},
 	},

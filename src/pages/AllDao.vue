@@ -1,11 +1,17 @@
 <template>
 	<a-row>
 		<a-col :span="12" :offset="6">
-			<div v-if="error">
-				<a-result status="error" title="Submission Failed" :sub-title="error">
-				</a-result>
+			<div v-if="error" class="margin_bottom_sm">
+				<a-alert
+					message="Error"
+					:description="error"
+					type="error"
+					show-icon
+					closable
+					@close="error = ''"
+				/>
 			</div>
-			<div v-else>
+			<div>
 				<a-form
 					:label-col="{ span: 12 }"
 					:wrapper-col="{ span: 12 }"
@@ -24,7 +30,7 @@
 						<a-input-number v-model:value="formState.dao_id" />
 					</a-form-item>
 
-					<a-form-item :wrapper-col="{ offset: 10, span: 20 }">
+					<a-form-item :wrapper-col="{ offset: 12, span: 20 }">
 						<a-button type="primary" html-type="submit">Select</a-button>
 					</a-form-item>
 				</a-form>
@@ -34,7 +40,13 @@
 </template>
 
 <script lang="ts">
-import { VALIDATE_MESSAGES } from "@/constants/constant";
+import {
+	errorMessage,
+	loadingMessage,
+	openSuccessNotificationWithIcon,
+	successMessage,
+	VALIDATE_MESSAGES,
+} from "@/constants";
 import { searchApplicationAndAccount } from "@/indexer";
 import { defineComponent, reactive } from "vue";
 import DaoStore from "../store/DaoID";
@@ -44,16 +56,24 @@ export default defineComponent({
 	data() {
 		return {
 			error: "",
+			key: "DaoKey",
 		};
 	},
 	methods: {
-		onFinish(values: any) {
-			searchApplicationAndAccount().catch((error) => {
-				this.error = error.message;
-				setTimeout(() => {
-					this.error = "";
-				}, 1500);
-			});
+		onFinish() {
+			loadingMessage(this.key);
+			searchApplicationAndAccount()
+				.then(() => {
+					successMessage(this.key);
+					openSuccessNotificationWithIcon(
+						"Success",
+						`Your DAO App of ID ${this.formState.dao_id} is selected.`
+					);
+				})
+				.catch((error) => {
+					errorMessage(this.key);
+					this.error = error.message;
+				});
 		},
 		onFinishFailed(errorinfo: Event) {
 			console.warn("Failed:", errorinfo);

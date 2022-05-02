@@ -18,8 +18,9 @@ export interface DAO {
 }
 
 export interface VoteFormState {
-	proposal_id?: number;
-	vote?: number;
+	vote_type?: number;
+	deposit_amt?: number;
+	withdraw_amt?: number;
 }
 
 export interface ProposalFormState {
