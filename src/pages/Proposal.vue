@@ -141,6 +141,9 @@ import {
 	ProposalType,
 	openSuccessNotificationWithIcon,
 	OverallErrorCheck,
+	LoadingMessage,
+	SuccessMessage,
+	ErrorMessage,
 } from "@/constants";
 import { DateRange, DAOActions } from "@/types";
 import { defineComponent, reactive } from "vue";
@@ -161,6 +164,7 @@ export default defineComponent({
 		return {
 			ProposalType,
 			error: "",
+			key: "ProposalKey",
 		};
 	},
 	setup() {
@@ -190,6 +194,7 @@ export default defineComponent({
 				} = values;
 				this.error = OverallErrorCheck();
 				if (!this.error) {
+					LoadingMessage(this.key);
 					let lsig: LogicSigAccount = await getProposalLsig(
 						this.daoStore.dao_id as number,
 						this.walletStore.address
@@ -237,10 +242,14 @@ export default defineComponent({
 							break;
 						}
 					}
+
+					// check if asset is already opted
+					const isApplicationAlreadyOpted = await isApplicationOpted(
+						this.walletStore.address,
+						this.daoStore.dao_id as number
+					);
 					// optin
-					if (
-						!isApplicationOpted(lsig.address(), this.daoStore.dao_id as number)
-					) {
+					if (!isApplicationAlreadyOpted) {
 						await this.optInLsigToApp(lsig);
 					}
 					const addProposalTx: types.ExecParams[] = [
@@ -269,13 +278,15 @@ export default defineComponent({
 					let response = await this.walletStore.webMode.executeTx(
 						addProposalTx
 					);
+					SuccessMessage(this.key);
 					openSuccessNotificationWithIcon(
 						"Success",
-						"Your Proposal has benn created."
+						"Your Proposal has been created."
 					);
 					console.log(response);
 				}
 			} catch (error) {
+				ErrorMessage(this.key);
 				console.error(error);
 			}
 		},
@@ -337,6 +348,7 @@ export default defineComponent({
 				let response = await optInToApp(lsig, execParam);
 				console.log(response);
 			} catch (error) {
+				ErrorMessage(this.key);
 				console.error(error);
 			}
 		},

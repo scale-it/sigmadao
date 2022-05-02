@@ -42,6 +42,9 @@ import {
 	openSuccessNotificationWithIcon,
 	VALIDATE_MESSAGES,
 	OverallErrorCheck,
+	LoadingMessage,
+	ErrorMessage,
+	SuccessMessage,
 } from "@/constants";
 import DaoID from "@/store/DaoID";
 import WalletStore from "@/store/WalletStore";
@@ -57,6 +60,7 @@ export default defineComponent({
 	data() {
 		return {
 			error: "",
+			key: "DepositKey",
 		};
 	},
 	setup() {
@@ -74,6 +78,7 @@ export default defineComponent({
 		async onFinish() {
 			this.error = OverallErrorCheck();
 			if (!this.error) {
+				LoadingMessage(this.key);
 				// check if asset is already opted
 				const isApplicationAlreadyOpted = await isApplicationOpted(
 					this.walletStore.address,
@@ -94,6 +99,7 @@ export default defineComponent({
 					try {
 						await this.walletStore.webMode.executeTx([execParam]);
 					} catch (error) {
+						ErrorMessage(this.key);
 						this.error = error.message;
 						console.error("Transaction Failed", error);
 					}
@@ -135,12 +141,14 @@ export default defineComponent({
 				try {
 					await this.walletStore.webMode.executeTx(depositVoteParam);
 					searchApplicationAndAccount(); // to update locked and available token on UI
+					SuccessMessage(this.key);
 					openSuccessNotificationWithIcon(
 						"Success",
 						`Your ${this.formState.deposit_amt} tokens have been deposited.`
 					);
 				} catch (error) {
 					this.error = error.message;
+					ErrorMessage(this.key);
 					console.error("Transaction Failed", error);
 				}
 			}

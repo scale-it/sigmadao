@@ -1,4 +1,4 @@
-import { notification } from "ant-design-vue";
+import { message, notification } from "ant-design-vue";
 
 export const openSuccessNotificationWithIcon = (
 	message: string,
@@ -10,4 +10,12 @@ export const openSuccessNotificationWithIcon = (
 		duration: 0, // to close only when user prompts close button
 		onClose: () => notification.close(""),
 	});
+};
+
+export const LoadingMessage = (key: string) => {
+	message.loading({ content: "Loading...", key: key });
+};
+
+export const SuccessMessage = (key: string) => {
+	message.loading({ content: "Loaded", key: key });
 };

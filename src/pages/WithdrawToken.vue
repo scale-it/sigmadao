@@ -39,8 +39,11 @@
 
 <script lang="ts">
 import {
+	ErrorMessage,
+	LoadingMessage,
 	openSuccessNotificationWithIcon,
 	OverallErrorCheck,
+	SuccessMessage,
 	VALIDATE_MESSAGES,
 } from "@/constants";
 import DaoID from "@/store/DaoID";
@@ -56,6 +59,7 @@ export default defineComponent({
 	data() {
 		return {
 			error: "",
+			key: "WithdrawKey",
 		};
 	},
 	setup() {
@@ -73,6 +77,7 @@ export default defineComponent({
 		async onFinish() {
 			this.error = OverallErrorCheck();
 			if (!this.error) {
+				LoadingMessage(this.key);
 				console.log(
 					`* Withrawing ${this.formState.deposit_amt} votes by ${this.walletStore.address} *`
 				);
@@ -96,11 +101,13 @@ export default defineComponent({
 				try {
 					await this.walletStore.webMode.executeTx([withdrawVoteParam]);
 					searchApplicationAndAccount(); // to update locked and available token on UI
+					SuccessMessage(this.key);
 					openSuccessNotificationWithIcon(
 						"Success",
 						`Your ${this.formState.withdraw_amt} tokens have been withdrawn.`
 					);
 				} catch (error) {
+					ErrorMessage(this.key);
 					this.error = error.message;
 					console.error("Transaction Failed", error);
 				}

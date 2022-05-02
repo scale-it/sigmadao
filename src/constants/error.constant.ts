@@ -1,5 +1,6 @@
 import DaoID from "@/store/DaoID";
 import WalletStore from "@/store/WalletStore";
+import { message, notification } from "ant-design-vue";
 import { reactive } from "vue";
 
 export const APP_NOT_FOUND = "Please add DAO App ID";
@@ -20,4 +21,20 @@ export const OverallErrorCheck = () => {
 		return WALLET_NOT_CONNECT;
 	}
 	return "";
+};
+
+export const openErrorNotificationWithIcon = (
+	message: string,
+	description: string
+) => {
+	notification["error"]({
+		message: message,
+		description: description,
+		duration: 0, // to close only when user prompts close button
+		onClose: () => notification.close(""),
+	});
+};
+
+export const ErrorMessage = (key: string) => {
+	message.error({ content: "Error Occured", key: key });
 };
