@@ -100,11 +100,11 @@ import DaoStore from "../store/DaoID";
 import { searchApplicationAndAccount } from "@/indexer";
 import { storeToRefs } from "pinia";
 import {
-	ErrorMessage,
-	LoadingMessage,
+	errorMessage,
+	loadingMessage,
 	openErrorNotificationWithIcon,
 	openSuccessNotificationWithIcon,
-	SuccessMessage,
+	successMessage,
 } from "@/constants";
 
 export default defineComponent({
@@ -144,17 +144,17 @@ export default defineComponent({
 			this.showIDTextField = false;
 			if (this.daoID) {
 				this.daoID = +this.daoID;
-				LoadingMessage(this.key);
+				loadingMessage(this.key);
 				searchApplicationAndAccount()
 					.then(() => {
-						SuccessMessage(this.key);
+						successMessage(this.key);
 						openSuccessNotificationWithIcon(
 							"Successful",
 							`Your DAO App of ID ${this.daoID} is selected.`
 						);
 					})
 					.catch((error) => {
-						ErrorMessage(this.key);
+						errorMessage(this.key);
 						openErrorNotificationWithIcon("Unsuccessful", error.message);
 					});
 			}

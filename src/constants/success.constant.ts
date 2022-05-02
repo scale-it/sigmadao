@@ -12,10 +12,10 @@ export const openSuccessNotificationWithIcon = (
 	});
 };
 
-export const LoadingMessage = (key: string) => {
+export const loadingMessage = (key: string) => {
 	message.loading({ content: "Loading...", key: key });
 };
 
-export const SuccessMessage = (key: string) => {
+export const successMessage = (key: string) => {
 	message.loading({ content: "Loaded", key: key });
 };

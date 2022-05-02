@@ -140,10 +140,10 @@ import {
 	VALIDATE_MESSAGES,
 	ProposalType,
 	openSuccessNotificationWithIcon,
-	OverallErrorCheck,
-	LoadingMessage,
-	SuccessMessage,
-	ErrorMessage,
+	overallErrorCheck,
+	loadingMessage,
+	successMessage,
+	errorMessage,
 } from "@/constants";
 import { DateRange, DAOActions } from "@/types";
 import { defineComponent, reactive } from "vue";
@@ -192,9 +192,9 @@ export default defineComponent({
 					message,
 					asaId,
 				} = values;
-				this.error = OverallErrorCheck();
+				this.error = overallErrorCheck();
 				if (!this.error) {
-					LoadingMessage(this.key);
+					loadingMessage(this.key);
 					let lsig: LogicSigAccount = await getProposalLsig(
 						this.daoStore.dao_id as number,
 						this.walletStore.address
@@ -278,7 +278,7 @@ export default defineComponent({
 					let response = await this.walletStore.webMode.executeTx(
 						addProposalTx
 					);
-					SuccessMessage(this.key);
+					successMessage(this.key);
 					openSuccessNotificationWithIcon(
 						"Success",
 						"Your Proposal has been created."
@@ -286,7 +286,7 @@ export default defineComponent({
 					console.log(response);
 				}
 			} catch (error) {
-				ErrorMessage(this.key);
+				errorMessage(this.key);
 				console.error(error);
 			}
 		},
@@ -348,7 +348,7 @@ export default defineComponent({
 				let response = await optInToApp(lsig, execParam);
 				console.log(response);
 			} catch (error) {
-				ErrorMessage(this.key);
+				errorMessage(this.key);
 				console.error(error);
 			}
 		},

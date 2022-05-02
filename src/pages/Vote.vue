@@ -47,11 +47,11 @@
 
 <script lang="ts">
 import {
-	ErrorMessage,
-	LoadingMessage,
+	errorMessage,
+	loadingMessage,
 	openSuccessNotificationWithIcon,
-	OverallErrorCheck,
-	SuccessMessage,
+	overallErrorCheck,
+	successMessage,
 	VALIDATE_MESSAGES,
 } from "@/constants";
 import DaoID from "@/store/DaoID";
@@ -85,9 +85,9 @@ export default defineComponent({
 	},
 	methods: {
 		async onFinish() {
-			this.error = OverallErrorCheck();
+			this.error = overallErrorCheck();
 			if (!this.error) {
-				LoadingMessage(this.key);
+				loadingMessage(this.key);
 				let lsig: LogicSigAccount = await getProposalLsig(
 					this.daoIDStore.dao_id as number,
 					this.walletStore.address // need to update it as per proposer address
@@ -116,10 +116,10 @@ export default defineComponent({
 						"Success",
 						"Your vote is registered "
 					);
-					SuccessMessage(this.key);
+					successMessage(this.key);
 				} catch (error) {
 					this.error = error.message;
-					ErrorMessage(this.key);
+					errorMessage(this.key);
 					console.error("Transaction Failed", error);
 				}
 			}

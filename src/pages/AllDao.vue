@@ -41,10 +41,10 @@
 
 <script lang="ts">
 import {
-	ErrorMessage,
-	LoadingMessage,
+	errorMessage,
+	loadingMessage,
 	openSuccessNotificationWithIcon,
-	SuccessMessage,
+	successMessage,
 	VALIDATE_MESSAGES,
 } from "@/constants";
 import { searchApplicationAndAccount } from "@/indexer";
@@ -61,17 +61,17 @@ export default defineComponent({
 	},
 	methods: {
 		onFinish() {
-			LoadingMessage(this.key);
+			loadingMessage(this.key);
 			searchApplicationAndAccount()
 				.then(() => {
-					SuccessMessage(this.key);
+					successMessage(this.key);
 					openSuccessNotificationWithIcon(
 						"Success",
 						`Your DAO App of ID ${this.formState.dao_id} is selected.`
 					);
 				})
 				.catch((error) => {
-					ErrorMessage(this.key);
+					errorMessage(this.key);
 					this.error = error.message;
 				});
 		},
