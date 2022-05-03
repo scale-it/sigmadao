@@ -15,16 +15,17 @@ import {
 } from "@algo-builder/algob/build/types";
 import type { LogicSigAccount } from "algosdk";
 import { getProposalLsig } from "../contract/dao";
+import indexerClient from "../config/indexer.config";
 declare var AlgoSigner: any; // eslint-disable-line
 
 export const searchForAssets = async (
 	tokenName: string
 ): Promise<Record<string, any> | undefined> => {
 	try {
-		const accountInfo = await AlgoSigner.indexer({
-			ledger: CHAIN_NAME,
-			path: `/v2/assets?name=${tokenName}`,
-		});
+		const accountInfo = await indexerClient
+			.searchForAssets()
+			.name(tokenName)
+			.do();
 		return JSON.parse(JSON.stringify(accountInfo));
 	} catch (e) {
 		console.log(e);
@@ -36,11 +37,9 @@ export const searchForApplication = async (
 	application_id: number
 ): Promise<Map<string, StateValue> | undefined> => {
 	try {
-		const applicationInfo = await AlgoSigner.indexer({
-			ledger: CHAIN_NAME,
-			path: `/v2/applications/${application_id}`,
-		});
-
+		const applicationInfo = await indexerClient
+			.lookupApplications(application_id)
+			.do();
 		const creator = applicationInfo.application.params.creator;
 		const globalStateMap = await readAppState(
 			GLOBAL_STATE,
@@ -62,10 +61,7 @@ export const searchForAccount = async (
 	localStateMap: Map<string, StateValue> | undefined;
 }> => {
 	try {
-		const accountInfo = await AlgoSigner.indexer({
-			ledger: CHAIN_NAME,
-			path: `/v2/accounts/${address}`,
-		});
+		const accountInfo = await indexerClient.lookupAccountByID(address).do();
 		console.log(
 			"Information for Account: " + JSON.stringify(accountInfo, undefined, 2)
 		);

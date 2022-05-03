@@ -3593,7 +3593,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"algosdk@npm:^1.13.1, algosdk@npm:^1.14.0":
+"algosdk@npm:^1.13.1":
   version: 1.14.0
   resolution: "algosdk@npm:1.14.0"
   dependencies:
@@ -3608,6 +3608,24 @@ __metadata:
     tweetnacl: ^1.0.3
     url-parse: ^1.5.1
   checksum: 9c19191d2a2d7e4e3a20756603f5b321590cfe5d09bdf522614a6a6ce9872c4e533b03b6c92e35b886ae3ce15d049d046f004154dd45d1b120bde191c0da427d
+  languageName: node
+  linkType: hard
+
+"algosdk@npm:^1.15.0":
+  version: 1.16.0
+  resolution: "algosdk@npm:1.16.0"
+  dependencies:
+    algo-msgpack-with-bigint: ^2.1.1
+    buffer: ^6.0.2
+    hi-base32: ^0.5.1
+    js-sha256: ^0.9.0
+    js-sha3: ^0.8.0
+    js-sha512: ^0.8.0
+    json-bigint: ^1.0.0
+    superagent: ^6.1.0
+    tweetnacl: ^1.0.3
+    url-parse: ^1.5.1
+  checksum: 5a1f17fce00b448fd037dfbd8bf3b9bc7974f78c92dccd0ac962478f16b954b691c22af35291e04a72ef79a01663fa38c7a2142873bdbefd1c8bf7fac7caf97c
   languageName: node
   linkType: hard
 
@@ -11960,7 +11978,7 @@ __metadata:
     "@vue/cli-service": ^5.0.1
     "@vue/compiler-sfc": ^3.2.31
     "@vue/eslint-config-typescript": ^10.0.0
-    algosdk: ^1.14.0
+    algosdk: ^1.15.0
     ant-design-vue: 3.2.0
     core-js: ^3.21.1
     crypto-browserify: ^3.12.0

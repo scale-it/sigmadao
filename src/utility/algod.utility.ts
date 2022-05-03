@@ -1,4 +1,4 @@
-import { types, tx as webTx, mkTxParams, WebMode } from "@algo-builder/web";
+import { types, tx as webTx, WebMode } from "@algo-builder/web";
 import { types as aTypes } from "@algo-builder/algob";
 import algodClient from "@/config/algob.config";
 import type { LogicSigAccount } from "algosdk";
@@ -35,7 +35,7 @@ export const optInToApp = async (
 	execParam: types.ExecParams
 ) => {
 	try {
-		const params = await mkTxParams(algodClient, {});
+		const params = await algodClient.getTransactionParams().do();
 		const optInLsigToAppTx = await webTx.mkTransaction(execParam, params);
 		const rawLsigSignedTx = algosdk.signLogicSigTransactionObject(
 			optInLsigToAppTx,
