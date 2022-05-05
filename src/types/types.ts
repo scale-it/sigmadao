@@ -14,4 +14,3 @@ export type WebModeTypes =
 	| WebMode
 	| MyAlgoWalletSession
 	| WallectConnectSession;
-
