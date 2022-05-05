@@ -1,4 +1,4 @@
-import { types, tx as webTx, mkTxParams, WebMode } from "@algo-builder/web";
+import { types, tx as webTx, mkTxParams } from "@algo-builder/web";
 import { types as aTypes } from "@algo-builder/algob";
 import algodClient from "@/config/algob.config";
 import type { LogicSigAccount } from "algosdk";
@@ -11,9 +11,9 @@ export const fundAmount = async (
 	from: string,
 	to: string,
 	amount: number,
-	webMode: WebMode
+	webMode: any // eslint-disable-line
 ) => {
-	const txParamss: types.ExecParams[] = [
+	const txParams: types.ExecParams[] = [
 		{
 			type: types.TransactionType.TransferAlgo,
 			sign: types.SignType.SecretKey,
@@ -26,7 +26,7 @@ export const fundAmount = async (
 			payFlags: { totalFee: 1000 },
 		},
 	];
-	const response = await webMode.executeTx(txParamss);
+	const response = await webMode.executeTx(txParams);
 	console.log("Funded: ", response);
 };
 

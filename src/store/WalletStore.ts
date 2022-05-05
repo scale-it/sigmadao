@@ -1,13 +1,18 @@
 import { defineStore } from "pinia";
-import { WalletType, WalletStoreState } from "../types";
-import { WebMode } from "@algo-builder/web";
+import {
+	WalletType,
+	WalletStoreState,
+	NetworkTypes,
+	WebModeTypes,
+} from "@/types";
 
 export default defineStore("WalletStore", {
 	state: (): WalletStoreState => {
 		return {
 			walletKind: WalletType.NONE,
-			webMode: <WebMode>{},
+			webMode: <WebModeTypes>{},
 			address: "",
+			network: NetworkTypes.NONE,
 		};
 	},
 	getters: {
@@ -19,12 +24,16 @@ export default defineStore("WalletStore", {
 		setWalletType(walletType: WalletType) {
 			this.walletKind = walletType;
 		},
-		setWebMode(webMode: WebMode) {
+		setWebMode(webMode: WebModeTypes) {
 			this.webMode = webMode;
 			console.log("WebMode Initialized", webMode);
 		},
 		setWalletAddress(address: string) {
 			this.address = address;
+		},
+		setNetworkTypes(network: NetworkTypes) {
+			console.log("Network Changed: ", network);
+			this.network = network;
 		},
 	},
 });
