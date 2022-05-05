@@ -88,7 +88,10 @@ import WalletStore from "../store/WalletStore";
 import { searchForAssets } from "../indexer";
 import { GOV_TOKEN_ASSET } from "../constants/constant";
 import DaoID from "@/store/DaoID";
-import { openErrorNotificationWithIcon } from "@/constants";
+import {
+	openErrorNotificationWithIcon,
+	WALLET_CONNECTION_ERROR,
+} from "@/constants";
 declare var AlgoSigner: any; // eslint-disable-line
 
 export default defineComponent({
@@ -137,8 +140,7 @@ export default defineComponent({
 		connectWallet(walletType: WalletType) {
 			if (!this.walletStore.network) {
 				openErrorNotificationWithIcon(
-					`Please select a network to connect with ${walletType}`,
-					""
+					`Please select a network to connect with ${walletType}`
 				);
 			} else {
 				this.selectedWallet = walletType;
@@ -172,7 +174,7 @@ export default defineComponent({
 				await this.getUserAccount();
 			} catch (e) {
 				openErrorNotificationWithIcon(
-					"Error occured while connecting with AlgoSigner",
+					WALLET_CONNECTION_ERROR("AlgoSigner"),
 					e.message
 				);
 				console.error(e);
@@ -198,7 +200,7 @@ export default defineComponent({
 				}
 			} catch (e) {
 				openErrorNotificationWithIcon(
-					"Error occured while connecting with MyAlgo Wallet",
+					WALLET_CONNECTION_ERROR("MyAlgo Wallet"),
 					e.message
 				);
 				console.error(e);
@@ -219,14 +221,14 @@ export default defineComponent({
 					}
 					if (error) {
 						openErrorNotificationWithIcon(
-							"Error occured while connecting with Wallet Connect",
+							WALLET_CONNECTION_ERROR("Wallet Connect"),
 							error.message
 						);
 					}
 				});
 			} catch (e) {
 				openErrorNotificationWithIcon(
-					"Error occured while connecting with Wallet Connect",
+					WALLET_CONNECTION_ERROR("Wallet Connect"),
 					e.message
 				);
 				console.error(e);
