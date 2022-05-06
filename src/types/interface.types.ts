@@ -1,11 +1,16 @@
-import { WalletType } from "./enum.types";
-import { WebMode } from "@algo-builder/web";
-import { Key, StateValue } from "./types";
+import {
+	Key,
+	NetworkTypes,
+	StateValue,
+	WebModeTypes,
+	WalletType,
+} from "@/types";
 
 export interface WalletStoreState {
 	walletKind: WalletType;
-	webMode: WebMode;
+	webMode: WebModeTypes;
 	address: string;
+	network: NetworkTypes;
 }
 
 export interface DAO {

@@ -7,6 +7,9 @@ export const APP_NOT_FOUND = "Please add DAO App ID";
 export const TOKEN_NOT_FOUND = "Govt token not found";
 export const WALLET_NOT_CONNECT = "Please connect to your Wallet";
 
+export const WALLET_CONNECTION_ERROR = (wallet: string) =>
+	`Error occured while connecting with ${wallet}`;
+
 export const overallErrorCheck = () => {
 	const daoIDStore = reactive(DaoID());
 	const walletStore = reactive(WalletStore());
@@ -25,7 +28,7 @@ export const overallErrorCheck = () => {
 
 export const openErrorNotificationWithIcon = (
 	message: string,
-	description: string
+	description?: string
 ) => {
 	notification["error"]({
 		message: message,

@@ -1,12 +1,41 @@
 <template>
-	<template v-if="selectedWallet === WalletType.NONE">
-		<a-row>
+	<template v-if="!walletAddress">
+		<a-row :gutter="16">
 			<a-col>
 				<a-dropdown>
 					<template #overlay>
-						<a-menu @click="handleMenuClick">
+						<a-menu @click="handleNetworkConnect">
+							<a-menu-item :key="NetworkTypes.MAIN_NET"> MainNet </a-menu-item>
+							<a-menu-item :key="NetworkTypes.TEST_NET"> TestNet </a-menu-item>
+							<a-menu-item :key="NetworkTypes.BETA_NET"> BetaNet </a-menu-item>
+							<!-- only for testing -->
+							<a-menu-item :key="NetworkTypes.PRIVATE_NET">
+								PrivateNet
+							</a-menu-item>
+						</a-menu>
+					</template>
+					<a-button>
+						<span v-if="selectedNetwork === NetworkTypes.NONE">
+							Select Network</span
+						>
+						<span v-else>Selected Network : {{ selectedNetwork }}</span>
+						<DownOutlined />
+					</a-button>
+				</a-dropdown>
+			</a-col>
+
+			<a-col>
+				<a-dropdown>
+					<template #overlay>
+						<a-menu @click="handleWalletConnect">
 							<a-menu-item :key="WalletType.ALGOSIGNER">
 								Algosigner
+							</a-menu-item>
+							<a-menu-item :key="WalletType.MY_ALGO">
+								MyAlgo Wallet
+							</a-menu-item>
+							<a-menu-item :key="WalletType.WALLET_CONNECT">
+								Wallet Connect
 							</a-menu-item>
 						</a-menu>
 					</template>
@@ -18,8 +47,9 @@
 			</a-col>
 		</a-row>
 	</template>
+
 	<template v-else>
-		<a-row class="wallet" v-if="walletAddress">
+		<a-row class="wallet">
 			<a-card size="small">
 				<a-row align="middle">
 					<a-col :span="20">
@@ -47,14 +77,21 @@
 
 <script lang="ts">
 import { DownOutlined, LogoutOutlined } from "@ant-design/icons-vue";
-import { CHAIN_NAME } from "../config/algosigner.config";
 import { defineComponent } from "vue";
-import { WalletType } from "../types/enum.types";
-import { WebMode } from "@algo-builder/web";
+import { WalletType, NetworkTypes } from "@/types";
+import {
+	MyAlgoWalletSession,
+	WallectConnectSession,
+	WebMode,
+} from "@algo-builder/web";
 import WalletStore from "../store/WalletStore";
 import { searchForAssets } from "../indexer";
 import { GOV_TOKEN_ASSET } from "../constants/constant";
 import DaoID from "@/store/DaoID";
+import {
+	openErrorNotificationWithIcon,
+	WALLET_CONNECTION_ERROR,
+} from "@/constants";
 declare var AlgoSigner: any; // eslint-disable-line
 
 export default defineComponent({
@@ -67,6 +104,8 @@ export default defineComponent({
 			WalletType,
 			selectedWallet: WalletType.NONE,
 			walletAddress: "",
+			selectedNetwork: NetworkTypes.NONE,
+			NetworkTypes,
 		};
 	},
 	mounted() {
@@ -92,56 +131,125 @@ export default defineComponent({
 	setup() {
 		const walletStore = WalletStore();
 		return {
-			initializeWebMode: walletStore.setWebMode,
 			setWalletType: walletStore.setWalletType,
 			setAddress: walletStore.setWalletAddress,
+			walletStore,
 		};
 	},
 	methods: {
 		connectWallet(walletType: WalletType) {
-			switch (walletType) {
-				case WalletType.ALGOSIGNER:
-					this.connectAlgoSigner();
-					break;
-				default:
-					console.warn("Wallet %s not supported", walletType);
+			if (!this.walletStore.network) {
+				openErrorNotificationWithIcon(
+					`Please select a network to connect with ${walletType}`
+				);
+			} else {
+				this.selectedWallet = walletType;
+				this.setWalletType(walletType);
+
+				switch (walletType) {
+					case WalletType.ALGOSIGNER:
+						this.connectAlgoSigner();
+						break;
+					case WalletType.MY_ALGO: {
+						this.connectMyAlgoWallet();
+						break;
+					}
+					case WalletType.WALLET_CONNECT: {
+						this.connectWalletConnect();
+						break;
+					}
+					default:
+						console.warn("Wallet %s not supported", walletType);
+				}
 			}
 		},
 		async connectAlgoSigner() {
 			try {
-				const webMode = new WebMode(AlgoSigner, CHAIN_NAME);
-				this.initializeWebMode(webMode);
+				const webMode = new WebMode(AlgoSigner, this.walletStore.network);
+				this.walletStore.setWebMode(webMode);
 				const algoSignerResponse = await AlgoSigner.connect({
-					ledger: CHAIN_NAME,
+					ledger: this.walletStore.network,
 				});
-				this.setWalletType(WalletType.ALGOSIGNER);
-				this.selectedWallet = WalletType.ALGOSIGNER;
 				console.log("Connected to AlgoSigner:", algoSignerResponse);
 				await this.getUserAccount();
 			} catch (e) {
+				openErrorNotificationWithIcon(
+					WALLET_CONNECTION_ERROR("AlgoSigner"),
+					e.message
+				);
 				console.error(e);
 			}
 		},
 		async getUserAccount() {
 			const userAccount = await AlgoSigner.accounts({
-				ledger: CHAIN_NAME,
+				ledger: this.walletStore.network,
 			});
 			if (userAccount && userAccount.length) {
-				this.updateWallet(userAccount[0].address);
+				this.walletAddress = userAccount[0].address;
+				this.setAddress(userAccount[0].address);
 			}
 		},
-		updateWallet(address: string) {
-			this.walletAddress = address;
-			this.setAddress(address);
+		async connectMyAlgoWallet() {
+			try {
+				let myAlgo = new MyAlgoWalletSession(this.walletStore.network);
+				await myAlgo.connectToMyAlgo();
+				this.walletStore.setWebMode(myAlgo);
+				if (myAlgo.accounts.length) {
+					this.walletAddress = myAlgo.accounts[0].address;
+					this.setAddress(myAlgo.accounts[0].address);
+				}
+			} catch (e) {
+				openErrorNotificationWithIcon(
+					WALLET_CONNECTION_ERROR("MyAlgo Wallet"),
+					e.message
+				);
+				console.error(e);
+			}
+		},
+		async connectWalletConnect() {
+			try {
+				let walletConnector = new WallectConnectSession(
+					this.walletStore.network
+				);
+				await walletConnector.create(true);
+				this.walletStore.setWebMode(walletConnector);
+
+				walletConnector.onConnect((error, response) => {
+					if (response.accounts.length) {
+						this.walletAddress = response.accounts[0];
+						this.setAddress(response.accounts[0]);
+					}
+					if (error) {
+						openErrorNotificationWithIcon(
+							WALLET_CONNECTION_ERROR("Wallet Connect"),
+							error.message
+						);
+					}
+				});
+			} catch (e) {
+				openErrorNotificationWithIcon(
+					WALLET_CONNECTION_ERROR("Wallet Connect"),
+					e.message
+				);
+				console.error(e);
+			}
 		},
 		// eslint-disable-next-line
-		handleMenuClick(e: any) {
+		handleWalletConnect(e: any) {
 			console.log("changing wallet kind", e.key);
 			this.connectWallet(e.key);
 		},
+		handleNetworkConnect(e: any) {
+			if (e.key) {
+				this.handleLogOut();
+				this.selectedNetwork = e.key;
+				this.walletStore.setNetworkTypes(e.key);
+			}
+		},
 		handleLogOut() {
 			console.log("Wallet Disconnected");
-			this.updateWallet("");
+			this.walletAddress = "";
+			this.setAddress("");
 			DaoID().handleLogOut();
 			this.setWalletType(WalletType.NONE);
 			this.selectedWallet = WalletType.NONE;
