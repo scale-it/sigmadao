@@ -23,7 +23,7 @@
 		"@algo-builder/web": "^3.2.0",
 		"@ant-design/icons-vue": "^6.1.0",
 		"algosdk": "^1.15.0",
-		"ant-design-vue": "3.2.0",
+		"ant-design-vue": "3.2.3",
 		"core-js": "^3.21.1",
 		"crypto-browserify": "^3.12.0",
 		"pinia": "^2.0.12",
