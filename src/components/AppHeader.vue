@@ -156,7 +156,7 @@ export default defineComponent({
 				this.daoID = +this.daoID;
 				loadingMessage(this.key);
 				searchApplicationAndAccount()
-					.then(async () => {
+					.then(() => {
 						successMessage(this.key);
 						openSuccessNotificationWithIcon(
 							"Successful",
@@ -164,17 +164,17 @@ export default defineComponent({
 						);
 						if (this.walletStore.address) {
 							isApplicationOpted(this.walletStore.address, this.daoID as number)
-								.then((appIsOptedIn) => {
+								.then((appIsOptedIn: boolean) => {
 									this.showOptIn = !appIsOptedIn;
 									if (appIsOptedIn) {
 										openSuccessNotificationWithIcon(
-											"You have already Opt-in DAO App"
+											"You have already Opted-in DAO App"
 										);
 									}
 								})
 								.catch((error) =>
 									openErrorNotificationWithIcon(
-										"Unsuccessful while getting Opt-in Details ",
+										"Unsuccessful while getting DAO App Opt-in Details",
 										error.message
 									)
 								);
