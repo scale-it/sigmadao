@@ -221,7 +221,6 @@ export default defineComponent({
 				if (myAlgo.accounts.length) {
 					this.walletAddress = myAlgo.accounts[0].address;
 					this.setAddress(myAlgo.accounts[0].address);
-					this.walletAddresses = myAlgo.accounts.map((acc) => acc.address);
 				}
 			} catch (e) {
 				openErrorNotificationWithIcon(
