@@ -54,9 +54,12 @@
 				<a-row align="middle">
 					<span>
 						<a-typography-text strong>Address: </a-typography-text>
-						<a-typography-link :copyable="{ text: walletAddress }">{{
-							walletAddress
-						}}</a-typography-link>
+						<a-typography-link :copyable="{ text: walletAddress }">
+							<a-tooltip>
+								<template #title>{{ walletAddress }}</template>
+								{{ getTruncatedAddress(walletAddress) }}
+							</a-tooltip>
+						</a-typography-link>
 					</span>
 					<a-row type="flex" style="width: 100%">
 						<a-col :flex="1">
@@ -75,12 +78,7 @@
 									</a-menu>
 								</template>
 								<a-button>
-									<span v-if="!walletAddresses.length">No Address Found</span>
-									<span v-else>{{
-										walletAddress.substring(0, 4) +
-										"..." +
-										walletAddress.slice(-4)
-									}}</span>
+									<span>{{ getTruncatedAddress(walletAddress) }}</span>
 									<DownOutlined />
 								</a-button>
 							</a-dropdown>
@@ -289,6 +287,9 @@ export default defineComponent({
 			DaoID().handleLogOut();
 			this.setWalletType(WalletType.NONE);
 			this.selectedWallet = WalletType.NONE;
+		},
+		getTruncatedAddress(addr: string) {
+			return addr.substring(0, 4) + "..." + addr.slice(-4);
 		},
 	},
 });
