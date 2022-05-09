@@ -105,7 +105,7 @@ import {
 	WebMode,
 } from "@algo-builder/web";
 import WalletStore from "../store/WalletStore";
-import { searchForAssets } from "../indexer";
+import { searchForAssets, searchApplicationAndAccount } from "@/indexer";
 import { GOV_TOKEN_ASSET } from "../constants/constant";
 import DaoID from "@/store/DaoID";
 import {
@@ -275,6 +275,7 @@ export default defineComponent({
 				const addr = e.key;
 				this.walletAddress = addr;
 				this.setAddress(addr);
+				searchApplicationAndAccount();
 				console.log("Address Switched.");
 			}
 		},
