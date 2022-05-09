@@ -20,7 +20,7 @@ import { NOT_OPTED_IN } from "@/constants";
 
 export default defineComponent({
 	name: "OptInError",
-	setup() {
+	data() {
 		return {
 			optedInDaoApp: !DaoID().show_opt_in,
 			NOT_OPTED_IN,

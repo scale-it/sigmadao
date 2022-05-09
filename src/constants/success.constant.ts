@@ -2,7 +2,7 @@ import { message, notification } from "ant-design-vue";
 
 export const openSuccessNotificationWithIcon = (
 	message: string,
-	description: string
+	description?: string
 ) => {
 	notification["success"]({
 		message: message,

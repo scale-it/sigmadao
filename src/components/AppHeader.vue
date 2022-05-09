@@ -163,10 +163,21 @@ export default defineComponent({
 							`Your DAO App of ID ${this.daoID} is selected.`
 						);
 						if (this.walletStore.address) {
-							this.showOptIn = await isApplicationOpted(
-								this.walletStore.address,
-								this.daoID as number
-							);
+							isApplicationOpted(this.walletStore.address, this.daoID as number)
+								.then((appIsOptedIn) => {
+									this.showOptIn = !appIsOptedIn;
+									if (appIsOptedIn) {
+										openSuccessNotificationWithIcon(
+											"You have already Opt-in DAO App"
+										);
+									}
+								})
+								.catch((error) =>
+									openErrorNotificationWithIcon(
+										"Unsuccessful while getting Opt-in Details ",
+										error.message
+									)
+								);
 						}
 					})
 					.catch((error) => {

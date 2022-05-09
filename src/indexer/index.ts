@@ -186,14 +186,17 @@ export const isApplicationOpted = async (
 	application_id: number
 ): Promise<boolean> => {
 	try {
-		const optedApplicationInfo = await AlgoSigner.algod({
-			ledger: CHAIN_NAME,
-			path: `/v2/accounts/${address}/applications/${application_id}`,
-		});
-		if (optedApplicationInfo && optedApplicationInfo["app-local-state"]) {
-			return optedApplicationInfo["app-local-state"].id === application_id;
+		let isAppOpted = false;
+		const applicationInfo = await indexerClient.lookupAccountByID(address).do();
+		if (applicationInfo && applicationInfo.account["apps-local-state"]) {
+			const optedAppInfo = applicationInfo.account["apps-local-state"].find(
+				(v: any) => v.id === application_id
+			);
+			if (optedAppInfo) {
+				isAppOpted = true;
+			}
 		}
-		return false;
+		return isAppOpted;
 	} catch (e) {
 		console.error(e);
 		throw e;
