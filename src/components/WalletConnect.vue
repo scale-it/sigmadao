@@ -69,7 +69,7 @@
 							</span>
 						</a-col>
 						<a-col>
-							<a-dropdown>
+							<a-dropdown v-if="selectedWallet === WalletType.ALGOSIGNER">
 								<template #overlay>
 									<a-menu @click="handleAccountSwitch">
 										<a-menu-item v-for="addr in walletAddresses" :key="addr">
@@ -243,7 +243,6 @@ export default defineComponent({
 					if (response.accounts.length) {
 						this.walletAddress = response.accounts[0];
 						this.setAddress(response.accounts[0]);
-						this.walletAddresses = response.accounts;
 					}
 					if (error) {
 						openErrorNotificationWithIcon(
