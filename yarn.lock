@@ -3721,9 +3721,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ant-design-vue@npm:3.2.0":
-  version: 3.2.0
-  resolution: "ant-design-vue@npm:3.2.0"
+"ant-design-vue@npm:3.2.3":
+  version: 3.2.3
+  resolution: "ant-design-vue@npm:3.2.3"
   dependencies:
     "@ant-design/colors": ^6.0.0
     "@ant-design/icons-vue": ^6.1.0
@@ -3744,7 +3744,7 @@ __metadata:
     warning: ^4.0.0
   peerDependencies:
     vue: ">=3.2.0"
-  checksum: abaea659cb25c70a2735d03cc69b0a4a76b71aa3e5502a356c23a4711b6a95b09b9638d3911a7eab15a5a3234c8efd28c652efc2c8a2ddcd76badc126a3fcd15
+  checksum: 5d6fd0a6241399b2f75f0f6110ad6ed8e3ca671c0619481b5711ac2d5e373b884ed08adf04521959ed00961194e43834d898958f79dc6bd66ae4f2f518d8f8b9
   languageName: node
   linkType: hard
 
@@ -11979,7 +11979,7 @@ __metadata:
     "@vue/compiler-sfc": ^3.2.31
     "@vue/eslint-config-typescript": ^10.0.0
     algosdk: ^1.15.0
-    ant-design-vue: 3.2.0
+    ant-design-vue: 3.2.3
     core-js: ^3.21.1
     crypto-browserify: ^3.12.0
     eslint: ^8.11.0

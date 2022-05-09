@@ -117,7 +117,11 @@ export const searchApplicationAndAccount = async () => {
 	const walletStore = WalletStore();
 	const proposalStore = ProposalStore();
 
-	const dao_id = daoIdStore.dao_id as number;
+	// check if dao id is present or not
+	if (typeof daoIdStore.dao_id === "undefined") {
+		return;
+	}
+	const dao_id = daoIdStore.dao_id;
 	const application = await searchForApplication(dao_id).catch((error) => {
 		console.log(error);
 		throw error;
