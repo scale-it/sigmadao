@@ -71,7 +71,7 @@
 						<a-col>
 							<a-dropdown v-if="selectedWallet === WalletType.ALGOSIGNER">
 								<template #overlay>
-									<a-menu @click="handleAccountSwitch">
+									<a-menu @click="handleAddressSwitch">
 										<a-menu-item v-for="addr in walletAddresses" :key="addr">
 											{{ addr }}
 										</a-menu-item>
@@ -270,12 +270,12 @@ export default defineComponent({
 				this.walletStore.setNetworkTypes(e.key);
 			}
 		},
-		handleAccountSwitch(e: any) {
+		handleAddressSwitch(e: any) {
 			if (e.key) {
 				const addr = e.key;
 				this.walletAddress = addr;
 				this.setAddress(addr);
-				console.log("Account Switched.");
+				console.log("Address Switched.");
 			}
 		},
 		handleLogOut() {
