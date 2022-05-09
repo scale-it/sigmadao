@@ -76,3 +76,26 @@ export const compileSignature = async (proposalSrc: string) => {
 	const program = new Uint8Array(Buffer.from(response["result"], "base64"));
 	return new algosdk.LogicSigAccount(program);
 };
+
+export const optInDaoApp = async (
+	from: string,
+	appID: number,
+	webMode: any // eslint-disable-line
+) => {
+	const execParam: types.ExecParams = {
+		type: types.TransactionType.OptInToApp,
+		sign: types.SignType.SecretKey,
+		fromAccount: {
+			addr: from,
+			sk: new Uint8Array(0),
+		},
+		appID: appID,
+		payFlags: {},
+	};
+	try {
+		webMode.executeTx([execParam]);
+	} catch (error) {
+		console.error("Transaction Failed", error);
+		throw error;
+	}
+};

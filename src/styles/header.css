@@ -11,6 +11,9 @@
 	max-width: 1000px;
 	margin: auto;
 }
+.opt_btn {
+	margin-top: 1rem;
+}
 .menu {
 	text-align: center;
 	margin-bottom: 1rem;

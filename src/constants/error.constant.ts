@@ -10,6 +10,7 @@ export const WALLET_NOT_CONNECT = "Please connect to your Wallet";
 export const WALLET_CONNECTION_ERROR = (wallet: string) =>
 	`Error occured while connecting with ${wallet}`;
 
+export const NOT_OPTED_IN = "Please opt in DAO App";
 export const overallErrorCheck = () => {
 	const daoIDStore = reactive(DaoID());
 	const walletStore = reactive(WalletStore());

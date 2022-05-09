@@ -87,6 +87,11 @@
 						</a-descriptions>
 					</a-col>
 				</a-row>
+				<a-row class="opt_btn" v-if="showOptIn">
+					<a-col class="menu" :span="24">
+						<a-button type="primary" @click="optIn">Opt-in DAO App</a-button>
+					</a-col>
+				</a-row>
 			</div>
 		</a-page-header>
 	</div>
@@ -97,7 +102,7 @@ import { defineComponent } from "vue";
 import WalletConnect from "./WalletConnect.vue";
 import { NavigationKey, EndPoint } from "../types/enum.types";
 import DaoStore from "../store/DaoID";
-import { searchApplicationAndAccount } from "@/indexer";
+import { isApplicationOpted, searchApplicationAndAccount } from "@/indexer";
 import { storeToRefs } from "pinia";
 import {
 	errorMessage,
@@ -106,6 +111,8 @@ import {
 	openSuccessNotificationWithIcon,
 	successMessage,
 } from "@/constants";
+import WalletStore from "@/store/WalletStore";
+import { optInDaoApp } from "@/utility";
 
 export default defineComponent({
 	components: {
@@ -113,6 +120,7 @@ export default defineComponent({
 	},
 	data() {
 		const daoStore = storeToRefs(DaoStore());
+		const walletStore = WalletStore();
 		return {
 			currentPageKey: 0,
 			NavigationKey: NavigationKey,
@@ -122,8 +130,10 @@ export default defineComponent({
 			name: daoStore.name,
 			availableTokens: daoStore.available,
 			lockedTokens: daoStore.locked,
+			showOptIn: daoStore.show_opt_in,
 			showIDTextField: false,
 			key: "HeaderKey",
+			walletStore,
 		};
 	},
 	methods: {
@@ -146,17 +156,39 @@ export default defineComponent({
 				this.daoID = +this.daoID;
 				loadingMessage(this.key);
 				searchApplicationAndAccount()
-					.then(() => {
+					.then(async () => {
 						successMessage(this.key);
 						openSuccessNotificationWithIcon(
 							"Successful",
 							`Your DAO App of ID ${this.daoID} is selected.`
 						);
+						if (this.walletStore.address) {
+							this.showOptIn = await isApplicationOpted(
+								this.walletStore.address,
+								this.daoID as number
+							);
+						}
 					})
 					.catch((error) => {
 						errorMessage(this.key);
 						openErrorNotificationWithIcon("Unsuccessful", error.message);
 					});
+			}
+		},
+		async optIn() {
+			try {
+				await optInDaoApp(
+					this.walletStore.address,
+					this.daoID as number,
+					this.walletStore.webMode
+				);
+				this.showOptIn = false;
+				openSuccessNotificationWithIcon(
+					"Successful",
+					`You have opted in DAO App.`
+				);
+			} catch (error) {
+				openErrorNotificationWithIcon("Unsuccessful", error.message);
 			}
 		},
 	},
