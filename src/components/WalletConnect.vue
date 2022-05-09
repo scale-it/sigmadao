@@ -211,6 +211,7 @@ export default defineComponent({
 				this.walletAddresses = userAccount.map(
 					(acc: { address: string }) => acc.address
 				);
+				searchApplicationAndAccount();
 			}
 		},
 		async connectMyAlgoWallet() {
