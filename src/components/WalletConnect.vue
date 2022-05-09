@@ -52,23 +52,43 @@
 		<a-row class="wallet">
 			<a-card size="small">
 				<a-row align="middle">
-					<a-col :span="20">
-						<a-descriptions :column="1" size="small" class="ellipsis">
-							<a-descriptions-item label="Wallet">{{
-								walletAddress
-							}}</a-descriptions-item>
-							<a-descriptions-item label="Selected Wallet">
-								{{ selectedWallet }}
-							</a-descriptions-item>
-						</a-descriptions>
-					</a-col>
-					<a-col style="margin: auto">
-						<a-button type="primary" @click="handleLogOut">
-							<template #icon>
-								<LogoutOutlined />
-							</template>
-						</a-button>
-					</a-col>
+					<span>
+						<a-typography-text strong>Address: </a-typography-text>
+						<a-typography-link :copyable="{ text: walletAddress }">
+							<a-tooltip>
+								<template #title>{{ walletAddress }}</template>
+								{{ getTruncatedAddress(walletAddress) }}
+							</a-tooltip>
+						</a-typography-link>
+					</span>
+					<a-row type="flex" style="width: 100%">
+						<a-col :flex="1">
+							<span style="margin-top: 5px">
+								<a-typography-text strong>Wallet: </a-typography-text>
+								<a-typography-link>{{ selectedWallet }}</a-typography-link>
+							</span>
+						</a-col>
+						<a-col>
+							<a-dropdown v-if="selectedWallet === WalletType.ALGOSIGNER">
+								<template #overlay>
+									<a-menu @click="handleAddressSwitch">
+										<a-menu-item v-for="addr in walletAddresses" :key="addr">
+											{{ addr }}
+										</a-menu-item>
+									</a-menu>
+								</template>
+								<a-button>
+									<span>{{ getTruncatedAddress(walletAddress) }}</span>
+									<DownOutlined />
+								</a-button>
+							</a-dropdown>
+							<a-button type="primary" @click="handleLogOut">
+								<template #icon>
+									<LogoutOutlined />
+								</template>
+							</a-button>
+						</a-col>
+					</a-row>
 				</a-row>
 			</a-card>
 		</a-row>
@@ -85,7 +105,7 @@ import {
 	WebMode,
 } from "@algo-builder/web";
 import WalletStore from "../store/WalletStore";
-import { searchForAssets } from "../indexer";
+import { searchForAssets, searchApplicationAndAccount } from "@/indexer";
 import { GOV_TOKEN_ASSET } from "../constants/constant";
 import DaoID from "@/store/DaoID";
 import {
@@ -106,6 +126,7 @@ export default defineComponent({
 			walletAddress: "",
 			selectedNetwork: NetworkTypes.NONE,
 			NetworkTypes,
+			walletAddresses: new Array<string>(),
 		};
 	},
 	mounted() {
@@ -187,6 +208,10 @@ export default defineComponent({
 			if (userAccount && userAccount.length) {
 				this.walletAddress = userAccount[0].address;
 				this.setAddress(userAccount[0].address);
+				this.walletAddresses = userAccount.map(
+					(acc: { address: string }) => acc.address
+				);
+				searchApplicationAndAccount();
 			}
 		},
 		async connectMyAlgoWallet() {
@@ -246,6 +271,15 @@ export default defineComponent({
 				this.walletStore.setNetworkTypes(e.key);
 			}
 		},
+		handleAddressSwitch(e: any) {
+			if (e.key) {
+				const addr = e.key;
+				this.walletAddress = addr;
+				this.setAddress(addr);
+				searchApplicationAndAccount();
+				console.log("Address Switched.");
+			}
+		},
 		handleLogOut() {
 			console.log("Wallet Disconnected");
 			this.walletAddress = "";
@@ -253,6 +287,9 @@ export default defineComponent({
 			DaoID().handleLogOut();
 			this.setWalletType(WalletType.NONE);
 			this.selectedWallet = WalletType.NONE;
+		},
+		getTruncatedAddress(addr: string) {
+			return addr.substring(0, 4) + "..." + addr.slice(-4);
 		},
 	},
 });
