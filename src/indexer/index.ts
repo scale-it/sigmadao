@@ -1,30 +1,30 @@
-import { CHAIN_NAME } from "@/config/algosigner.config";
 import {
 	GLOBAL_STATE,
 	GLOBAL_STATE_MAP_KEY,
 	LOCAL_STATE,
 	LOCAL_STATE_MAP_KEY,
-} from "@/constants/constant";
+	APPLICATION_ID,
+	ASSET_ID,
+	KEY_VALUE,
+	APPLICATION,
+	PARAMS,
+	ASSETS,
+} from "@/constants";
 import DaoID from "@/store/DaoID";
 import WalletStore from "@/store/WalletStore";
 import ProposalStore from "@/store/ProposalStore";
-import {
-	Key,
-	StateValue,
-	AccountAddress,
-} from "@algo-builder/algob/build/types";
+import { Key, StateValue } from "@algo-builder/algob/build/types";
 import type { LogicSigAccount } from "algosdk";
 import { getProposalLsig } from "../contract/dao";
 import indexerClient from "../config/indexer.config";
-declare var AlgoSigner: any; // eslint-disable-line
 
-export const searchForAssets = async (
-	tokenName: string
+export const searchForAssetsByName = async (
+	assetName: string
 ): Promise<Record<string, any> | undefined> => {
 	try {
 		const accountInfo = await indexerClient
 			.searchForAssets()
-			.name(tokenName)
+			.name(assetName)
 			.do();
 		return JSON.parse(JSON.stringify(accountInfo));
 	} catch (e) {
@@ -33,19 +33,18 @@ export const searchForAssets = async (
 	}
 };
 
-export const searchForApplication = async (
-	application_id: number
+export const getApplicationGlobalState = async (
+	applicationId: number
 ): Promise<Map<string, StateValue> | undefined> => {
 	try {
+		// get global state of application
 		const applicationInfo = await indexerClient
-			.lookupApplications(application_id)
+			.lookupApplications(applicationId)
 			.do();
-		const creator = applicationInfo.application.params.creator;
-		const globalStateMap = await readAppState(
-			GLOBAL_STATE,
-			creator,
-			application_id
-		);
+
+		const globalState = applicationInfo[APPLICATION][PARAMS][GLOBAL_STATE];
+		// parse global state of DAO app to get details for UI
+		const globalStateMap = await decodeStateMap(globalState);
 		return globalStateMap;
 	} catch (e) {
 		console.log(e);
@@ -53,64 +52,33 @@ export const searchForApplication = async (
 	}
 };
 
-export const searchForAccount = async (
+export const getAccountAppLocalState = async (
 	address: string,
-	application_id: number
-): Promise<{
-	total_amount: number;
-	localStateMap: Map<string, StateValue> | undefined;
-}> => {
+	applicationId: number
+): Promise<Map<string, StateValue> | undefined> => {
 	try {
-		const accountInfo = await indexerClient.lookupAccountByID(address).do();
-		console.log(
-			"Information for Account: " + JSON.stringify(accountInfo, undefined, 2)
-		);
-		const localStateMap = await readAppState(
-			LOCAL_STATE,
-			address,
-			application_id
-		);
-		const total_amount = accountInfo.account.amount;
-		return { total_amount, localStateMap };
+		let localStateMap = undefined;
+		// parse local state of DAO app for current user to get their details related to app for UI
+		const localState = await indexerClient
+			.lookupAccountAppLocalStates(address)
+			.do();
+		const parsedLocalState = JSON.parse(JSON.stringify(localState));
+
+		if (parsedLocalState && parsedLocalState[LOCAL_STATE]) {
+			const applicationInfo = parsedLocalState[LOCAL_STATE].find(
+				(i: any) => i[APPLICATION_ID] === applicationId
+			);
+			if (applicationInfo) {
+				localStateMap = await decodeStateMap(applicationInfo[KEY_VALUE]);
+			}
+		}
+
+		return localStateMap;
 	} catch (e) {
 		console.log(e);
 		throw e;
 	}
 };
-
-export async function readAppState(
-	stateType: string,
-	account: AccountAddress,
-	appID: number
-): Promise<Map<Key, StateValue> | undefined> {
-	const accountInfoResponse = await AlgoSigner.algod({
-		ledger: CHAIN_NAME,
-		path: `/v2/accounts/${account}`,
-	});
-
-	for (const app of accountInfoResponse[stateType]) {
-		if (app.id === appID) {
-			const stateMap = new Map<Key, StateValue>();
-			const appKey =
-				stateType === LOCAL_STATE
-					? app[`key-value`]
-					: app.params["global-state"];
-			for (const g of appKey) {
-				const key = Buffer.from(g.key, "base64").toString();
-				if (g.value.type === 1) {
-					stateMap.set(
-						key,
-						Buffer.from(g.value.bytes, "base64").toString("ascii")
-					);
-				} else {
-					stateMap.set(key, g.value.uint);
-				}
-			}
-			return stateMap;
-		}
-	}
-	return undefined;
-}
 
 export const searchApplicationAndAccount = async () => {
 	const daoIdStore = DaoID();
@@ -122,7 +90,7 @@ export const searchApplicationAndAccount = async () => {
 		return;
 	}
 	const dao_id = daoIdStore.dao_id;
-	const application = await searchForApplication(dao_id).catch((error) => {
+	const application = await getApplicationGlobalState(dao_id).catch((error) => {
 		console.log(error);
 		throw error;
 	});
@@ -135,21 +103,29 @@ export const searchApplicationAndAccount = async () => {
 	}
 
 	if (walletStore.address) {
-		const account = await searchForAccount(walletStore.address, dao_id).catch(
-			(error) => {
-				console.log(error);
-				throw error;
-			}
-		);
+		const localStateMap = await getAccountAppLocalState(
+			walletStore.address,
+			dao_id
+		).catch((error) => {
+			console.log(error);
+			throw error;
+		});
+
 		const lsig: LogicSigAccount = await getProposalLsig(
 			dao_id,
 			walletStore.address
 		);
 		proposalStore.setProposalAddr(lsig.address());
-		searchForGovASAToken();
-		if (account && account.localStateMap) {
+		if (daoIdStore.govt_id) {
+			const availableTokens = await getGovASATokenAmount(
+				walletStore.address,
+				daoIdStore.govt_id
+			);
+			daoIdStore.available = availableTokens;
+		}
+		if (localStateMap) {
 			daoIdStore.locked =
-				(account.localStateMap.get(LOCAL_STATE_MAP_KEY.Deposit) as number) ?? 0;
+				(localStateMap.get(LOCAL_STATE_MAP_KEY.Deposit) as number) ?? 0;
 		} else {
 			daoIdStore.locked = 0;
 		}
@@ -166,14 +142,18 @@ export const isAssetOpted = async (
 	asset_id: number
 ): Promise<boolean> => {
 	try {
-		const optedAssetInfo = await AlgoSigner.algod({
-			ledger: CHAIN_NAME,
-			path: `/v2/accounts/${address}/assets/${asset_id}`,
-		});
-		if (optedAssetInfo && optedAssetInfo["asset-holding"]) {
-			return optedAssetInfo["asset-holding"]["asset-id"] === asset_id;
+		let isAssetOpted = false;
+		const assetInfo = await indexerClient.lookupAccountAssets(address).do();
+
+		if (assetInfo.assets) {
+			const optedAssetInfo = assetInfo.assets.find(
+				(i: any) => i[ASSET_ID] === asset_id
+			);
+			if (optedAssetInfo) {
+				isAssetOpted = true;
+			}
 		}
-		return false;
+		return isAssetOpted;
 	} catch (e) {
 		console.error(e);
 		throw e;
@@ -183,45 +163,71 @@ export const isAssetOpted = async (
 /**
  * Check if given application is opted in given address
  * @param address Account address
- * @param application_id application id
+ * @param applicationId application id
  */
 export const isApplicationOpted = async (
 	address: string,
-	application_id: number
+	applicationId: number
 ): Promise<boolean> => {
 	try {
-		const optedApplicationInfo = await AlgoSigner.algod({
-			ledger: CHAIN_NAME,
-			path: `/v2/accounts/${address}/applications/${application_id}`,
-		});
-		if (optedApplicationInfo && optedApplicationInfo["app-local-state"]) {
-			return optedApplicationInfo["app-local-state"].id === application_id;
+		let isApplicationOpted = false;
+		const applicationInfo = await indexerClient
+			.lookupAccountAppLocalStates(address)
+			.do();
+		const parsedApplicationInfo = JSON.parse(JSON.stringify(applicationInfo));
+		if (parsedApplicationInfo && parsedApplicationInfo[LOCAL_STATE]) {
+			const optedApplicationInfo = applicationInfo[LOCAL_STATE].find(
+				(i: any) => (i[APPLICATION_ID] = applicationId)
+			);
+			if (optedApplicationInfo) {
+				isApplicationOpted = true;
+			}
 		}
-		return false;
+		return isApplicationOpted;
 	} catch (e) {
 		console.error(e);
 		throw e;
 	}
 };
 
-export const searchForGovASAToken = async () => {
-	const daoIdStore = DaoID();
-	const walletStore = WalletStore();
-	const govtID = DaoID().govt_id;
-	if (walletStore.address && govtID) {
-		try {
-			const accountInfo = await AlgoSigner.algod({
-				ledger: CHAIN_NAME,
-				path: `/v2/accounts/${walletStore.address}/assets/${govtID}`,
-			});
-			let amount = 0;
-			if (accountInfo["asset-holding"].amount) {
-				amount = accountInfo["asset-holding"].amount;
+export const getGovASATokenAmount = async (
+	address: string,
+	govtID: number
+): Promise<number> => {
+	try {
+		const assetInfo = await indexerClient.lookupAccountAssets(address).do();
+		let amount = 0;
+		if (assetInfo[ASSETS]) {
+			const govtAssetInfo = assetInfo[ASSETS].find(
+				(i: any) => i[ASSET_ID] === govtID
+			);
+			if (govtAssetInfo) {
+				amount = govtAssetInfo.amount;
 			}
-			daoIdStore.available = amount;
-		} catch (e) {
-			console.log(e);
-			throw e;
 		}
+		return amount;
+	} catch (e) {
+		console.log(e);
+		throw e;
 	}
 };
+
+export async function decodeStateMap(
+	state: Array<any>
+): Promise<Map<Key, StateValue>> {
+	const stateMap = new Map<Key, StateValue>();
+	if (state) {
+		for (const g of state) {
+			const key = Buffer.from(g.key, "base64").toString();
+			if (g.value.type === 1) {
+				stateMap.set(
+					key,
+					Buffer.from(g.value.bytes, "base64").toString("ascii")
+				);
+			} else {
+				stateMap.set(key, g.value.uint);
+			}
+		}
+	}
+	return stateMap;
+}

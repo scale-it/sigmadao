@@ -3611,7 +3611,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"algosdk@npm:^1.15.0":
+"algosdk@npm:^1.16.0":
   version: 1.16.0
   resolution: "algosdk@npm:1.16.0"
   dependencies:
@@ -11978,7 +11978,7 @@ __metadata:
     "@vue/cli-service": ^5.0.1
     "@vue/compiler-sfc": ^3.2.31
     "@vue/eslint-config-typescript": ^10.0.0
-    algosdk: ^1.15.0
+    algosdk: ^1.16.0
     ant-design-vue: 3.2.3
     core-js: ^3.21.1
     crypto-browserify: ^3.12.0
