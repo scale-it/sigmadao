@@ -188,16 +188,18 @@ export default defineComponent({
 		},
 		async optIn() {
 			try {
-				await optInDaoApp(
-					this.walletStore.address,
-					this.daoID as number,
-					this.walletStore.webMode
-				);
-				this.showOptIn = false;
-				openSuccessNotificationWithIcon(
-					"Successful",
-					`You have opted in DAO App.`
-				);
+				if (this.daoID) {
+					await optInDaoApp(
+						this.walletStore.address,
+						this.daoID,
+						this.walletStore.webMode
+					);
+					this.showOptIn = false;
+					openSuccessNotificationWithIcon(
+						"Successful",
+						`You have opted in DAO App.`
+					);
+				}
 			} catch (error) {
 				openErrorNotificationWithIcon("Unsuccessful", error.message);
 			}
