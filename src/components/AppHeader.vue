@@ -134,6 +134,7 @@ export default defineComponent({
 			showIDTextField: false,
 			key: "HeaderKey",
 			walletStore,
+			removeDaoData: DaoStore().removeDaoID,
 		};
 	},
 	methods: {
@@ -184,6 +185,9 @@ export default defineComponent({
 						errorMessage(this.key);
 						openErrorNotificationWithIcon("Unsuccessful", error.message);
 					});
+			} else {
+				// when daoID is removed
+				this.removeDaoData();
 			}
 		},
 		async optIn() {

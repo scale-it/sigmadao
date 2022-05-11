@@ -25,5 +25,13 @@ export default defineStore("DaoStore", {
 			this.available = undefined;
 			this.locked = undefined;
 		},
+		removeDaoID() {
+			// clearing user data when dao id is removed
+			this.name = "";
+			this.available = undefined;
+			this.locked = undefined;
+			this.global_app_state = undefined;
+			this.show_opt_in = false;
+		},
 	},
 });
