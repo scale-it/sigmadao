@@ -17,6 +17,7 @@ import { Key, StateValue } from "@algo-builder/algob/build/types";
 import type { LogicSigAccount } from "algosdk";
 import { getProposalLsig } from "../contract/dao";
 import indexerClient from "../config/indexer.config";
+import { SchemaType } from "@/types";
 
 export const searchForAssetsByName = async (
 	assetName: string
@@ -217,7 +218,7 @@ export function decodeStateMap(state: Array<any>): Map<Key, StateValue> {
 	if (state) {
 		for (const g of state) {
 			const key = Buffer.from(g.key, "base64").toString();
-			if (g.value.type === 1) {
+			if (g.value.type === SchemaType.BYTES) {
 				stateMap.set(
 					key,
 					Buffer.from(g.value.bytes, "base64").toString("ascii")
