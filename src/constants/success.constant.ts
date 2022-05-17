@@ -19,3 +19,5 @@ export const loadingMessage = (key: string) => {
 export const successMessage = (key: string) => {
 	message.loading({ content: "Loaded", key: key });
 };
+
+export const SUCCESSFUL = "Successful";

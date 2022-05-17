@@ -41,9 +41,11 @@
 
 <script lang="ts">
 import {
+	daoAppMessage,
 	errorMessage,
 	loadingMessage,
 	openSuccessNotificationWithIcon,
+	SUCCESSFUL,
 	successMessage,
 	VALIDATE_MESSAGES,
 } from "@/constants";
@@ -66,8 +68,8 @@ export default defineComponent({
 				.then(() => {
 					successMessage(this.key);
 					openSuccessNotificationWithIcon(
-						"Success",
-						`Your DAO App of ID ${this.formState.dao_id} is selected.`
+						SUCCESSFUL,
+						daoAppMessage.SUCCESSFUL(this.formState.dao_id as number)
 					);
 				})
 				.catch((error) => {

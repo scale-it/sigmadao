@@ -45,6 +45,8 @@ import {
 	loadingMessage,
 	errorMessage,
 	successMessage,
+	depositTokenMessage,
+	SUCCESSFUL,
 } from "@/constants";
 import DaoID from "@/store/DaoID";
 import WalletStore from "@/store/WalletStore";
@@ -117,8 +119,8 @@ export default defineComponent({
 					searchApplicationAndAccount(); // to update locked and available token on UI
 					successMessage(this.key);
 					openSuccessNotificationWithIcon(
-						"Success",
-						`Your ${this.formState.deposit_amt} tokens have been deposited.`
+						SUCCESSFUL,
+						depositTokenMessage.SUCCESSFUL(this.formState.deposit_amt as number)
 					);
 				} catch (error) {
 					this.error = error.message;

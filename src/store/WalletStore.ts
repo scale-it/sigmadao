@@ -8,6 +8,7 @@ import {
 import { isApplicationOpted } from "@/indexer";
 import DaoID from "./DaoID";
 import {
+	daoAppMessage,
 	openErrorNotificationWithIcon,
 	openSuccessNotificationWithIcon,
 } from "@/constants";
@@ -43,14 +44,12 @@ export default defineStore("WalletStore", {
 					.then((appIsOptedIn: boolean) => {
 						daoIDStore.show_opt_in = !appIsOptedIn;
 						if (appIsOptedIn) {
-							openSuccessNotificationWithIcon(
-								"You have already Opted-in DAO App"
-							);
+							openSuccessNotificationWithIcon(daoAppMessage.ALREADY_OPT_IN);
 						}
 					})
 					.catch((error) =>
 						openErrorNotificationWithIcon(
-							"Unsuccessful while getting DAO App Opt-in Details",
+							daoAppMessage.UNSUCCESFUL,
 							error.message
 						)
 					);

@@ -106,7 +106,7 @@ import {
 } from "@algo-builder/web";
 import WalletStore from "../store/WalletStore";
 import { searchForAssetsByName, searchApplicationAndAccount } from "@/indexer";
-import { GOV_TOKEN_ASSET } from "../constants/constant";
+import { GOV_TOKEN_ASSET, walletMessage } from "../constants/constant";
 import DaoID from "@/store/DaoID";
 import {
 	openErrorNotificationWithIcon,
@@ -161,7 +161,7 @@ export default defineComponent({
 		connectWallet(walletType: WalletType) {
 			if (!this.walletStore.network) {
 				openErrorNotificationWithIcon(
-					`Please select a network to connect with ${walletType}`
+					walletMessage.NETWORK_ISSUE(walletType as string)
 				);
 			} else {
 				this.selectedWallet = walletType;

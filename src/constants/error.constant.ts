@@ -42,3 +42,5 @@ export const openErrorNotificationWithIcon = (
 export const errorMessage = (key: string) => {
 	message.error({ content: "Error Occured", key: key });
 };
+
+export const UNSUCCESSFUL = "Unsuccessful";

@@ -43,8 +43,10 @@ import {
 	loadingMessage,
 	openSuccessNotificationWithIcon,
 	overallErrorCheck,
+	SUCCESSFUL,
 	successMessage,
 	VALIDATE_MESSAGES,
+	withdrawTokenMessage,
 } from "@/constants";
 import DaoID from "@/store/DaoID";
 import WalletStore from "@/store/WalletStore";
@@ -103,8 +105,10 @@ export default defineComponent({
 					searchApplicationAndAccount(); // to update locked and available token on UI
 					successMessage(this.key);
 					openSuccessNotificationWithIcon(
-						"Success",
-						`Your ${this.formState.withdraw_amt} tokens have been withdrawn.`
+						SUCCESSFUL,
+						withdrawTokenMessage.SUCCESSFUL(
+							this.formState.withdraw_amt as number
+						)
 					);
 				} catch (error) {
 					errorMessage(this.key);

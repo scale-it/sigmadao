@@ -105,11 +105,13 @@ import DaoStore from "../store/DaoID";
 import { isApplicationOpted, searchApplicationAndAccount } from "@/indexer";
 import { storeToRefs } from "pinia";
 import {
+	daoAppMessage,
 	errorMessage,
 	loadingMessage,
 	openErrorNotificationWithIcon,
 	openSuccessNotificationWithIcon,
 	successMessage,
+	UNSUCCESSFUL,
 } from "@/constants";
 import WalletStore from "@/store/WalletStore";
 import { optInDaoApp } from "@/utility";
@@ -134,7 +136,7 @@ export default defineComponent({
 			showIDTextField: false,
 			key: "HeaderKey",
 			walletStore,
-			removeDaoData: DaoStore().removeDaoID,
+			resetDaoStore: DaoStore().resetDaoStore,
 		};
 	},
 	methods: {
@@ -161,7 +163,7 @@ export default defineComponent({
 						successMessage(this.key);
 						openSuccessNotificationWithIcon(
 							"Successful",
-							`Your DAO App of ID ${this.daoID} is selected.`
+							daoAppMessage.SUCCESSFUL(this.daoID as number)
 						);
 						if (this.walletStore.address) {
 							isApplicationOpted(this.walletStore.address, this.daoID as number)
@@ -169,13 +171,13 @@ export default defineComponent({
 									this.showOptIn = !appIsOptedIn;
 									if (appIsOptedIn) {
 										openSuccessNotificationWithIcon(
-											"You have already Opted-in DAO App"
+											daoAppMessage.ALREADY_OPT_IN
 										);
 									}
 								})
 								.catch((error) =>
 									openErrorNotificationWithIcon(
-										"Unsuccessful while getting DAO App Opt-in Details",
+										daoAppMessage.UNSUCCESFUL,
 										error.message
 									)
 								);
@@ -183,11 +185,11 @@ export default defineComponent({
 					})
 					.catch((error) => {
 						errorMessage(this.key);
-						openErrorNotificationWithIcon("Unsuccessful", error.message);
+						openErrorNotificationWithIcon(UNSUCCESSFUL, error.message);
 					});
 			} else {
 				// when daoID is removed
-				this.removeDaoData();
+				this.resetDaoStore();
 			}
 		},
 		async optIn() {
@@ -201,11 +203,11 @@ export default defineComponent({
 					this.showOptIn = false;
 					openSuccessNotificationWithIcon(
 						"Successful",
-						`You have opted in DAO App.`
+						daoAppMessage.SUCCESSFUL(this.daoID)
 					);
 				}
 			} catch (error) {
-				openErrorNotificationWithIcon("Unsuccessful", error.message);
+				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message);
 			}
 		},
 	},

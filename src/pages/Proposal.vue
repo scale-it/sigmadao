@@ -149,6 +149,8 @@ import {
 	loadingMessage,
 	successMessage,
 	errorMessage,
+	proposalMessage,
+	SUCCESSFUL,
 } from "@/constants";
 import { DateRange, DAOActions } from "@/types";
 import { defineComponent, reactive } from "vue";
@@ -287,8 +289,8 @@ export default defineComponent({
 					);
 					successMessage(this.key);
 					openSuccessNotificationWithIcon(
-						"Success",
-						"Your Proposal has been created."
+						SUCCESSFUL,
+						proposalMessage.SUCCESSFUL
 					);
 					console.log(response);
 				}

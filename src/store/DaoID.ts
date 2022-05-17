@@ -25,7 +25,7 @@ export default defineStore("DaoStore", {
 			this.available = undefined;
 			this.locked = undefined;
 		},
-		removeDaoID() {
+		resetDaoStore() {
 			// clearing user data when dao id is removed
 			this.name = "";
 			this.available = undefined;

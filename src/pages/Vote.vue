@@ -53,8 +53,10 @@ import {
 	loadingMessage,
 	openSuccessNotificationWithIcon,
 	overallErrorCheck,
+	SUCCESSFUL,
 	successMessage,
 	VALIDATE_MESSAGES,
+	voteMessage,
 } from "@/constants";
 import DaoID from "@/store/DaoID";
 import WalletStore from "@/store/WalletStore";
@@ -116,10 +118,7 @@ export default defineComponent({
 				};
 				try {
 					await this.walletStore.webMode.executeTx([registerVoteParam]);
-					openSuccessNotificationWithIcon(
-						"Success",
-						"Your vote is registered "
-					);
+					openSuccessNotificationWithIcon(SUCCESSFUL, voteMessage.SUCCESSFUL);
 					successMessage(this.key);
 				} catch (error) {
 					this.error = error.message;
