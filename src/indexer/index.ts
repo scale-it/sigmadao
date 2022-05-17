@@ -177,7 +177,7 @@ export const isApplicationOpted = async (
 		const parsedApplicationInfo = JSON.parse(JSON.stringify(applicationInfo));
 		if (parsedApplicationInfo && parsedApplicationInfo[LOCAL_STATE]) {
 			const optedApplicationInfo = applicationInfo[LOCAL_STATE].find(
-				(i: any) => (i[APPLICATION_ID] = applicationId)
+				(appInfo: any) => (appInfo[APPLICATION_ID] = applicationId)
 			);
 			if (optedApplicationInfo) {
 				isApplicationOpted = true;
