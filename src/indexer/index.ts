@@ -44,7 +44,7 @@ export const getApplicationGlobalState = async (
 
 		const globalState = applicationInfo[APPLICATION][PARAMS][GLOBAL_STATE];
 		// parse global state of DAO app to get details for UI
-		const globalStateMap = await decodeStateMap(globalState);
+		const globalStateMap = decodeStateMap(globalState);
 		return globalStateMap;
 	} catch (e) {
 		console.log(e);
@@ -69,7 +69,7 @@ export const getAccountAppLocalState = async (
 				(appInfo: any) => appInfo[APPLICATION_ID] === applicationId
 			);
 			if (applicationInfo) {
-				localStateMap = await decodeStateMap(applicationInfo[KEY_VALUE]);
+				localStateMap = decodeStateMap(applicationInfo[KEY_VALUE]);
 			}
 		}
 
@@ -135,11 +135,11 @@ export const searchApplicationAndAccount = async () => {
 /**
  * Check if given asset is opted in given address
  * @param address Account address
- * @param asset_id asset id
+ * @param assetId asset id
  */
 export const isAssetOpted = async (
 	address: string,
-	asset_id: number
+	assetId: number
 ): Promise<boolean> => {
 	try {
 		let isAssetOpted = false;
@@ -147,7 +147,7 @@ export const isAssetOpted = async (
 
 		if (assetInfo.assets) {
 			const optedAssetInfo = assetInfo.assets.find(
-				(asset: any) => asset[ASSET_ID] === asset_id
+				(asset: any) => asset[ASSET_ID] === assetId
 			);
 			if (optedAssetInfo) {
 				isAssetOpted = true;
@@ -212,9 +212,7 @@ export const getGovASATokenAmount = async (
 	}
 };
 
-export async function decodeStateMap(
-	state: Array<any>
-): Promise<Map<Key, StateValue>> {
+export function decodeStateMap(state: Array<any>): Map<Key, StateValue> {
 	const stateMap = new Map<Key, StateValue>();
 	if (state) {
 		for (const g of state) {
