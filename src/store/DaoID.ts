@@ -10,6 +10,7 @@ export default defineStore("DaoStore", {
 			available: undefined,
 			locked: undefined,
 			global_app_state: undefined,
+			show_opt_in: false,
 		};
 	},
 	actions: {
@@ -23,6 +24,14 @@ export default defineStore("DaoStore", {
 			// removes token from UI if user log out of wallet
 			this.available = undefined;
 			this.locked = undefined;
+		},
+		resetDaoStore() {
+			// clearing user data when dao id is removed
+			this.name = "";
+			this.available = undefined;
+			this.locked = undefined;
+			this.global_app_state = undefined;
+			this.show_opt_in = false;
 		},
 	},
 });

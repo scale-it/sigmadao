@@ -5,6 +5,13 @@ import {
 	NetworkTypes,
 	WebModeTypes,
 } from "@/types";
+import { isApplicationOpted } from "@/indexer";
+import DaoID from "./DaoID";
+import {
+	daoAppMessage,
+	openErrorNotificationWithIcon,
+	openSuccessNotificationWithIcon,
+} from "@/constants";
 
 export default defineStore("WalletStore", {
 	state: (): WalletStoreState => {
@@ -30,6 +37,23 @@ export default defineStore("WalletStore", {
 		},
 		setWalletAddress(address: string) {
 			this.address = address;
+			const daoIDStore = DaoID();
+			// updates application opt in status whenever address is changed
+			if (this.address.length && daoIDStore.dao_id) {
+				isApplicationOpted(this.address, daoIDStore.dao_id)
+					.then((appIsOptedIn: boolean) => {
+						daoIDStore.show_opt_in = !appIsOptedIn;
+						if (appIsOptedIn) {
+							openSuccessNotificationWithIcon(daoAppMessage.ALREADY_OPT_IN);
+						}
+					})
+					.catch((error) =>
+						openErrorNotificationWithIcon(
+							daoAppMessage.UNSUCCESFUL,
+							error.message
+						)
+					);
+			}
 		},
 		setNetworkTypes(network: NetworkTypes) {
 			console.log("Network Changed: ", network);

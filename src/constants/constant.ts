@@ -36,3 +36,30 @@ export const ProposalType = {
 };
 
 export const MILLI_SECOND = 1000;
+
+export const daoAppMessage = {
+	ALREADY_OPT_IN: "You have already Opted-in DAO App",
+	SUCCESSFUL: (daoID: number) => `Your DAO App of ID ${daoID} is selected.`,
+	UNSUCCESFUL: "Unsuccessful while getting DAO App Opt-in Details",
+};
+
+export const voteMessage = {
+	SUCCESSFUL: "Your vote is registered.",
+};
+
+export const proposalMessage = {
+	SUCCESSFUL: "Your Proposal has been created.",
+};
+
+export const depositTokenMessage = {
+	SUCCESSFUL: (amt: number) => `Your ${amt} tokens have been deposited.`,
+};
+
+export const withdrawTokenMessage = {
+	SUCCESSFUL: (amt: number) => `Your ${amt} tokens have been withdrawn.`,
+};
+
+export const walletMessage = {
+	NETWORK_ISSUE: (walletType: string) =>
+		`Please select a network to connect with ${walletType}`,
+};

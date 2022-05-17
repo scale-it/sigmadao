@@ -45,6 +45,8 @@ import {
 	loadingMessage,
 	errorMessage,
 	successMessage,
+	depositTokenMessage,
+	SUCCESSFUL,
 } from "@/constants";
 import DaoID from "@/store/DaoID";
 import WalletStore from "@/store/WalletStore";
@@ -53,7 +55,7 @@ import { getApplicationAddress } from "algosdk";
 import { defineComponent, reactive } from "vue";
 import VoteStore from "../store/VoteStore";
 import { DAOActions } from "../types/enum.types";
-import { isApplicationOpted, searchApplicationAndAccount } from "@/indexer";
+import { searchApplicationAndAccount } from "@/indexer";
 
 export default defineComponent({
 	name: "DepositToken",
@@ -79,32 +81,6 @@ export default defineComponent({
 			this.error = overallErrorCheck();
 			if (!this.error) {
 				loadingMessage(this.key);
-				// check if asset is already opted
-				const isApplicationAlreadyOpted = await isApplicationOpted(
-					this.walletStore.address,
-					this.daoIDStore.dao_id as number
-				);
-
-				if (!isApplicationAlreadyOpted) {
-					const execParam: types.ExecParams = {
-						type: types.TransactionType.OptInToApp,
-						sign: types.SignType.SecretKey,
-						fromAccount: {
-							addr: this.walletStore.address,
-							sk: new Uint8Array(0),
-						},
-						appID: this.daoIDStore.dao_id as number,
-						payFlags: {},
-					};
-					try {
-						await this.walletStore.webMode.executeTx([execParam]);
-					} catch (error) {
-						errorMessage(this.key);
-						this.error = error.message;
-						console.error("Transaction Failed", error);
-					}
-				}
-
 				console.log(
 					`* Deposit ${this.formState.deposit_amt} votes by ${this.walletStore.address} *`
 				);
@@ -143,8 +119,8 @@ export default defineComponent({
 					searchApplicationAndAccount(); // to update locked and available token on UI
 					successMessage(this.key);
 					openSuccessNotificationWithIcon(
-						"Success",
-						`Your ${this.formState.deposit_amt} tokens have been deposited.`
+						SUCCESSFUL,
+						depositTokenMessage.SUCCESSFUL(this.formState.deposit_amt as number)
 					);
 				} catch (error) {
 					this.error = error.message;

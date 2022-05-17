@@ -20,6 +20,7 @@ export interface DAO {
 	available?: number;
 	locked?: number;
 	global_app_state?: Map<Key, StateValue>;
+	show_opt_in: boolean;
 }
 
 export interface VoteFormState {
