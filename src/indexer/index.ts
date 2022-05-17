@@ -66,7 +66,7 @@ export const getAccountAppLocalState = async (
 
 		if (parsedLocalState && parsedLocalState[LOCAL_STATE]) {
 			const applicationInfo = parsedLocalState[LOCAL_STATE].find(
-				(i: any) => i[APPLICATION_ID] === applicationId
+				(appInfo: any) => appInfo[APPLICATION_ID] === applicationId
 			);
 			if (applicationInfo) {
 				localStateMap = await decodeStateMap(applicationInfo[KEY_VALUE]);
