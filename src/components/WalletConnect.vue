@@ -105,7 +105,7 @@ import {
 	WebMode,
 } from "@algo-builder/web";
 import WalletStore from "../store/WalletStore";
-import { searchForAssets, searchApplicationAndAccount } from "@/indexer";
+import { searchForAssetsByName, searchApplicationAndAccount } from "@/indexer";
 import { GOV_TOKEN_ASSET } from "../constants/constant";
 import DaoID from "@/store/DaoID";
 import {
@@ -130,7 +130,7 @@ export default defineComponent({
 		};
 	},
 	mounted() {
-		searchForAssets(GOV_TOKEN_ASSET)
+		searchForAssetsByName(GOV_TOKEN_ASSET)
 			.then((response) => {
 				if (response && response.assets && response.assets.length) {
 					let assetLength: number = response.assets.length;

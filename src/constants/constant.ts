@@ -7,9 +7,18 @@ export const VALIDATE_MESSAGES = {
 	},
 };
 
-export const LOCAL_STATE = "apps-local-state";
-export const GLOBAL_STATE = "created-apps";
+// indexer response keys
+export const LOCAL_STATE = "apps-local-states";
+export const GLOBAL_STATE = "global-state";
+export const ASSET_ID = "asset-id";
+export const APPLICATION_ID = "id";
+export const KEY_VALUE = "key-value";
+export const CREATED_APPS = "created-apps";
+export const APPLICATION = "application";
+export const PARAMS = "params";
+export const ASSETS = "assets";
 
+// DAO App local and global state map keys
 export const LOCAL_STATE_MAP_KEY = {
 	Deposit: "deposit",
 };
