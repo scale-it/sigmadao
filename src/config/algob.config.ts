@@ -1,9 +1,10 @@
 import algosdk from "algosdk";
 
 const token =
+	process.env.ALGOSDK_TOKEN ||
 	"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-const server = "http://localhost";
-const port = 4001;
+const server = process.env.ALGOSDK_URL || "http://localhost";
+const port = process.env.ALGOSDK_PORT || 4001;
 
 const algodClient = new algosdk.Algodv2(token, server, port);
 
