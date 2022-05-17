@@ -147,7 +147,7 @@ export const isAssetOpted = async (
 
 		if (assetInfo.assets) {
 			const optedAssetInfo = assetInfo.assets.find(
-				(i: any) => i[ASSET_ID] === asset_id
+				(asset: any) => asset[ASSET_ID] === asset_id
 			);
 			if (optedAssetInfo) {
 				isAssetOpted = true;
