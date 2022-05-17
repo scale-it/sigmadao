@@ -199,7 +199,7 @@ export const getGovASATokenAmount = async (
 		let amount = 0;
 		if (assetInfo[ASSETS]) {
 			const govtAssetInfo = assetInfo[ASSETS].find(
-				(i: any) => i[ASSET_ID] === govtID
+				(assetInfo: any) => assetInfo[ASSET_ID] === govtID
 			);
 			if (govtAssetInfo) {
 				amount = govtAssetInfo.amount;
