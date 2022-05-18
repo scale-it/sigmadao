@@ -24,7 +24,7 @@
 				</a-dropdown>
 			</a-col>
 
-			<a-col>
+			<a-col v-if="selectedNetwork !== NetworkTypes.NONE">
 				<a-dropdown>
 					<template #overlay>
 						<a-menu @click="handleWalletConnect">
