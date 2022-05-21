@@ -12,13 +12,6 @@
 					<a-col class="menu" :span="24">
 						<div>
 							<!-- add route after page component is added  -->
-							<a-button
-								class="menu_option"
-								:type="isLinkActive(NavigationKey.CREATE_DAO)"
-								@click="() => handleMenuClick(NavigationKey.CREATE_DAO)"
-								>Create DAO</a-button
-							>
-
 							<router-link :to="{ path: EndPoint.ALL_DAO }">
 								<a-button
 									class="menu_option"
@@ -27,6 +20,13 @@
 									>All DAOs</a-button
 								>
 							</router-link>
+							<a-button
+								class="menu_option"
+								:type="isLinkActive(NavigationKey.CREATE_DAO)"
+								@click="() => handleMenuClick(NavigationKey.CREATE_DAO)"
+								>Create DAO</a-button
+							>
+
 							<router-link :to="{ path: EndPoint.ADD_PROPOSAL }">
 								<a-button
 									class="menu_option"
