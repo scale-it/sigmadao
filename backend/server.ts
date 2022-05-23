@@ -4,13 +4,6 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 const { graphqlHTTP } = require("express-graphql");
-const {
-	GraphQLObjectType,
-	GraphQLSchema,
-	GraphQLString,
-	GraphQLInt,
-	GraphQLList,
-} = require("graphql");
 app.use(cors());
 
 app.use(
