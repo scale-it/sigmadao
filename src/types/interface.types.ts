@@ -40,3 +40,9 @@ export interface ProposalFormState {
 	asaId?: number;
 	message: string;
 }
+
+export interface DaoItemType {
+	app_id?: number;
+	app_params?: string;
+	asset_id?: number;
+}

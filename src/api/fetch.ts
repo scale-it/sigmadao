@@ -12,7 +12,7 @@ export const executeReq = (query: string) => {
 		}),
 	})
 		.then((response) => response.json())
-		.then((data) => data.data)
+		.then((data) => data?.data)
 		.catch((error) => error);
 };
 

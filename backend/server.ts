@@ -1,5 +1,6 @@
 import { executeQuery } from "./psql/queryExecute";
 import { QUERY_GET_ALL_DAOS } from "./psql/query";
+import { DaoItemType } from "./types";
 const express = require("express");
 const cors = require("cors");
 const app = express();
@@ -35,7 +36,7 @@ const QueryRoot = new GraphQLObjectType({
 			resolve: async () => {
 				const res = await executeQuery(QUERY_GET_ALL_DAOS);
 				if (res && res.rows && res.rows.length) {
-					res.rows.map((item: any) => {
+					res.rows.map((item: DaoItemType) => {
 						if (item.app_params) {
 							item.app_params = JSON.stringify(item.app_params);
 						}

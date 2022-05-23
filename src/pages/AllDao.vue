@@ -53,6 +53,7 @@ import { searchApplicationAndAccount } from "@/indexer";
 import { defineComponent, reactive } from "vue";
 import DaoStore from "../store/DaoID";
 import { executeReq, ALL_DAOS_REQ } from "@/api";
+import { DaoItemType } from "@/types";
 
 export default defineComponent({
 	name: "AllDao",
@@ -88,7 +89,7 @@ export default defineComponent({
 		executeReq(ALL_DAOS_REQ)
 			.then((res) => {
 				if (res && res.Daos && res.Daos.length) {
-					res.Daos.map((item: any) => {
+					res.Daos.map((item: DaoItemType) => {
 						if (item.app_params) {
 							item.app_params = JSON.parse(item.app_params);
 						}
