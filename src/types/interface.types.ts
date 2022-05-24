@@ -46,3 +46,16 @@ export interface DaoItemType {
 	app_params?: string;
 	asset_id?: number;
 }
+
+export interface DaoTableData {
+	dao_id: number;
+	token_id: number;
+	token_name: string;
+	name: string;
+	link: string;
+	key: number;
+}
+
+export interface UnknownObject {
+	[key: string]: string | number | boolean;
+}

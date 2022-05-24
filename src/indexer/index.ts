@@ -9,6 +9,7 @@ import {
 	APPLICATION,
 	PARAMS,
 	ASSETS,
+	ASSET,
 } from "@/constants";
 import DaoID from "@/store/DaoID";
 import WalletStore from "@/store/WalletStore";
@@ -17,7 +18,7 @@ import { Key, StateValue } from "@algo-builder/algob/build/types";
 import type { LogicSigAccount } from "algosdk";
 import { getProposalLsig } from "../contract/dao";
 import indexerClient from "../config/indexer.config";
-import { SchemaType } from "@/types";
+import { SchemaType, UnknownObject } from "@/types";
 
 export const searchForAssetsByName = async (
 	assetName: string
@@ -229,4 +230,36 @@ export function decodeStateMap(state: Array<any>): Map<Key, StateValue> {
 		}
 	}
 	return stateMap;
+}
+
+export function decodeAppParamsState(state: any): Map<Key, StateValue> {
+	const stateMap = new Map<Key, StateValue>();
+	if (state) {
+		for (const key in state) {
+			if (state[key].at === SchemaType.BYTES) {
+				stateMap.set(
+					Buffer.from(key, "base64").toString("ascii"),
+					Buffer.from(state[key].bs, "base64").toString("ascii")
+				);
+			} else {
+				stateMap.set(
+					Buffer.from(key, "base64").toString("ascii"),
+					state[key].ui
+				);
+			}
+		}
+	}
+	return stateMap;
+}
+
+export async function getAssetInformation(
+	assetId: number
+): Promise<UnknownObject> {
+	try {
+		const assetInfo = await indexerClient.lookupAssetByID(assetId).do();
+		return assetInfo[ASSET][PARAMS];
+	} catch (e) {
+		console.error(e);
+		throw e;
+	}
 }

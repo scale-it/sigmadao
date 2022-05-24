@@ -26,7 +26,9 @@ export default defineStore("DaoStore", {
 			this.locked = undefined;
 		},
 		resetDaoStore() {
-			// clearing user data when dao id is removed
+			// clearing user data when dao id is removed or deselected from dao table
+			this.dao_id = undefined;
+			this.govt_id = undefined;
 			this.name = "";
 			this.available = undefined;
 			this.locked = undefined;

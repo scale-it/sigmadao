@@ -1,50 +1,48 @@
 <template>
-	<opt-in-error>
-		<a-row>
-			<a-col :span="12" :offset="6">
-				<div v-if="error" class="margin_bottom_sm">
-					<a-alert
-						message="Error"
-						:description="error"
-						type="error"
-						show-icon
-						closable
-						@close="error = ''"
-					/>
-				</div>
-				<a-form
-					:label-col="{ span: 12 }"
-					:wrapper-col="{ span: 12 }"
-					:model="formState"
-					name="Vote"
-					autocomplete="off"
-					@finish="onFinish"
-					@finishFailed="onFinishFailed"
-					@validate-messages="validateMessages"
+	<a-row>
+		<a-col :span="12" :offset="6">
+			<div v-if="error" class="margin_bottom_sm">
+				<a-alert
+					message="Error"
+					:description="error"
+					type="error"
+					show-icon
+					closable
+					@close="error = ''"
+				/>
+			</div>
+			<a-form
+				:label-col="{ span: 12 }"
+				:wrapper-col="{ span: 12 }"
+				:model="formState"
+				name="Vote"
+				autocomplete="off"
+				@finish="onFinish"
+				@finishFailed="onFinishFailed"
+				@validate-messages="validateMessages"
+			>
+				<a-form-item
+					label="Vote"
+					name="vote_type"
+					:rules="[{ required: true }]"
 				>
-					<a-form-item
-						label="Vote"
-						name="vote_type"
-						:rules="[{ required: true }]"
+					<a-select
+						v-model:value="formState.vote_type"
+						placeholder="Please select your option"
 					>
-						<a-select
-							v-model:value="formState.vote_type"
-							placeholder="Please select your option"
+						<a-select-option :value="VoteOptions.ABSTAIN"
+							>Abstain</a-select-option
 						>
-							<a-select-option :value="VoteOptions.ABSTAIN"
-								>Abstain</a-select-option
-							>
-							<a-select-option :value="VoteOptions.YES">Yes</a-select-option>
-							<a-select-option :value="VoteOptions.NO">No</a-select-option>
-						</a-select>
-					</a-form-item>
-					<a-form-item :wrapper-col="{ offset: 12, span: 20 }">
-						<a-button type="primary" html-type="submit">Submit</a-button>
-					</a-form-item>
-				</a-form>
-			</a-col>
-		</a-row>
-	</opt-in-error>
+						<a-select-option :value="VoteOptions.YES">Yes</a-select-option>
+						<a-select-option :value="VoteOptions.NO">No</a-select-option>
+					</a-select>
+				</a-form-item>
+				<a-form-item :wrapper-col="{ offset: 12, span: 20 }">
+					<a-button type="primary" html-type="submit">Submit</a-button>
+				</a-form-item>
+			</a-form>
+		</a-col>
+	</a-row>
 </template>
 
 <script lang="ts">
@@ -66,11 +64,9 @@ import { defineComponent, reactive } from "vue";
 import VoteStore from "../store/VoteStore";
 import { DAOActions, VoteOptions } from "../types/enum.types";
 import { getProposalLsig } from "../contract/dao";
-import OptInError from "@/components/OptInError.vue";
 
 export default defineComponent({
 	name: "VotePage",
-	components: { OptInError },
 	data() {
 		return {
 			VoteOptions,

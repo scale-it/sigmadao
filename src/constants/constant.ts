@@ -17,6 +17,7 @@ export const CREATED_APPS = "created-apps";
 export const APPLICATION = "application";
 export const PARAMS = "params";
 export const ASSETS = "assets";
+export const ASSET = "asset";
 
 // DAO App local and global state map keys
 export const LOCAL_STATE_MAP_KEY = {
@@ -25,6 +26,7 @@ export const LOCAL_STATE_MAP_KEY = {
 
 export const GLOBAL_STATE_MAP_KEY = {
 	DaoName: "dao_name",
+	Url: "url",
 };
 
 export const DAY_TO_MILLISECONDS = 1000 * 60 * 60 * 24;

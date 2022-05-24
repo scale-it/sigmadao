@@ -32,6 +32,7 @@
 									class="menu_option"
 									:type="isLinkActive(NavigationKey.ADD_PROPOSAL)"
 									@click="() => handleMenuClick(NavigationKey.ADD_PROPOSAL)"
+									:disabled="!daoID || showOptIn"
 									>Add Proposal</a-button
 								>
 							</router-link>
@@ -40,7 +41,8 @@
 									class="menu_option"
 									:type="isLinkActive(NavigationKey.VOTE_TOKEN)"
 									@click="() => handleMenuClick(NavigationKey.VOTE_TOKEN)"
-									>Vote Tokens</a-button
+									:disabled="!daoID || showOptIn"
+									>Deposit Vote Tokens</a-button
 								>
 							</router-link>
 							<router-link :to="{ path: EndPoint.VOTE }">
@@ -48,6 +50,7 @@
 									class="menu_option"
 									:type="isLinkActive(NavigationKey.PROPOSALS)"
 									@click="() => handleMenuClick(NavigationKey.PROPOSALS)"
+									:disabled="!daoID || showOptIn"
 									>Vote</a-button
 								>
 							</router-link>
