@@ -203,6 +203,7 @@ export default defineComponent({
 							openErrorNotificationWithIcon(UNSUCCESSFUL, error.message);
 						});
 				} else {
+					this.resetDaoStore();
 					openErrorNotificationWithIcon(UNSUCCESSFUL, DAO_ID_ERROR(this.daoID));
 				}
 			} else {
