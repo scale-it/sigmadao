@@ -1,6 +1,6 @@
 /* GraphQL queries */
 export const ALL_DAOS_REQ = (pageNumber: number, pageSize: number) => {
-	return `
+  return `
     query {
       DaoAndPage(pageNumber: ${pageNumber}, pageSize: ${pageSize}) {
         Daos {
@@ -12,7 +12,7 @@ export const ALL_DAOS_REQ = (pageNumber: number, pageSize: number) => {
         hasPrev
         hasNext
       }
-      } 
+      }
     }
   `;
 };
