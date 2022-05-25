@@ -21,6 +21,7 @@ export interface DAO {
 	locked?: number;
 	global_app_state?: Map<Key, StateValue>;
 	show_opt_in: boolean;
+	psqlData: Array<DaoTableData>;
 }
 
 export interface VoteFormState {

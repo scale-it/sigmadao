@@ -45,3 +45,6 @@ export const errorMessage = (key: string) => {
 };
 
 export const UNSUCCESSFUL = "Unsuccessful";
+
+export const DAO_ID_ERROR = (daoId: number) =>
+	`No Application found for Application-ID: ${daoId}`;

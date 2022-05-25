@@ -1,6 +1,11 @@
 <template>
 	<div class="dao_table_container">
-		<a-table :dataSource="dataSource" :columns="columns" bordered>
+		<a-table
+			:dataSource="dataSource"
+			:columns="columns"
+			bordered
+			:pagination="{ hideOnSinglePage: true }"
+		>
 			<template #title>
 				<a-col> <h3 style="text-align: center">Selected DAO</h3> </a-col>
 			</template>
@@ -42,6 +47,7 @@
 						size="small"
 						class="reset_btn"
 						@click="handleReset(clearFilters)"
+						danger
 					>
 						Reset
 					</a-button>
@@ -217,13 +223,13 @@ export default defineComponent({
 	},
 	setup() {
 		const formState = reactive(DaoStore());
-		const dataSource: DaoTableData[] = reactive([]);
 		const state = reactive({
 			searchText: "",
 			searchedColumn: "",
 		});
 		const searchInput = ref();
-
+		const tempArray: Array<DaoTableData> = [];
+		formState.psqlData = tempArray; // prohibit duplication of data
 		// Get all daos
 		// Here 1 --> Page number
 		// 5 --> number of entries to show in single fetch
@@ -236,7 +242,7 @@ export default defineComponent({
 						}
 						const globalState = decodeAppParamsState(item.app_params.dt.gd);
 						const tokenData = await getAssetInformation(item.asset_id);
-						dataSource.push({
+						formState.psqlData.push({
 							key: index,
 							dao_id: item.app_id,
 							token_id: item.asset_id,
@@ -267,7 +273,7 @@ export default defineComponent({
 		return {
 			formState,
 			validateMessages: VALIDATE_MESSAGES,
-			dataSource,
+			dataSource: formState.psqlData,
 			searchInput,
 			handleSearch,
 			handleReset,

@@ -71,7 +71,7 @@
 									/>
 									<div v-else>
 										<div v-if="daoID">{{ daoID }}</div>
-										<div v-else>Enter ID</div>
+										<div v-else class="text_btn">Enter ID</div>
 									</div>
 								</div></a-descriptions-item
 							>
@@ -109,6 +109,7 @@ import { isApplicationOpted, searchApplicationAndAccount } from "@/indexer";
 import { storeToRefs } from "pinia";
 import {
 	daoAppMessage,
+	DAO_ID_ERROR,
 	errorMessage,
 	loadingMessage,
 	openErrorNotificationWithIcon,
@@ -118,6 +119,7 @@ import {
 } from "@/constants";
 import WalletStore from "@/store/WalletStore";
 import { optInDaoApp } from "@/utility";
+import { DaoTableData } from "@/types";
 
 export default defineComponent({
 	components: {
@@ -137,6 +139,7 @@ export default defineComponent({
 			lockedTokens: daoStore.locked,
 			showOptIn: daoStore.show_opt_in,
 			showIDTextField: false,
+			psqlData: daoStore.psqlData,
 			key: "HeaderKey",
 			walletStore,
 			resetDaoStore: DaoStore().resetDaoStore,
@@ -160,36 +163,48 @@ export default defineComponent({
 			this.showIDTextField = false;
 			if (this.daoID) {
 				this.daoID = +this.daoID;
-				loadingMessage(this.key);
-				searchApplicationAndAccount()
-					.then(() => {
-						successMessage(this.key);
-						openSuccessNotificationWithIcon(
-							"Successful",
-							daoAppMessage.SUCCESSFUL(this.daoID as number)
-						);
-						if (this.walletStore.address) {
-							isApplicationOpted(this.walletStore.address, this.daoID as number)
-								.then((appIsOptedIn: boolean) => {
-									this.showOptIn = !appIsOptedIn;
-									if (appIsOptedIn) {
-										openSuccessNotificationWithIcon(
-											daoAppMessage.ALREADY_OPT_IN
-										);
-									}
-								})
-								.catch((error) =>
-									openErrorNotificationWithIcon(
-										daoAppMessage.UNSUCCESFUL,
-										error.message
-									)
-								);
-						}
-					})
-					.catch((error) => {
-						errorMessage(this.key);
-						openErrorNotificationWithIcon(UNSUCCESSFUL, error.message);
-					});
+				// to get gov token id
+				const daoData: DaoTableData | undefined = this.psqlData.find(
+					(daoData: DaoTableData) => daoData.dao_id === this.daoID
+				);
+				if (daoData) {
+					this.govtId = daoData.token_id;
+					loadingMessage(this.key);
+					searchApplicationAndAccount()
+						.then(() => {
+							successMessage(this.key);
+							openSuccessNotificationWithIcon(
+								"Successful",
+								daoAppMessage.SUCCESSFUL(this.daoID as number)
+							);
+							if (this.walletStore.address) {
+								isApplicationOpted(
+									this.walletStore.address,
+									this.daoID as number
+								)
+									.then((appIsOptedIn: boolean) => {
+										this.showOptIn = !appIsOptedIn;
+										if (appIsOptedIn) {
+											openSuccessNotificationWithIcon(
+												daoAppMessage.ALREADY_OPT_IN
+											);
+										}
+									})
+									.catch((error) =>
+										openErrorNotificationWithIcon(
+											daoAppMessage.UNSUCCESFUL,
+											error.message
+										)
+									);
+							}
+						})
+						.catch((error) => {
+							errorMessage(this.key);
+							openErrorNotificationWithIcon(UNSUCCESSFUL, error.message);
+						});
+				} else {
+					openErrorNotificationWithIcon(UNSUCCESSFUL, DAO_ID_ERROR(this.daoID));
+				}
 			} else {
 				// when daoID is removed
 				this.resetDaoStore();
