@@ -1,6 +1,13 @@
-const { GraphQLObjectType, GraphQLString, GraphQLInt } = require("graphql");
+const {
+	GraphQLObjectType,
+	GraphQLString,
+	GraphQLInt,
+	GraphQLBoolean,
+	GraphQLList,
+} = require("graphql");
+import { DaoAndPageResType } from "../types";
 
-export const DaoType = new GraphQLObjectType({
+const DaoType = new GraphQLObjectType({
 	name: "Dao",
 	description: "Dao Single Record",
 	fields: () => ({
@@ -10,5 +17,31 @@ export const DaoType = new GraphQLObjectType({
 			description: "app params like global state etc.",
 		},
 		asset_id: { type: GraphQLInt, description: "asset id" },
+	}),
+});
+
+const PageInfoType = new GraphQLObjectType({
+	name: "Page",
+	description: "Page Info",
+	fields: () => ({
+		hasPrev: { type: GraphQLBoolean, description: "Prev page exists or not" },
+		hasNext: { type: GraphQLBoolean, description: "Next page exists or not" },
+	}),
+});
+
+export const DaosAndPageInfoType = new GraphQLObjectType({
+	name: "DaoAndPage",
+	description: "Dao and Page Info",
+	fields: () => ({
+		Daos: {
+			type: new GraphQLList(DaoType),
+			description: "All Daos",
+			resolve: (parent: DaoAndPageResType) => parent.Daos || [],
+		},
+		pageInfo: {
+			type: PageInfoType,
+			description: "Page Info",
+			resolve: (parent: DaoAndPageResType) => parent.pageInfo,
+		},
 	}),
 });
