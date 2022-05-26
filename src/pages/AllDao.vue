@@ -4,7 +4,7 @@
 			:dataSource="dataSource"
 			:columns="columns"
 			bordered
-			:pagination="{ hideOnSinglePage: true }"
+			:pagination="false"
 		>
 			<template #title>
 				<a-col> <h3 style="text-align: center">Sigma DAOs</h3> </a-col>
@@ -97,6 +97,15 @@
 			</template>
 		</a-table>
 	</div>
+	<a-col :offset="15">
+		<a-pagination
+			:hideOnSinglePage="true"
+			v-model:current="currentPage"
+			:pageSize="ROWS_PER_PAGE"
+			:total="totalDataRows"
+			@change="(page) => handlePageChange(page)"
+		/>
+	</a-col>
 </template>
 
 <script lang="ts">
@@ -107,6 +116,7 @@ import {
 	loadingMessage,
 	openErrorNotificationWithIcon,
 	openSuccessNotificationWithIcon,
+	ROWS_PER_PAGE,
 	SUCCESSFUL,
 	successMessage,
 	UNSUCCESSFUL,
@@ -175,9 +185,15 @@ export default defineComponent({
 				},
 			],
 			walletStore: WalletStore(),
+			currentPage: ref(1),
+			totalDataRows: ROWS_PER_PAGE,
+			ROWS_PER_PAGE,
 		};
 	},
 	methods: {
+		handlePageChange(page: number) {
+			this.fetchDataForDAO(page);
+		},
 		handleSelectDAO(data: DaoTableData) {
 			this.formState.govt_id = data.token_id;
 			this.formState.dao_id = data.dao_id;
@@ -235,6 +251,37 @@ export default defineComponent({
 		handleFilterData(value: string, record: DaoTableData) {
 			return record.name.toString().toLowerCase().includes(value.toLowerCase());
 		},
+		fetchDataForDAO(currentPage: number) {
+			executeReq(getAllDaoReq(currentPage, ROWS_PER_PAGE))
+				.then((res) => {
+					if (res && res.DaoAndPage) {
+						if (res.DaoAndPage.Daos.length) {
+							res.DaoAndPage.Daos.map(async (item: any, index: number) => {
+								if (item.app_params) {
+									item.app_params = JSON.parse(item.app_params);
+								}
+								const globalState = decodeAppParamsState(item.app_params.dt.gd);
+								const tokenData = await getAssetInformation(item.asset_id);
+								this.formState.psqlData.push({
+									key: index,
+									dao_id: item.app_id,
+									token_id: item.asset_id,
+									token_name: tokenData.name as string,
+									name: globalState.get(GLOBAL_STATE_MAP_KEY.DaoName) as string,
+									link: globalState.get(GLOBAL_STATE_MAP_KEY.Url) as string,
+								});
+							});
+						}
+						if (res.DaoAndPage.pageInfo && res.DaoAndPage.pageInfo.hasNext) {
+							this.totalDataRows = this.totalDataRows + ROWS_PER_PAGE;
+							console.log(this.totalDataRows);
+						}
+					}
+				})
+				.catch((error) =>
+					openErrorNotificationWithIcon(UNSUCCESSFUL, error.message)
+				);
+		},
 	},
 	setup() {
 		const formState = reactive(DaoStore());
@@ -245,34 +292,6 @@ export default defineComponent({
 		const searchInput = ref();
 		const tempArray: Array<DaoTableData> = [];
 		formState.psqlData = tempArray; // prohibit duplication of data
-		// Get all daos
-		// Here 40 --> Page size
-		executeReq(getAllDaoReq(40, null, null, null))
-			.then((res) => {
-				if (res && res.allSigmaDaos && res.allSigmaDaos.nodes.length) {
-					res.allSigmaDaos.nodes.map(async (item: any, index: number) => {
-						if (item.appParams) {
-							item.appParams = JSON.parse(item.appParams);
-						}
-						const globalState = decodeAppParamsState(item.appParams.dt.gd);
-						const tokenData = await getAssetInformation(item.assetId);
-						formState.psqlData.push({
-							key: index,
-							dao_id: item.appId,
-							token_id: item.assetId,
-							token_name: tokenData.name as string,
-							name: globalState.get(GLOBAL_STATE_MAP_KEY.DaoName) as string,
-							link: globalState.get(GLOBAL_STATE_MAP_KEY.Url) as string,
-						});
-					});
-					console.log(res);
-					// total daos
-					console.log(res.allSigmaDaos.totalCount);
-					// pagination info
-					console.log(res.allSigmaDaos.pageInfo);
-				}
-			})
-			.catch((err) => console.error(err));
 
 		return {
 			formState,
@@ -281,6 +300,9 @@ export default defineComponent({
 			searchInput,
 			...toRefs(state),
 		};
+	},
+	mounted() {
+		this.fetchDataForDAO(1);
 	},
 });
 </script>
