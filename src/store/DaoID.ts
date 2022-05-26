@@ -37,4 +37,10 @@ export default defineStore("DaoStore", {
 			this.show_opt_in = false;
 		},
 	},
+	getters: {
+		// if dao id is not selected or if app is not opted in
+		disableActions(state) {
+			return !state.dao_id || state.show_opt_in;
+		},
+	},
 });
