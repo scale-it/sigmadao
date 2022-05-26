@@ -32,7 +32,7 @@
 									class="menu_option"
 									:type="isLinkActive(NavigationKey.ADD_PROPOSAL)"
 									@click="() => handleMenuClick(NavigationKey.ADD_PROPOSAL)"
-									:disabled="!daoID || showOptIn"
+									:disabled="disableActions"
 									>Add Proposal</a-button
 								>
 							</router-link>
@@ -41,7 +41,7 @@
 									class="menu_option"
 									:type="isLinkActive(NavigationKey.VOTE_TOKEN)"
 									@click="() => handleMenuClick(NavigationKey.VOTE_TOKEN)"
-									:disabled="!daoID || showOptIn"
+									:disabled="disableActions"
 									>Deposit Vote Tokens</a-button
 								>
 							</router-link>
@@ -50,7 +50,7 @@
 									class="menu_option"
 									:type="isLinkActive(NavigationKey.PROPOSALS)"
 									@click="() => handleMenuClick(NavigationKey.PROPOSALS)"
-									:disabled="!daoID || showOptIn"
+									:disabled="disableActions"
 									>Vote</a-button
 								>
 							</router-link>
@@ -143,6 +143,7 @@ export default defineComponent({
 			key: "HeaderKey",
 			walletStore,
 			resetDaoStore: DaoStore().resetDaoStore,
+			disableActions: !DaoStore().dao_id || daoStore.show_opt_in, // if dao id is not selected or if app is not opted in
 		};
 	},
 	methods: {

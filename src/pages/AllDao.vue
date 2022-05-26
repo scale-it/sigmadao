@@ -29,9 +29,7 @@
 						:placeholder="`Search ${column.dataIndex}`"
 						:value="selectedKeys[0]"
 						class="search_input"
-						@change="
-							(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])
-						"
+						@change="(e) => handleInputChange(e, setSelectedKeys)"
 						@pressEnter="handleSearch(selectedKeys, confirm, column.dataIndex)"
 					/>
 					<a-button
@@ -146,13 +144,8 @@ export default defineComponent({
 					key: "name",
 					dataIndex: "name",
 					customFilterDropdown: true,
-					onFilter: (value: string, record: DaoTableData) => {
-						return record.name
-							.toString()
-							.toLowerCase()
-							.includes(value.toLowerCase());
-					},
-
+					onFilter: (value: string, record: DaoTableData) =>
+						this.handleFilterData(value, record),
 					onFilterDropdownVisibleChange: (visible: boolean) => {
 						if (visible && this.$refs.searchInput) {
 							setTimeout(() => {
@@ -220,6 +213,28 @@ export default defineComponent({
 		handleDeSelectDao() {
 			this.formState.resetDaoStore();
 		},
+		handleSearch(
+			selectedKeys: string[],
+			confirm: (param?: any) => void,
+			dataIndex: string
+		) {
+			confirm();
+			this.searchText = selectedKeys[0];
+			this.searchedColumn = dataIndex;
+		},
+		handleReset(clearFilters: (param: any) => void) {
+			clearFilters({ confirm: true });
+			this.searchText = "";
+		},
+		handleInputChange(
+			e: any,
+			setSelectedKeys: (selectedKeys: string[]) => void
+		) {
+			setSelectedKeys(e.target.value ? [e.target.value] : []);
+		},
+		handleFilterData(value: string, record: DaoTableData) {
+			return record.name.toString().toLowerCase().includes(value.toLowerCase());
+		},
 	},
 	setup() {
 		const formState = reactive(DaoStore());
@@ -255,28 +270,11 @@ export default defineComponent({
 			})
 			.catch((err) => console.error(err));
 
-		const handleSearch = (
-			selectedKeys: string[],
-			confirm: (param?: any) => void,
-			dataIndex: string
-		) => {
-			confirm();
-			state.searchText = selectedKeys[0];
-			state.searchedColumn = dataIndex;
-		};
-
-		const handleReset = (clearFilters: (param: any) => void) => {
-			clearFilters({ confirm: true });
-			state.searchText = "";
-		};
-
 		return {
 			formState,
 			validateMessages: VALIDATE_MESSAGES,
 			dataSource: formState.psqlData,
 			searchInput,
-			handleSearch,
-			handleReset,
 			...toRefs(state),
 		};
 	},
