@@ -1,5 +1,5 @@
 /* GraphQL queries */
-export const ALL_DAOS_REQ = (pageNumber: number, pageSize: number) => {
+export const getAllDaoReq = (pageNumber: number, pageSize: number) => {
 	return `
     query {
       DaoAndPage(pageNumber: ${pageNumber}, pageSize: ${pageSize}) {
