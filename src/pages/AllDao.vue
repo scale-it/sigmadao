@@ -52,7 +52,7 @@ import {
 import { searchApplicationAndAccount } from "@/indexer";
 import { defineComponent, reactive } from "vue";
 import DaoStore from "../store/DaoID";
-import { executeReq, ALL_DAOS_REQ } from "@/api";
+import { executeReq, getAllDaoReq } from "@/api";
 import { DaoItemType } from "@/types";
 
 export default defineComponent({
@@ -86,16 +86,18 @@ export default defineComponent({
 	setup() {
 		const formState = reactive(DaoStore());
 		// Get all daos
-		executeReq(ALL_DAOS_REQ)
+		// Here 1 --> Page number
+		// 5 --> number of entries to show in single fetch
+		executeReq(getAllDaoReq(1, 5))
 			.then((res) => {
-				if (res && res.Daos && res.Daos.length) {
-					res.Daos.map((item: DaoItemType) => {
+				if (res && res.DaoAndPage && res.DaoAndPage.Daos.length) {
+					res.DaoAndPage.Daos.map((item: DaoItemType) => {
 						if (item.app_params) {
 							item.app_params = JSON.parse(item.app_params);
 						}
 						return item;
 					});
-					console.log(res.Daos);
+					console.log(res.DaoAndPage);
 				}
 			})
 			.catch((err) => console.error(err));
