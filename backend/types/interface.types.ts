@@ -9,7 +9,13 @@ export interface DaoArgType {
 	pageSize: number;
 }
 
+interface pageInfo {
+	hasPrev: boolean;
+	hasNext: boolean;
+	totalDaos: number;
+}
+
 export interface DaoAndPageResType {
-	Daos: object;
-	pageInfo: object;
+	daos: [DaoItemType];
+	pageInfo: pageInfo;
 }

@@ -17,7 +17,7 @@ const validateRes = (totalDaosRes: any, paginateRes: any, args: DaoArgType) => {
 
 const getDaoPageRes = (
 	totalDaos: number,
-	Daos: [DaoItemType],
+	daos: [DaoItemType],
 	args: DaoArgType
 ): DaoAndPageResType => {
 	const pageNumber = args.pageNumber; // page number = 1..n
@@ -25,10 +25,11 @@ const getDaoPageRes = (
 	const hasNext = !(pageNumber * pageSize >= totalDaos); // check if user's total page iterated is >= totalDaos
 	const hasPrev = !(pageNumber <= 1); // check if user is on first page
 	return {
-		Daos,
+		daos,
 		pageInfo: {
 			hasNext,
 			hasPrev,
+			totalDaos,
 		},
 	};
 };

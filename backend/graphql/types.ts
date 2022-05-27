@@ -26,6 +26,7 @@ const PageInfoType = new GraphQLObjectType({
 	fields: () => ({
 		hasPrev: { type: GraphQLBoolean, description: "Prev page exists or not" },
 		hasNext: { type: GraphQLBoolean, description: "Next page exists or not" },
+		totalDaos: { type: GraphQLInt, description: "Total number of daos" },
 	}),
 });
 
@@ -36,7 +37,7 @@ export const DaosAndPageInfoType = new GraphQLObjectType({
 		Daos: {
 			type: new GraphQLList(DaoType),
 			description: "All Daos",
-			resolve: (parent: DaoAndPageResType) => parent.Daos || [],
+			resolve: (parent: DaoAndPageResType) => parent.daos || [],
 		},
 		pageInfo: {
 			type: PageInfoType,
