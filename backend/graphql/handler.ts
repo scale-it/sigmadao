@@ -15,7 +15,7 @@ const validateRes = (totalDaosRes: any, paginateRes: any, args: Page) => {
 	);
 };
 
-const getDaoPageRes = (
+const combineDaosAndPage = (
 	totalDaos: number,
 	daos: [DaoItemType],
 	args: Page
@@ -64,7 +64,7 @@ export const queryRoot = new GraphQLObjectType({
 						}
 						return item;
 					});
-					return getDaoPageRes(totalDaos, paginateRes.rows, args);
+					return combineDaosAndPage(totalDaos, paginateRes.rows, args);
 				}
 				return [];
 			},
