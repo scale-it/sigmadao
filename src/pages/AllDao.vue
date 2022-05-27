@@ -256,6 +256,8 @@ export default defineComponent({
 				.then((res) => {
 					if (res && res.DaoAndPage) {
 						if (res.DaoAndPage.Daos.length) {
+							const temp: Array<DaoTableData> = [];
+							this.formState.psqlData = temp;
 							res.DaoAndPage.Daos.map(async (item: any, index: number) => {
 								if (item.app_params) {
 									item.app_params = JSON.parse(item.app_params);
@@ -272,9 +274,9 @@ export default defineComponent({
 								});
 							});
 						}
-						if (res.DaoAndPage.pageInfo && res.DaoAndPage.pageInfo.hasNext) {
-							this.totalDataRows = this.totalDataRows + ROWS_PER_PAGE;
-							console.log(this.totalDataRows);
+						// setting it only at first call since it doesn't change i.e for page 1
+						if (currentPage === 1 && res.DaoAndPage.pageInfo) {
+							this.totalDataRows = res.DaoAndPage.pageInfo.totalDaos;
 						}
 					}
 				})
