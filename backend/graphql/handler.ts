@@ -59,6 +59,7 @@ export const queryRoot = new GraphQLObjectType({
 					const totalDaos = totalDaosRes.rows[0].count || 0;
 					paginateRes.rows.map((item: DaoItemType) => {
 						if (item.app_params) {
+							// TODO: Get rid of this stringify
 							item.app_params = JSON.stringify(item.app_params);
 						}
 						return item;
