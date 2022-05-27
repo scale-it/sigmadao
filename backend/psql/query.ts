@@ -6,4 +6,4 @@ export const QUERY_GET_DAOS_COUNT = "SELECT COUNT(*) FROM sigma_daos";
  * @param pageSize Number of data to show in single page/fetch.
  */
 export const getPaginatedDaos = (pageNumber: number, pageSize: number) =>
-    `SELECT * FROM sigma_daos OFFSET ((${pageNumber}-1)*${pageSize}) ROWS FETCH NEXT ${pageSize} ROWS ONLY;`;
+	`SELECT * FROM sigma_daos OFFSET ((${pageNumber}-1)*${pageSize}) ROWS FETCH NEXT ${pageSize} ROWS ONLY;`;
