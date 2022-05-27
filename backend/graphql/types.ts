@@ -20,7 +20,7 @@ const DaoType = new GraphQLObjectType({
 	}),
 });
 
-const PageInfoType = new GraphQLObjectType({
+const PageType = new GraphQLObjectType({
 	name: "Page",
 	description: "Page Info",
 	fields: () => ({
