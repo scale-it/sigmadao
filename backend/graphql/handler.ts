@@ -1,5 +1,5 @@
 import { executeQuery } from "../psql/queryExecute";
-import { QUERY_GET_DAOS_COUNT, getPageQuery } from "../psql/query";
+import { QUERY_GET_DAOS_COUNT, getPaginatedDaos } from "../psql/query";
 import { DaosAndPageType } from "./types";
 import { DaoItemType, Page, DaosAndPageResType } from "../types";
 const { GraphQLObjectType, GraphQLInt, GraphQLNonNull } = require("graphql");
@@ -53,7 +53,7 @@ export const queryRoot = new GraphQLObjectType({
 			resolve: async (_: object, args: Page) => {
 				const totalDaosRes = await executeQuery(QUERY_GET_DAOS_COUNT);
 				const paginateRes = await executeQuery(
-					getPageQuery(args.pageNumber, args.pageSize)
+					getPaginatedDaos(args.pageNumber, args.pageSize)
 				);
 				if (validateRes(totalDaosRes, paginateRes, args)) {
 					const totalDaos = totalDaosRes.rows[0].count || 0;
