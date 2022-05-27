@@ -11,6 +11,7 @@ export const ALL_DAOS_REQ = (pageNumber: number, pageSize: number) => {
       pageInfo {
         hasPrev
         hasNext
+        totalDaos
       }
       }
     }
