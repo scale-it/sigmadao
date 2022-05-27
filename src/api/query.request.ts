@@ -1,19 +1,20 @@
 /* GraphQL queries */
 export const getAllDaoReq = (pageNumber: number, pageSize: number) => {
 	return `
-    query {
-      DaoAndPage(pageNumber: ${pageNumber}, pageSize: ${pageSize}) {
-        Daos {
-          app_id
-          app_params
-          asset_id
-        }
-      PageInfo {
-        hasPrev
-        hasNext
-        totalDaos
+  query Query {
+    allSigmaDaos(first: ${pageSize}, offset: ${(pageNumber - 1) * pageSize}) {
+      nodes {
+        appId
+        appParams
+        assetId
       }
+      totalCount
+      pageInfo {
+        hasNextPage
+        hasPreviousPage
       }
     }
+  }
+  
   `;
 };

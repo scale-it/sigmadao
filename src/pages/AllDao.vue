@@ -250,8 +250,8 @@ export default defineComponent({
 		// 5 --> number of entries to show in single fetch
 		executeReq(getAllDaoReq(1, 5))
 			.then((res) => {
-				if (res && res.Daos && res.Daos.length) {
-					res.Daos.map(async (item: any, index: number) => {
+				if (res && res.allSigmaDaos && res.allSigmaDaos.nodes.length) {
+					res.allSigmaDaos.nodes.map(async (item: any, index: number) => {
 						if (item.app_params) {
 							item.app_params = JSON.parse(item.app_params);
 						}
@@ -266,6 +266,11 @@ export default defineComponent({
 							link: globalState.get(GLOBAL_STATE_MAP_KEY.Url) as string,
 						});
 					});
+					console.log(res);
+					// total daos
+					console.log(res.allSigmaDaos.totalCount);
+					// pagination info
+					console.log(res.allSigmaDaos.pageInfo);
 				}
 			})
 			.catch((err) => console.error(err));
