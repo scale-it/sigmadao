@@ -4,7 +4,7 @@ export interface DaoItemType {
 	asset_id?: number;
 }
 
-export interface DaoArgType {
+export interface Page {
 	pageNumber: number;
 	pageSize: number;
 }
