@@ -7,7 +7,7 @@
 			:pagination="{ hideOnSinglePage: true }"
 		>
 			<template #title>
-				<a-col> <h3 style="text-align: center">Selected DAO</h3> </a-col>
+				<a-col> <h3 style="text-align: center">Sigma DAOs</h3> </a-col>
 			</template>
 			<template #headerCell="{ column }">
 				<template v-if="column.key === 'name'">

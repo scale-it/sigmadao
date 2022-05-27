@@ -60,19 +60,26 @@
 				<a-row class="dao-table">
 					<a-col :span="24">
 						<a-descriptions :column="5" size="small" bordered layout="vertical">
-							<a-descriptions-item label="DAO App ID">
+							<a-descriptions-item>
+								<template #label>
+									<div class="flexbox_justify_space">
+										DAO App ID
+										<SearchOutlined />
+									</div>
+								</template>
+
 								<div @click="handleIDListener">
 									<a-input
 										v-model:value="daoID"
 										type="number"
-										v-if="showIDTextField"
 										@keyup.enter="searchID"
 										@blur="searchID"
+										placeholder="Enter ID"
 									/>
-									<div v-else>
+									<!-- <div v-else>
 										<div v-if="daoID">{{ daoID }}</div>
 										<div v-else class="text_btn">Enter ID</div>
-									</div>
+									</div> -->
 								</div></a-descriptions-item
 							>
 							<a-descriptions-item label="DAO Name">{{
@@ -120,10 +127,12 @@ import {
 import WalletStore from "@/store/WalletStore";
 import { optInDaoApp } from "@/utility";
 import { DaoTableData } from "@/types";
+import { SearchOutlined } from "@ant-design/icons-vue";
 
 export default defineComponent({
 	components: {
 		WalletConnect,
+		SearchOutlined,
 	},
 	data() {
 		const daoStore = storeToRefs(DaoStore());
