@@ -17,5 +17,5 @@ interface PageInfo {
 
 export interface DaosAndPageResType {
 	daos: [DaoItemType];
-	pageInfo: pageInfo;
+	PageInfo: PageInfo;
 }

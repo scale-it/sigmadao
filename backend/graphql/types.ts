@@ -5,7 +5,7 @@ const {
 	GraphQLBoolean,
 	GraphQLList,
 } = require("graphql");
-import { DaoAndPageResType } from "../types";
+import { DaosAndPageResType } from "../types";
 
 const DaoType = new GraphQLObjectType({
 	name: "Dao",
@@ -30,19 +30,19 @@ const PageType = new GraphQLObjectType({
 	}),
 });
 
-export const DaosAndPageInfoType = new GraphQLObjectType({
+export const DaosAndPageType = new GraphQLObjectType({
 	name: "DaoAndPage",
 	description: "Dao and Page Info",
 	fields: () => ({
 		Daos: {
 			type: new GraphQLList(DaoType),
 			description: "All Daos",
-			resolve: (parent: DaoAndPageResType) => parent.daos || [],
+			resolve: (parent: DaosAndPageResType) => parent.daos || [],
 		},
-		pageInfo: {
-			type: PageInfoType,
+		PageInfo: {
+			type: PageType,
 			description: "Page Info",
-			resolve: (parent: DaoAndPageResType) => parent.pageInfo,
+			resolve: (parent: DaosAndPageResType) => parent.PageInfo,
 		},
 	}),
 });

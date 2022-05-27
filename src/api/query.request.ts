@@ -8,7 +8,7 @@ export const getAllDaoReq = (pageNumber: number, pageSize: number) => {
           app_params
           asset_id
         }
-      pageInfo {
+      PageInfo {
         hasPrev
         hasNext
         totalDaos

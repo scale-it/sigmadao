@@ -1,10 +1,10 @@
 import { executeQuery } from "../psql/queryExecute";
 import { QUERY_GET_DAOS_COUNT, getPaginatedQuery } from "../psql/query";
-import { DaosAndPageInfoType } from "./types";
-import { DaoItemType, DaoArgType, DaoAndPageResType } from "../types";
+import { DaosAndPageType } from "./types";
+import { DaoItemType, Page, DaosAndPageResType } from "../types";
 const { GraphQLObjectType, GraphQLInt, GraphQLNonNull } = require("graphql");
 
-const validateRes = (totalDaosRes: any, paginateRes: any, args: DaoArgType) => {
+const validateRes = (totalDaosRes: any, paginateRes: any, args: Page) => {
 	return (
 		totalDaosRes &&
 		totalDaosRes.rows &&
@@ -18,15 +18,15 @@ const validateRes = (totalDaosRes: any, paginateRes: any, args: DaoArgType) => {
 const getDaoPageRes = (
 	totalDaos: number,
 	daos: [DaoItemType],
-	args: DaoArgType
-): DaoAndPageResType => {
+	args: Page
+): DaosAndPageResType => {
 	const pageNumber = args.pageNumber; // page number = 1..n
 	const pageSize = args.pageSize;
 	const hasNext = !(pageNumber * pageSize >= totalDaos); // check if user's total page iterated is >= totalDaos
 	const hasPrev = !(pageNumber <= 1); // check if user is on first page
 	return {
 		daos,
-		pageInfo: {
+		PageInfo: {
 			hasNext,
 			hasPrev,
 			totalDaos,
@@ -38,7 +38,7 @@ export const queryRoot = new GraphQLObjectType({
 	name: "Query",
 	fields: () => ({
 		DaoAndPage: {
-			type: DaosAndPageInfoType,
+			type: DaosAndPageType,
 			description: "Returns Dao Records and Page Info",
 			args: {
 				pageNumber: {
@@ -50,7 +50,7 @@ export const queryRoot = new GraphQLObjectType({
 					description: "Offset as an argument.",
 				},
 			},
-			resolve: async (_: object, args: DaoArgType) => {
+			resolve: async (_: object, args: Page) => {
 				const totalDaosRes = await executeQuery(QUERY_GET_DAOS_COUNT);
 				const paginateRes = await executeQuery(
 					getPaginatedQuery(args.pageNumber, args.pageSize)
