@@ -9,7 +9,7 @@ export interface Page {
 	pageSize: number;
 }
 
-interface pageInfo {
+interface PageInfo {
 	hasPrev: boolean;
 	hasNext: boolean;
 	totalDaos: number;
