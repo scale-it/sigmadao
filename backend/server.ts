@@ -1,6 +1,3 @@
-/*  Please run below query in shell to get more interactive GraphiQL UI. Very helpful in debugging
-	npx postgraphile -c 'postgres://algorand:indexer@localhost/pgdb' --watch --enhance-graphl --dynamic-json
-*/
 import { BACKEND_PORT } from "./config";
 import { dbUrl } from "./psql";
 const { postgraphile } = require("postgraphile");
@@ -15,6 +12,7 @@ app.use(
 		ignoreRBAC: true,
 		extendedErrors: ["errcode", "detail", "hint"],
 		graphiql: true,
+		enhanceGraphiql: true,
 		graphqlRoute: "/api",
 		graphiqlRoute: "/graphiql",
 	})
