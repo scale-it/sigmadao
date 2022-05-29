@@ -188,6 +188,7 @@ export default defineComponent({
 			currentPage: ref(1),
 			totalDataRows: ROWS_PER_PAGE,
 			ROWS_PER_PAGE,
+			dataSource: [] as DaoTableData[],
 		};
 	},
 	methods: {
@@ -249,6 +250,7 @@ export default defineComponent({
 			setSelectedKeys(e.target.value ? [e.target.value] : []);
 		},
 		handleFilterData(value: string, record: DaoTableData) {
+			// TODO: update to use filter from backend (for name)
 			return record.name.toString().toLowerCase().includes(value.toLowerCase());
 		},
 		fetchDataForDAO(currentPage: number) {
@@ -256,27 +258,37 @@ export default defineComponent({
 				.then((res) => {
 					if (res && res.DaoAndPage) {
 						if (res.DaoAndPage.Daos.length) {
-							const temp: Array<DaoTableData> = [];
-							this.formState.psqlData = temp;
+							// clean existing data in temp array with change of page
+							if (this.dataSource.length) {
+								this.dataSource = [];
+							}
 							res.DaoAndPage.Daos.map(async (item: any, index: number) => {
 								if (item.app_params) {
 									item.app_params = JSON.parse(item.app_params);
 								}
 								const globalState = decodeAppParamsState(item.app_params.dt.gd);
 								const tokenData = await getAssetInformation(item.asset_id);
-								this.formState.psqlData.push({
+								let data = {
 									key: index,
 									dao_id: item.app_id,
 									token_id: item.asset_id,
 									token_name: tokenData.name as string,
 									name: globalState.get(GLOBAL_STATE_MAP_KEY.DaoName) as string,
 									link: globalState.get(GLOBAL_STATE_MAP_KEY.Url) as string,
-								});
+								};
+								this.dataSource.push(data);
+								// pushing data to store only if it doesn't exists
+								let dataExists = this.formState.psqlData.find(
+									(row) => row.dao_id === item.app_id
+								);
+								if (!dataExists) {
+									this.formState.psqlData.push(data);
+								}
 							});
 						}
 						// setting it only at first call since it doesn't change i.e for page 1
-						if (currentPage === 1 && res.DaoAndPage.pageInfo) {
-							this.totalDataRows = res.DaoAndPage.pageInfo.totalDaos;
+						if (currentPage === 1 && res.DaoAndPage.PageInfo) {
+							this.totalDataRows = res.DaoAndPage.PageInfo.totalDaos;
 						}
 					}
 				})
@@ -292,13 +304,10 @@ export default defineComponent({
 			searchedColumn: "",
 		});
 		const searchInput = ref();
-		const tempArray: Array<DaoTableData> = [];
-		formState.psqlData = tempArray; // prohibit duplication of data
 
 		return {
 			formState,
 			validateMessages: VALIDATE_MESSAGES,
-			dataSource: formState.psqlData,
 			searchInput,
 			...toRefs(state),
 		};

@@ -66,4 +66,4 @@ export const walletMessage = {
 		`Please select a network to connect with ${walletType}`,
 };
 
-export const ROWS_PER_PAGE = 2; // for pagination
+export const ROWS_PER_PAGE = 40; // for pagination
