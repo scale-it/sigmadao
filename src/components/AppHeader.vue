@@ -75,13 +75,8 @@
 										@keyup.enter="searchID"
 										@blur="searchID"
 										placeholder="Enter ID"
-									/>
-									<!-- <div v-else>
-										<div v-if="daoID">{{ daoID }}</div>
-										<div v-else class="text_btn">Enter ID</div>
-									</div> -->
-								</div></a-descriptions-item
-							>
+									/></div
+							></a-descriptions-item>
 							<a-descriptions-item label="DAO Name">{{
 								name
 							}}</a-descriptions-item>
@@ -172,7 +167,9 @@ export default defineComponent({
 		async searchID() {
 			this.showIDTextField = false;
 			if (this.daoID) {
+				const tempDaoID: number = +this.daoID;
 				this.daoID = +this.daoID;
+				// TODO: update to use filter from backend (for daoID)
 				// to get gov token id
 				const daoData: DaoTableData | undefined = this.psqlData.find(
 					(daoData: DaoTableData) => daoData.dao_id === this.daoID
@@ -214,7 +211,7 @@ export default defineComponent({
 						});
 				} else {
 					this.resetDaoStore();
-					openErrorNotificationWithIcon(UNSUCCESSFUL, DAO_ID_ERROR(this.daoID));
+					openErrorNotificationWithIcon(UNSUCCESSFUL, DAO_ID_ERROR(tempDaoID));
 				}
 			} else {
 				// when daoID is removed
