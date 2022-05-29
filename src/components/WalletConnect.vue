@@ -105,8 +105,8 @@ import {
 	WebMode,
 } from "@algo-builder/web";
 import WalletStore from "../store/WalletStore";
-import { searchForAssetsByName, searchApplicationAndAccount } from "@/indexer";
-import { GOV_TOKEN_ASSET, walletMessage } from "../constants/constant";
+import { searchApplicationAndAccount } from "@/indexer";
+import { walletMessage } from "../constants/constant";
 import DaoID from "@/store/DaoID";
 import {
 	openErrorNotificationWithIcon,
@@ -128,26 +128,6 @@ export default defineComponent({
 			NetworkTypes,
 			walletAddresses: new Array<string>(),
 		};
-	},
-	mounted() {
-		searchForAssetsByName(GOV_TOKEN_ASSET)
-			.then((response) => {
-				if (response && response.assets && response.assets.length) {
-					let assetLength: number = response.assets.length;
-					if (response.assets[assetLength - 1].params) {
-						DaoID().setGovtId(response.assets[assetLength - 1].index);
-						console.log(
-							"Gov Token Info:",
-							response.assets[assetLength - 1].params
-						);
-					}
-				} else {
-					console.warn("gov-token not found");
-				}
-			})
-			.catch((error) => {
-				console.log(error);
-			});
 	},
 	setup() {
 		const walletStore = WalletStore();

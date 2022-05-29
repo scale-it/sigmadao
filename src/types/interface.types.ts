@@ -21,6 +21,7 @@ export interface DAO {
 	locked?: number;
 	global_app_state?: Map<Key, StateValue>;
 	show_opt_in: boolean;
+	psqlData: Array<DaoTableData>;
 }
 
 export interface VoteFormState {
@@ -45,4 +46,17 @@ export interface DaoItemType {
 	app_id?: number;
 	app_params?: string;
 	asset_id?: number;
+}
+
+export interface DaoTableData {
+	dao_id: number;
+	token_id: number;
+	token_name: string;
+	name: string;
+	link: string;
+	key: number;
+}
+
+export interface UnknownObject {
+	[key: string]: string | number | boolean;
 }

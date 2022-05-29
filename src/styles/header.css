@@ -25,3 +25,9 @@
 .logo {
 	max-width: 12rem;
 }
+
+.text_btn {
+	color: #1890ff;
+	cursor: pointer;
+	font-size: 1.6rem;
+}

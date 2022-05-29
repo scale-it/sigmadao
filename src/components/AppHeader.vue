@@ -12,13 +12,6 @@
 					<a-col class="menu" :span="24">
 						<div>
 							<!-- add route after page component is added  -->
-							<a-button
-								class="menu_option"
-								:type="isLinkActive(NavigationKey.CREATE_DAO)"
-								@click="() => handleMenuClick(NavigationKey.CREATE_DAO)"
-								>Create DAO</a-button
-							>
-
 							<router-link :to="{ path: EndPoint.ALL_DAO }">
 								<a-button
 									class="menu_option"
@@ -27,11 +20,19 @@
 									>All DAOs</a-button
 								>
 							</router-link>
+							<a-button
+								class="menu_option"
+								:type="isLinkActive(NavigationKey.CREATE_DAO)"
+								@click="() => handleMenuClick(NavigationKey.CREATE_DAO)"
+								>Create DAO</a-button
+							>
+
 							<router-link :to="{ path: EndPoint.ADD_PROPOSAL }">
 								<a-button
 									class="menu_option"
 									:type="isLinkActive(NavigationKey.ADD_PROPOSAL)"
 									@click="() => handleMenuClick(NavigationKey.ADD_PROPOSAL)"
+									:disabled="DaoStore().disableActions"
 									>Add Proposal</a-button
 								>
 							</router-link>
@@ -40,7 +41,8 @@
 									class="menu_option"
 									:type="isLinkActive(NavigationKey.VOTE_TOKEN)"
 									@click="() => handleMenuClick(NavigationKey.VOTE_TOKEN)"
-									>Vote Tokens</a-button
+									:disabled="DaoStore().disableActions"
+									>Deposit Vote Tokens</a-button
 								>
 							</router-link>
 							<router-link :to="{ path: EndPoint.VOTE }">
@@ -48,6 +50,7 @@
 									class="menu_option"
 									:type="isLinkActive(NavigationKey.PROPOSALS)"
 									@click="() => handleMenuClick(NavigationKey.PROPOSALS)"
+									:disabled="DaoStore().disableActions"
 									>Vote</a-button
 								>
 							</router-link>
@@ -57,19 +60,26 @@
 				<a-row class="dao-table">
 					<a-col :span="24">
 						<a-descriptions :column="5" size="small" bordered layout="vertical">
-							<a-descriptions-item label="DAO App ID">
+							<a-descriptions-item>
+								<template #label>
+									<div class="flexbox_justify_space">
+										DAO App ID
+										<SearchOutlined />
+									</div>
+								</template>
+
 								<div @click="handleIDListener">
 									<a-input
 										v-model:value="daoID"
 										type="number"
-										v-if="showIDTextField"
 										@keyup.enter="searchID"
 										@blur="searchID"
+										placeholder="Enter ID"
 									/>
-									<div v-else>
+									<!-- <div v-else>
 										<div v-if="daoID">{{ daoID }}</div>
-										<div v-else>Enter ID</div>
-									</div>
+										<div v-else class="text_btn">Enter ID</div>
+									</div> -->
 								</div></a-descriptions-item
 							>
 							<a-descriptions-item label="DAO Name">{{
@@ -106,6 +116,7 @@ import { isApplicationOpted, searchApplicationAndAccount } from "@/indexer";
 import { storeToRefs } from "pinia";
 import {
 	daoAppMessage,
+	DAO_ID_ERROR,
 	errorMessage,
 	loadingMessage,
 	openErrorNotificationWithIcon,
@@ -115,10 +126,13 @@ import {
 } from "@/constants";
 import WalletStore from "@/store/WalletStore";
 import { optInDaoApp } from "@/utility";
+import { DaoTableData } from "@/types";
+import { SearchOutlined } from "@ant-design/icons-vue";
 
 export default defineComponent({
 	components: {
 		WalletConnect,
+		SearchOutlined,
 	},
 	data() {
 		const daoStore = storeToRefs(DaoStore());
@@ -134,9 +148,11 @@ export default defineComponent({
 			lockedTokens: daoStore.locked,
 			showOptIn: daoStore.show_opt_in,
 			showIDTextField: false,
+			psqlData: daoStore.psqlData,
 			key: "HeaderKey",
 			walletStore,
 			resetDaoStore: DaoStore().resetDaoStore,
+			DaoStore,
 		};
 	},
 	methods: {
@@ -157,36 +173,49 @@ export default defineComponent({
 			this.showIDTextField = false;
 			if (this.daoID) {
 				this.daoID = +this.daoID;
-				loadingMessage(this.key);
-				searchApplicationAndAccount()
-					.then(() => {
-						successMessage(this.key);
-						openSuccessNotificationWithIcon(
-							"Successful",
-							daoAppMessage.SUCCESSFUL(this.daoID as number)
-						);
-						if (this.walletStore.address) {
-							isApplicationOpted(this.walletStore.address, this.daoID as number)
-								.then((appIsOptedIn: boolean) => {
-									this.showOptIn = !appIsOptedIn;
-									if (appIsOptedIn) {
-										openSuccessNotificationWithIcon(
-											daoAppMessage.ALREADY_OPT_IN
-										);
-									}
-								})
-								.catch((error) =>
-									openErrorNotificationWithIcon(
-										daoAppMessage.UNSUCCESFUL,
-										error.message
-									)
-								);
-						}
-					})
-					.catch((error) => {
-						errorMessage(this.key);
-						openErrorNotificationWithIcon(UNSUCCESSFUL, error.message);
-					});
+				// to get gov token id
+				const daoData: DaoTableData | undefined = this.psqlData.find(
+					(daoData: DaoTableData) => daoData.dao_id === this.daoID
+				);
+				if (daoData) {
+					this.govtId = daoData.token_id;
+					loadingMessage(this.key);
+					searchApplicationAndAccount()
+						.then(() => {
+							successMessage(this.key);
+							openSuccessNotificationWithIcon(
+								"Successful",
+								daoAppMessage.SUCCESSFUL(this.daoID as number)
+							);
+							if (this.walletStore.address) {
+								isApplicationOpted(
+									this.walletStore.address,
+									this.daoID as number
+								)
+									.then((appIsOptedIn: boolean) => {
+										this.showOptIn = !appIsOptedIn;
+										if (appIsOptedIn) {
+											openSuccessNotificationWithIcon(
+												daoAppMessage.ALREADY_OPT_IN
+											);
+										}
+									})
+									.catch((error) =>
+										openErrorNotificationWithIcon(
+											daoAppMessage.UNSUCCESFUL,
+											error.message
+										)
+									);
+							}
+						})
+						.catch((error) => {
+							errorMessage(this.key);
+							openErrorNotificationWithIcon(UNSUCCESSFUL, error.message);
+						});
+				} else {
+					this.resetDaoStore();
+					openErrorNotificationWithIcon(UNSUCCESSFUL, DAO_ID_ERROR(this.daoID));
+				}
 			} else {
 				// when daoID is removed
 				this.resetDaoStore();
