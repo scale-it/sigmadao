@@ -251,15 +251,15 @@ export default defineComponent({
 			.then((res) => {
 				if (res && res.allSigmaDaos && res.allSigmaDaos.nodes.length) {
 					res.allSigmaDaos.nodes.map(async (item: any, index: number) => {
-						if (item.app_params) {
-							item.app_params = JSON.parse(item.app_params);
+						if (item.appParams) {
+							item.appParams = JSON.parse(item.appParams);
 						}
-						const globalState = decodeAppParamsState(item.app_params.dt.gd);
-						const tokenData = await getAssetInformation(item.asset_id);
+						const globalState = decodeAppParamsState(item.appParams.dt.gd);
+						const tokenData = await getAssetInformation(item.assetId);
 						formState.psqlData.push({
 							key: index,
-							dao_id: item.app_id,
-							token_id: item.asset_id,
+							dao_id: item.appId,
+							token_id: item.assetId,
 							token_name: tokenData.name as string,
 							name: globalState.get(GLOBAL_STATE_MAP_KEY.DaoName) as string,
 							link: globalState.get(GLOBAL_STATE_MAP_KEY.Url) as string,
