@@ -248,7 +248,7 @@ export default defineComponent({
 		// Get all daos
 		// Here 1 --> Page number
 		// 5 --> number of entries to show in single fetch
-		executeReq(getAllDaoReq(1, 5))
+		executeReq(getAllDaoReq(40, null, null, null))
 			.then((res) => {
 				if (res && res.allSigmaDaos && res.allSigmaDaos.nodes.length) {
 					res.allSigmaDaos.nodes.map(async (item: any, index: number) => {
