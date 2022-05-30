@@ -246,8 +246,7 @@ export default defineComponent({
 		const tempArray: Array<DaoTableData> = [];
 		formState.psqlData = tempArray; // prohibit duplication of data
 		// Get all daos
-		// Here 1 --> Page number
-		// 5 --> number of entries to show in single fetch
+		// Here 40 --> Page size
 		executeReq(getAllDaoReq(40, null, null, null))
 			.then((res) => {
 				if (res && res.allSigmaDaos && res.allSigmaDaos.nodes.length) {

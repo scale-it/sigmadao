@@ -13,18 +13,18 @@ export const getAllDaoReq = (
       before: ${before}
       last: ${last}
     ) {
-      totalCount
+      nodes {
+        appId
+        assetId
+        appParams
+      }
       pageInfo {
         endCursor
         startCursor
         hasNextPage
         hasPreviousPage
       }
-      nodes {
-        appId
-        assetId
-        appParams
-      }
+      totalCount
     }
   }
   `;
