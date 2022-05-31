@@ -29,3 +29,19 @@ export const getAllDaoReq = (
   }
   `;
 };
+
+/* Get start and end cursor
+   Page = 2 to n-1
+*/
+export const getCursorReq = (pageNumber: number, pageSize: number) => {
+	return `
+  query Cursor {
+    allSigmaDaos(first: ${(pageNumber - 1) * pageSize}) {
+      pageInfo {
+        endCursor
+        startCursor
+      }
+    }
+  }
+  `;
+};
