@@ -65,3 +65,7 @@ export const walletMessage = {
 	NETWORK_ISSUE: (walletType: string) =>
 		`Please select a network to connect with ${walletType}`,
 };
+
+export const mainnetURL = "https://node.algoexplorerapi.io";
+export const testnetURL = "https://node.testnet.algoexplorerapi.io";
+export const betanetURL = "https://node.betanet.algoexplorerapi.io";

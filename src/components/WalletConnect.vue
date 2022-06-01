@@ -98,7 +98,7 @@
 <script lang="ts">
 import { DownOutlined, LogoutOutlined } from "@ant-design/icons-vue";
 import { defineComponent } from "vue";
-import { WalletType, NetworkTypes } from "@/types";
+import { WalletType, NetworkTypes, HttpNetworkConfig } from "@/types";
 import {
 	MyAlgoWalletSession,
 	WallectConnectSession,
@@ -106,12 +106,18 @@ import {
 } from "@algo-builder/web";
 import WalletStore from "../store/WalletStore";
 import { searchApplicationAndAccount } from "@/indexer";
-import { walletMessage } from "../constants/constant";
+import {
+	mainnetURL,
+	betanetURL,
+	testnetURL,
+	walletMessage,
+} from "../constants/constant";
 import DaoID from "@/store/DaoID";
 import {
 	openErrorNotificationWithIcon,
 	WALLET_CONNECTION_ERROR,
 } from "@/constants";
+import { port, server, token } from "@/config/algob.config";
 declare var AlgoSigner: any; // eslint-disable-line
 
 export default defineComponent({
@@ -138,6 +144,40 @@ export default defineComponent({
 		};
 	},
 	methods: {
+		getWalletUrlConfig(networkType: NetworkTypes): HttpNetworkConfig {
+			switch (networkType) {
+				case NetworkTypes.MAIN_NET:
+					return {
+						token: "",
+						server: mainnetURL,
+						port: "",
+					};
+				case NetworkTypes.TEST_NET:
+					return {
+						token: "",
+						server: testnetURL,
+						port: "",
+					};
+				case NetworkTypes.BETA_NET:
+					return {
+						token: "",
+						server: betanetURL,
+						port: "",
+					};
+				case NetworkTypes.PRIVATE_NET:
+					return {
+						token: token,
+						server: server,
+						port: port,
+					};
+				default:
+					return {
+						token: "",
+						server: "",
+						port: "",
+					};
+			}
+		},
 		connectWallet(walletType: WalletType) {
 			if (!this.walletStore.network) {
 				openErrorNotificationWithIcon(
@@ -196,7 +236,9 @@ export default defineComponent({
 		},
 		async connectMyAlgoWallet() {
 			try {
-				let myAlgo = new MyAlgoWalletSession(this.walletStore.network);
+				let myAlgo = new MyAlgoWalletSession(
+					this.getWalletUrlConfig(this.walletStore.network)
+				);
 				await myAlgo.connectToMyAlgo();
 				this.walletStore.setWebMode(myAlgo);
 				if (myAlgo.accounts.length) {
@@ -214,7 +256,7 @@ export default defineComponent({
 		async connectWalletConnect() {
 			try {
 				let walletConnector = new WallectConnectSession(
-					this.walletStore.network
+					this.getWalletUrlConfig(this.walletStore.network)
 				);
 				await walletConnector.create(true);
 				this.walletStore.setWebMode(walletConnector);
