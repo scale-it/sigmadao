@@ -43,9 +43,9 @@ export interface ProposalFormState {
 }
 
 export interface DaoItemType {
-	app_id?: number;
-	app_params?: string;
-	asset_id?: number;
+	appId?: number;
+	appParams?: string;
+	assetId?: number;
 }
 
 export interface DaoTableData {

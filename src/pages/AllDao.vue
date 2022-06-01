@@ -246,26 +246,30 @@ export default defineComponent({
 		const tempArray: Array<DaoTableData> = [];
 		formState.psqlData = tempArray; // prohibit duplication of data
 		// Get all daos
-		// Here 1 --> Page number
-		// 5 --> number of entries to show in single fetch
-		executeReq(getAllDaoReq(1, 5))
+		// Here 40 --> Page size
+		executeReq(getAllDaoReq(40, null, null, null))
 			.then((res) => {
-				if (res && res.Daos && res.Daos.length) {
-					res.Daos.map(async (item: any, index: number) => {
-						if (item.app_params) {
-							item.app_params = JSON.parse(item.app_params);
+				if (res && res.allSigmaDaos && res.allSigmaDaos.nodes.length) {
+					res.allSigmaDaos.nodes.map(async (item: any, index: number) => {
+						if (item.appParams) {
+							item.appParams = JSON.parse(item.appParams);
 						}
-						const globalState = decodeAppParamsState(item.app_params.dt.gd);
-						const tokenData = await getAssetInformation(item.asset_id);
+						const globalState = decodeAppParamsState(item.appParams.dt.gd);
+						const tokenData = await getAssetInformation(item.assetId);
 						formState.psqlData.push({
 							key: index,
-							dao_id: item.app_id,
-							token_id: item.asset_id,
+							dao_id: item.appId,
+							token_id: item.assetId,
 							token_name: tokenData.name as string,
 							name: globalState.get(GLOBAL_STATE_MAP_KEY.DaoName) as string,
 							link: globalState.get(GLOBAL_STATE_MAP_KEY.Url) as string,
 						});
 					});
+					console.log(res);
+					// total daos
+					console.log(res.allSigmaDaos.totalCount);
+					// pagination info
+					console.log(res.allSigmaDaos.pageInfo);
 				}
 			})
 			.catch((err) => console.error(err));
