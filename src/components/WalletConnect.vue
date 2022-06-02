@@ -98,7 +98,7 @@
 <script lang="ts">
 import { DownOutlined, LogoutOutlined } from "@ant-design/icons-vue";
 import { defineComponent } from "vue";
-import { WalletType, NetworkTypes, HttpNetworkConfig } from "@/types";
+import { WalletType, NetworkTypes } from "@/types";
 import {
 	MyAlgoWalletSession,
 	WallectConnectSession,
@@ -107,9 +107,9 @@ import {
 import WalletStore from "../store/WalletStore";
 import { searchApplicationAndAccount } from "@/indexer";
 import {
-	mainnetURL,
-	betanetURL,
-	testnetURL,
+	MAIN_NET_URL,
+	BETA_NET_URL,
+	TEST_NET_URL,
 	walletMessage,
 } from "../constants/constant";
 import DaoID from "@/store/DaoID";
@@ -118,6 +118,7 @@ import {
 	WALLET_CONNECTION_ERROR,
 } from "@/constants";
 import { port, server, token } from "@/config/algob.config";
+import { HttpNetworkConfig } from "@algo-builder/web/build/types";
 declare var AlgoSigner: any; // eslint-disable-line
 
 export default defineComponent({
@@ -149,19 +150,19 @@ export default defineComponent({
 				case NetworkTypes.MAIN_NET:
 					return {
 						token: "",
-						server: mainnetURL,
+						server: MAIN_NET_URL,
 						port: "",
 					};
 				case NetworkTypes.TEST_NET:
 					return {
 						token: "",
-						server: testnetURL,
+						server: TEST_NET_URL,
 						port: "",
 					};
 				case NetworkTypes.BETA_NET:
 					return {
 						token: "",
-						server: betanetURL,
+						server: BETA_NET_URL,
 						port: "",
 					};
 				case NetworkTypes.PRIVATE_NET:
