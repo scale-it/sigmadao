@@ -106,16 +106,14 @@ import {
 } from "@algo-builder/web";
 import WalletStore from "../store/WalletStore";
 import { searchApplicationAndAccount } from "@/indexer";
-import {
-	MAIN_NET_URL,
-	BETA_NET_URL,
-	TEST_NET_URL,
-	walletMessage,
-} from "../constants/constant";
 import DaoID from "@/store/DaoID";
 import {
 	openErrorNotificationWithIcon,
 	WALLET_CONNECTION_ERROR,
+	MAIN_NET_URL,
+	BETA_NET_URL,
+	TEST_NET_URL,
+	walletMessage,
 } from "@/constants";
 import { port, server, token } from "@/config/algob.config";
 import { HttpNetworkConfig } from "@algo-builder/web/build/types";
