@@ -60,23 +60,15 @@
 				<a-row class="dao-table">
 					<a-col :span="24">
 						<a-descriptions :column="5" size="small" bordered layout="vertical">
-							<a-descriptions-item>
-								<template #label>
-									<div class="flexbox_justify_space">
-										DAO App ID
-										<SearchOutlined />
-									</div>
-								</template>
-
-								<div @click="handleIDListener">
-									<a-input
-										v-model:value="daoID"
-										type="number"
-										@keyup.enter="searchID"
-										@blur="searchID"
-										placeholder="Enter ID"
-									/></div
-							></a-descriptions-item>
+							<a-descriptions-item label="DAO App ID">
+								<a-input-search
+									v-model:value="daoID"
+									type="number"
+									enter-button
+									@search="searchID"
+									placeholder="Enter ID"
+								/>
+							</a-descriptions-item>
 							<a-descriptions-item label="DAO Name">{{
 								name
 							}}</a-descriptions-item>
@@ -122,12 +114,10 @@ import {
 import WalletStore from "@/store/WalletStore";
 import { optInDaoApp } from "@/utility";
 import { DaoTableData } from "@/types";
-import { SearchOutlined } from "@ant-design/icons-vue";
 
 export default defineComponent({
 	components: {
 		WalletConnect,
-		SearchOutlined,
 	},
 	data() {
 		const daoStore = storeToRefs(DaoStore());
@@ -142,7 +132,6 @@ export default defineComponent({
 			availableTokens: daoStore.available,
 			lockedTokens: daoStore.locked,
 			showOptIn: daoStore.show_opt_in,
-			showIDTextField: false,
 			psqlData: daoStore.psqlData,
 			key: "HeaderKey",
 			walletStore,
@@ -161,11 +150,7 @@ export default defineComponent({
 			}
 			return "text";
 		},
-		handleIDListener() {
-			this.showIDTextField = true;
-		},
 		async searchID() {
-			this.showIDTextField = false;
 			if (this.daoID) {
 				const tempDaoID: number = +this.daoID;
 				this.daoID = +this.daoID;
@@ -212,8 +197,8 @@ export default defineComponent({
 							openErrorNotificationWithIcon(UNSUCCESSFUL, error.message);
 						});
 				} else {
+					openErrorNotificationWithIcon(UNSUCCESSFUL, DAO_ID_ERROR(this.daoID));
 					this.resetDaoStore();
-					openErrorNotificationWithIcon(UNSUCCESSFUL, DAO_ID_ERROR(tempDaoID));
 				}
 			} else {
 				// when daoID is removed
