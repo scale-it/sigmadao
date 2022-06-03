@@ -130,7 +130,7 @@
 					><right-outlined
 				/></a>
 				<component
-					@click="handlePageJump"
+					@click="handlePageJump(originalElement.children[0].children)"
 					:is="originalElement"
 					v-else
 				></component>
@@ -233,14 +233,18 @@ export default defineComponent({
 		};
 	},
 	methods: {
-		async handlePageJump() {
-			await this.getCursorDetails();
-			await this.fetchDataForDAO(
-				ROWS_PER_PAGE,
-				this.currentPageCursor.endCursor,
-				null,
-				null
-			);
+		async handlePageJump(pageNumber: string) {
+			if (+pageNumber === 1) {
+				this.fetchDataForDAO(ROWS_PER_PAGE, null, null, null);
+			} else {
+				await this.getCursorDetails(+pageNumber);
+				await this.fetchDataForDAO(
+					ROWS_PER_PAGE,
+					this.currentPageCursor.endCursor,
+					null,
+					null
+				);
+			}
 		},
 		handleSelectDAO(data: DaoTableData) {
 			this.formState.govt_id = data.token_id;
@@ -300,9 +304,9 @@ export default defineComponent({
 			// TODO: update to use filter from backend (for name)
 			return record.name.toString().toLowerCase().includes(value.toLowerCase());
 		},
-		async getCursorDetails() {
+		async getCursorDetails(pageNumber: number) {
 			const cursorRes = await executeReq(
-				getCursorReq(this.currentPage, ROWS_PER_PAGE)
+				getCursorReq(pageNumber, ROWS_PER_PAGE)
 			).catch((error) =>
 				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message)
 			);
