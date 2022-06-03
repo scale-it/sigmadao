@@ -106,12 +106,17 @@ import {
 } from "@algo-builder/web";
 import WalletStore from "../store/WalletStore";
 import { searchApplicationAndAccount } from "@/indexer";
-import { walletMessage } from "../constants/constant";
 import DaoID from "@/store/DaoID";
 import {
 	openErrorNotificationWithIcon,
 	WALLET_CONNECTION_ERROR,
+	MAIN_NET_URL,
+	BETA_NET_URL,
+	TEST_NET_URL,
+	walletMessage,
 } from "@/constants";
+import { port, server, token } from "@/config/algob.config";
+import { HttpNetworkConfig } from "@algo-builder/web/build/types";
 declare var AlgoSigner: any; // eslint-disable-line
 
 export default defineComponent({
@@ -138,6 +143,40 @@ export default defineComponent({
 		};
 	},
 	methods: {
+		getWalletUrlConfig(networkType: NetworkTypes): HttpNetworkConfig {
+			switch (networkType) {
+				case NetworkTypes.MAIN_NET:
+					return {
+						token: "",
+						server: MAIN_NET_URL,
+						port: "",
+					};
+				case NetworkTypes.TEST_NET:
+					return {
+						token: "",
+						server: TEST_NET_URL,
+						port: "",
+					};
+				case NetworkTypes.BETA_NET:
+					return {
+						token: "",
+						server: BETA_NET_URL,
+						port: "",
+					};
+				case NetworkTypes.PRIVATE_NET:
+					return {
+						token: token,
+						server: server,
+						port: port,
+					};
+				default:
+					return {
+						token: "",
+						server: "",
+						port: "",
+					};
+			}
+		},
 		connectWallet(walletType: WalletType) {
 			if (!this.walletStore.network) {
 				openErrorNotificationWithIcon(
@@ -196,7 +235,9 @@ export default defineComponent({
 		},
 		async connectMyAlgoWallet() {
 			try {
-				let myAlgo = new MyAlgoWalletSession(this.walletStore.network);
+				let myAlgo = new MyAlgoWalletSession(
+					this.getWalletUrlConfig(this.walletStore.network)
+				);
 				await myAlgo.connectToMyAlgo();
 				this.walletStore.setWebMode(myAlgo);
 				if (myAlgo.accounts.length) {
@@ -214,7 +255,7 @@ export default defineComponent({
 		async connectWalletConnect() {
 			try {
 				let walletConnector = new WallectConnectSession(
-					this.walletStore.network
+					this.getWalletUrlConfig(this.walletStore.network)
 				);
 				await walletConnector.create(true);
 				this.walletStore.setWebMode(walletConnector);
