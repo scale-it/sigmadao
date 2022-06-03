@@ -315,7 +315,6 @@ export default defineComponent({
 				const pageInfo = cursorRes.allSigmaDaos.pageInfo;
 				this.currentPageCursor.endCursor = pageInfo.endCursor;
 				this.currentPageCursor.startCursor = pageInfo.startCursor;
-				console.log(this.currentPageCursor);
 			}
 		},
 		async fetchDataForDAO(
@@ -325,13 +324,11 @@ export default defineComponent({
 			startCursor: string | null,
 			currentPage?: number
 		) {
-			console.log("configg", endCursor, startCursor);
 			const res = await executeReq(
 				getAllDaoReq(first, endCursor, last, startCursor)
 			).catch((error) =>
 				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message)
 			);
-			console.log("response is", res);
 			if (res && res.allSigmaDaos) {
 				if (res.allSigmaDaos.nodes.length) {
 					// clean existing data in temp array with change of page
@@ -397,7 +394,7 @@ export default defineComponent({
 		};
 	},
 	mounted() {
-		this.fetchDataForDAO(ROWS_PER_PAGE, null, null, null, 1); // since we -1 to get cursor details
+		this.fetchDataForDAO(ROWS_PER_PAGE, null, null, null, 1);
 	},
 });
 </script>

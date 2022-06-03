@@ -1,5 +1,7 @@
 /* GraphQL queries */
 
+import { quotesWrapper } from "@/constants";
+
 /**
  * Get all dao request for postgraphile
  * @param first Similar to limit in PostreSQL. E.g first 10 entries of row after cursor pointer
@@ -13,6 +15,9 @@ export const getAllDaoReq = (
 	last: number | null,
 	before: string | null
 ) => {
+	// the cursor needs to be wrapped inside double quotes
+	after = quotesWrapper(after);
+	before = quotesWrapper(before);
 	return `
   query Daos {
     allSigmaDaos(

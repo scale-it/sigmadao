@@ -67,3 +67,7 @@ export const walletMessage = {
 };
 
 export const ROWS_PER_PAGE = 40; // for pagination
+
+export const quotesWrapper = (value: string | null) => {
+	return typeof value === "string" ? '"' + value + '"' : value;
+};
