@@ -11,7 +11,6 @@ export default defineStore("DaoStore", {
 			locked: undefined,
 			global_app_state: undefined,
 			show_opt_in: false,
-			psqlData: [],
 		};
 	},
 	actions: {
