@@ -59,3 +59,38 @@ export const getCursorReq = (pageNumber: number, pageSize: number) => {
   }
   `;
 };
+
+export const lookupApplications = (applicationId: number) => {
+	return `query MyQuery {
+    allSigmaDaos(condition: {appId: "${applicationId}"}) {
+      nodes {
+        appParams
+      }
+    }
+  }`;
+};
+
+export const lookupAssetByID = (assetId: number) => {
+	return `query MyQuery {
+    allAssets(condition: {index: "${assetId}"}) {
+        nodes {
+          params
+        }
+    }
+  }`;
+};
+
+export const lookupAccountAssets = (addr: string, assetId: number) => {
+	return `query MyQuery {
+    allAccountAssets(
+      condition: {
+        assetid: "${assetId}"
+        addr: "${"\\\\x" + addr}"
+      }
+    ) {
+      nodes {
+        amount
+      }
+    }
+  }`;
+};

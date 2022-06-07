@@ -18,36 +18,25 @@ import { Key, StateValue } from "@algo-builder/algob/build/types";
 import type { LogicSigAccount } from "algosdk";
 import { getProposalLsig } from "../contract/dao";
 import indexerClient from "../config/indexer.config";
+import { convertToHex } from "@/utility";
 import { SchemaType, UnknownObject } from "@/types";
-
-export const searchForAssetsByName = async (
-	assetName: string
-): Promise<Record<string, any> | undefined> => {
-	try {
-		const accountInfo = await indexerClient
-			.searchForAssets()
-			.name(assetName)
-			.do();
-		return JSON.parse(JSON.stringify(accountInfo));
-	} catch (e) {
-		console.log(e);
-		throw e;
-	}
-};
+import {
+	executeReq,
+	lookupApplications,
+	lookupAssetByID,
+	lookupAccountAssets,
+} from "@/api";
 
 export const getApplicationGlobalState = async (
 	applicationId: number
 ): Promise<Map<string, StateValue> | undefined> => {
 	try {
 		// get global state of application
-		const applicationInfo = await indexerClient
-			.lookupApplications(applicationId)
-			.do();
-
-		const globalState = applicationInfo[APPLICATION][PARAMS][GLOBAL_STATE];
-		// parse global state of DAO app to get details for UI
-		const globalStateMap = decodeStateMap(globalState);
-		return globalStateMap;
+		const globalStateRes = await executeReq(lookupApplications(applicationId));
+		const globalState = JSON.parse(
+			globalStateRes.allSigmaDaos.nodes[0].appParams
+		).dt.gd;
+		return decodeAppParamsState(globalState);
 	} catch (e) {
 		console.log(e);
 		throw e;
@@ -144,18 +133,10 @@ export const isAssetOpted = async (
 	assetId: number
 ): Promise<boolean> => {
 	try {
-		let isAssetOpted = false;
-		const assetInfo = await indexerClient.lookupAccountAssets(address).do();
-
-		if (assetInfo.assets) {
-			const optedAssetInfo = assetInfo.assets.find(
-				(asset: any) => asset[ASSET_ID] === assetId
-			);
-			if (optedAssetInfo) {
-				isAssetOpted = true;
-			}
-		}
-		return isAssetOpted;
+		const hexAddr = convertToHex(address);
+		const assetInfo = await executeReq(lookupAccountAssets(hexAddr, assetId));
+		// if greater then 0 then asset is opted.
+		return assetInfo?.allAccountAssets?.nodes?.length;
 	} catch (e) {
 		console.error(e);
 		throw e;
@@ -194,18 +175,14 @@ export const isApplicationOpted = async (
 
 export const getGovASATokenAmount = async (
 	address: string,
-	govtID: number
+	assetId: number
 ): Promise<number> => {
 	try {
-		const assetInfo = await indexerClient.lookupAccountAssets(address).do();
+		const hexAddr = convertToHex(address);
+		const assetInfo = await executeReq(lookupAccountAssets(hexAddr, assetId));
 		let amount = 0;
-		if (assetInfo[ASSETS]) {
-			const govtAssetInfo = assetInfo[ASSETS].find(
-				(assetInfo: any) => assetInfo[ASSET_ID] === govtID
-			);
-			if (govtAssetInfo) {
-				amount = govtAssetInfo.amount;
-			}
+		if (assetInfo?.allAccountAssets?.nodes[0]?.amount) {
+			amount = parseInt(assetInfo.allAccountAssets.nodes[0].amount);
 		}
 		return amount;
 	} catch (e) {
@@ -256,8 +233,8 @@ export async function getAssetInformation(
 	assetId: number
 ): Promise<UnknownObject> {
 	try {
-		const assetInfo = await indexerClient.lookupAssetByID(assetId).do();
-		return assetInfo[ASSET][PARAMS];
+		const assetInfo = await executeReq(lookupAssetByID(assetId));
+		return JSON.parse(assetInfo.allAssets.nodes[0].params);
 	} catch (e) {
 		console.error(e);
 		throw e;
