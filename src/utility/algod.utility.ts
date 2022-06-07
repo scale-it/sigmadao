@@ -1,6 +1,6 @@
 import { types, tx as webTx } from "@algo-builder/web";
 import { types as aTypes } from "@algo-builder/algob";
-import algodClient from "@/config/algob.config";
+import { algodClient } from "@/config/algob.config";
 import type { LogicSigAccount } from "algosdk";
 import algosdk from "algosdk";
 const confirmedRound = "confirmed-round";

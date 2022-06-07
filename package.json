@@ -20,11 +20,11 @@
 		"test": "echo 'no test'"
 	},
 	"dependencies": {
-		"@algo-builder/algob": "^3.2.0",
-		"@algo-builder/web": "^3.2.0",
+		"@algo-builder/algob": "^4.0.0",
+		"@algo-builder/web": "^4.0.0",
 		"@ant-design/icons-vue": "^6.1.0",
 		"algosdk": "^1.16.0",
-		"ant-design-vue": "3.2.3",
+		"ant-design-vue": "^3.2.5",
 		"core-js": "^3.21.1",
 		"cors": "^2.8.5",
 		"crypto-browserify": "^3.12.0",

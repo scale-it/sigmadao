@@ -8,4 +8,4 @@ const port = process.env.ALGOSDK_PORT || 4001;
 
 const algodClient = new algosdk.Algodv2(token, server, port);
 
-export default algodClient;
+export { token, server, port, algodClient };
