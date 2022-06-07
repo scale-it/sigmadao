@@ -107,12 +107,12 @@
 			<template #itemRender="{ type, originalElement }">
 				<a
 					v-if="type === 'prev'"
-					@click="handlePaginationCall(PaginationCallType.PREVIOUS)"
+					@click="handlePaginationCall(PaginationCallType.NAV_PREV)"
 					><left-outlined
 				/></a>
 				<a
 					v-else-if="type === 'next'"
-					@click="handlePaginationCall(PaginationCallType.NEXT)"
+					@click="handlePaginationCall(PaginationCallType.NAV_NEXT)"
 					><right-outlined
 				/></a>
 				<component
@@ -227,16 +227,16 @@ export default defineComponent({
 	methods: {
 		handlePaginationCall(type: PaginationCallType, pageNumber?: string) {
 			switch (type) {
-				case PaginationCallType.PREVIOUS:
-					this.fetchDataForDAO(
+				case PaginationCallType.NAV_PREV:
+					this.fetchDaoData(
 						null,
 						null,
 						ROWS_PER_PAGE,
 						this.currentPageCursor.startCursor
 					);
 					break;
-				case PaginationCallType.NEXT:
-					this.fetchDataForDAO(
+				case PaginationCallType.NAV_NEXT:
+					this.fetchDaoData(
 						ROWS_PER_PAGE,
 						this.currentPageCursor.endCursor,
 						null,
@@ -247,7 +247,7 @@ export default defineComponent({
 					this.handlePageJump(pageNumber as string);
 					break;
 				case PaginationCallType.FIRST_PAGE:
-					this.fetchDataForDAO(ROWS_PER_PAGE, null, null, null, 1);
+					this.fetchDaoData(ROWS_PER_PAGE, null, null, null, 1);
 					break;
 			}
 		},
@@ -256,7 +256,7 @@ export default defineComponent({
 				this.handlePaginationCall(PaginationCallType.FIRST_PAGE);
 			} else {
 				await this.getCursorDetails(+pageNumber);
-				this.handlePaginationCall(PaginationCallType.NEXT);
+				this.handlePaginationCall(PaginationCallType.NAV_NEXT);
 			}
 		},
 		handleSelectDAO(data: DaoTableData) {
@@ -334,7 +334,7 @@ export default defineComponent({
 				this.currentPageCursor.startCursor = pageInfo.startCursor;
 			}
 		},
-		async fetchDataForDAO(
+		async fetchDaoData(
 			first: number | null,
 			endCursor: string | null,
 			last: number | null,

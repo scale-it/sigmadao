@@ -62,8 +62,8 @@ export enum SchemaType {
 }
 
 export enum PaginationCallType {
-	PREVIOUS,
-	NEXT,
+	NAV_PREV,
+	NAV_NEXT,
 	JUMP_PAGE,
 	FIRST_PAGE,
 }
