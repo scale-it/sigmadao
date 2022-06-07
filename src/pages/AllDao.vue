@@ -107,30 +107,21 @@
 			<template #itemRender="{ type, originalElement }">
 				<a
 					v-if="type === 'prev'"
-					@click="
-						fetchDataForDAO(
-							null,
-							null,
-							ROWS_PER_PAGE,
-							currentPageCursor.startCursor
-						)
-					"
+					@click="handlePaginationCall(PaginationCallType.PREVIOUS)"
 					><left-outlined
 				/></a>
 				<a
 					v-else-if="type === 'next'"
-					@click="
-						fetchDataForDAO(
-							ROWS_PER_PAGE,
-							currentPageCursor.endCursor,
-							null,
-							null
-						)
-					"
+					@click="handlePaginationCall(PaginationCallType.NEXT)"
 					><right-outlined
 				/></a>
 				<component
-					@click="handlePageJump(originalElement.children[0].children)"
+					@click="
+						handlePaginationCall(
+							PaginationCallType.JUMP_PAGE,
+							originalElement.children[0].children
+						)
+					"
 					:is="originalElement"
 					v-else
 				></component>
@@ -162,7 +153,7 @@ import {
 import { defineComponent, reactive, ref, toRefs } from "vue";
 import DaoStore from "../store/DaoID";
 import { executeReq, getAllDaoReq, getCursorReq } from "@/api";
-import { DaoTableData } from "@/types";
+import { DaoTableData, PaginationCallType } from "@/types";
 import WalletStore from "@/store/WalletStore";
 import {
 	SearchOutlined,
@@ -230,20 +221,42 @@ export default defineComponent({
 				endCursor: null,
 				startCursor: null,
 			},
+			PaginationCallType,
 		};
 	},
 	methods: {
+		handlePaginationCall(type: PaginationCallType, pageNumber?: string) {
+			switch (type) {
+				case PaginationCallType.PREVIOUS:
+					this.fetchDataForDAO(
+						null,
+						null,
+						ROWS_PER_PAGE,
+						this.currentPageCursor.startCursor
+					);
+					break;
+				case PaginationCallType.NEXT:
+					this.fetchDataForDAO(
+						ROWS_PER_PAGE,
+						this.currentPageCursor.endCursor,
+						null,
+						null
+					);
+					break;
+				case PaginationCallType.JUMP_PAGE:
+					this.handlePageJump(pageNumber as string);
+					break;
+				case PaginationCallType.FIRST_PAGE:
+					this.fetchDataForDAO(ROWS_PER_PAGE, null, null, null, 1);
+					break;
+			}
+		},
 		async handlePageJump(pageNumber: string) {
 			if (+pageNumber === 1) {
-				this.fetchDataForDAO(ROWS_PER_PAGE, null, null, null);
+				this.handlePaginationCall(PaginationCallType.FIRST_PAGE);
 			} else {
 				await this.getCursorDetails(+pageNumber);
-				await this.fetchDataForDAO(
-					ROWS_PER_PAGE,
-					this.currentPageCursor.endCursor,
-					null,
-					null
-				);
+				this.handlePaginationCall(PaginationCallType.NEXT);
 			}
 		},
 		handleSelectDAO(data: DaoTableData) {
@@ -356,14 +369,9 @@ export default defineComponent({
 						this.dataSource.push(data);
 
 						// pushing data to store only if it doesn't exists
-						let dataExists: boolean;
-						if (this.formState.psqlData) {
-							dataExists = this.formState.psqlData.has(+item.appId);
-						} else {
-							this.formState.psqlData = new Map();
-							dataExists = false;
-						}
-						if (!dataExists) {
+						let isCached = false;
+						isCached = this.formState.psqlData.has(+item.appId);
+						if (!isCached) {
 							this.formState.psqlData.set(+item.appId, data);
 						}
 					});
@@ -398,7 +406,7 @@ export default defineComponent({
 		};
 	},
 	mounted() {
-		this.fetchDataForDAO(ROWS_PER_PAGE, null, null, null, 1);
+		this.handlePaginationCall(PaginationCallType.FIRST_PAGE);
 	},
 });
 </script>

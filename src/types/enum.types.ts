@@ -60,3 +60,10 @@ export enum SchemaType {
 	UINT,
 	BYTES,
 }
+
+export enum PaginationCallType {
+	PREVIOUS,
+	NEXT,
+	JUMP_PAGE,
+	FIRST_PAGE,
+}
