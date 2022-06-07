@@ -66,6 +66,12 @@ export const walletMessage = {
 		`Please select a network to connect with ${walletType}`,
 };
 
+export const ROWS_PER_PAGE = 40; // for pagination
+
+export const quotesWrapper = (value: string | null) => {
+	return typeof value === "string" ? '"' + value + '"' : value;
+};
+
 export const MAIN_NET_URL = "https://node.algoexplorerapi.io";
 export const TEST_NET_URL = "https://node.testnet.algoexplorerapi.io";
 export const BETA_NET_URL = "https://node.betanet.algoexplorerapi.io";

@@ -152,11 +152,15 @@ export default defineComponent({
 		},
 		async searchID() {
 			if (this.daoID) {
+				const tempDaoID: number = +this.daoID;
 				this.daoID = +this.daoID;
+				// TODO: update to use filter from backend (for daoID)
 				// to get gov token id
-				const daoData: DaoTableData | undefined = this.psqlData.find(
-					(daoData: DaoTableData) => daoData.dao_id === this.daoID
-				);
+				let daoData: DaoTableData | undefined = undefined;
+				if (this.psqlData) {
+					daoData = this.psqlData.get(this.daoID);
+				}
+
 				if (daoData) {
 					this.govtId = daoData.token_id;
 					loadingMessage(this.key);

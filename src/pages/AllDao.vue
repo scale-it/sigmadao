@@ -4,7 +4,7 @@
 			:dataSource="dataSource"
 			:columns="columns"
 			bordered
-			:pagination="{ hideOnSinglePage: true }"
+			:pagination="false"
 		>
 			<template #title>
 				<a-col> <h3 style="text-align: center">Sigma DAOs</h3> </a-col>
@@ -97,6 +97,37 @@
 			</template>
 		</a-table>
 	</div>
+	<a-col :offset="15">
+		<a-pagination
+			:hideOnSinglePage="true"
+			v-model:current="currentPage"
+			:pageSize="ROWS_PER_PAGE"
+			:total="totalDataRowsCount"
+		>
+			<template #itemRender="{ type, originalElement }">
+				<a
+					v-if="type === 'prev'"
+					@click="handlePaginationCall(PaginationCallType.NAV_PREV)"
+					><left-outlined
+				/></a>
+				<a
+					v-else-if="type === 'next'"
+					@click="handlePaginationCall(PaginationCallType.NAV_NEXT)"
+					><right-outlined
+				/></a>
+				<component
+					@click="
+						handlePaginationCall(
+							PaginationCallType.JUMP_PAGE,
+							originalElement.children[0].children
+						)
+					"
+					:is="originalElement"
+					v-else
+				></component>
+			</template>
+		</a-pagination>
+	</a-col>
 </template>
 
 <script lang="ts">
@@ -107,6 +138,7 @@ import {
 	loadingMessage,
 	openErrorNotificationWithIcon,
 	openSuccessNotificationWithIcon,
+	ROWS_PER_PAGE,
 	SUCCESSFUL,
 	successMessage,
 	UNSUCCESSFUL,
@@ -120,15 +152,21 @@ import {
 } from "@/indexer";
 import { defineComponent, reactive, ref, toRefs } from "vue";
 import DaoStore from "../store/DaoID";
-import { executeReq, getAllDaoReq } from "@/api";
-import { DaoTableData } from "@/types";
+import { executeReq, getAllDaoReq, getCursorReq } from "@/api";
+import { DaoTableData, PaginationCallType } from "@/types";
 import WalletStore from "@/store/WalletStore";
-import { SearchOutlined } from "@ant-design/icons-vue";
+import {
+	SearchOutlined,
+	LeftOutlined,
+	RightOutlined,
+} from "@ant-design/icons-vue";
 
 export default defineComponent({
 	name: "AllDao",
 	components: {
 		SearchOutlined,
+		LeftOutlined,
+		RightOutlined,
 	},
 	data() {
 		return {
@@ -175,9 +213,52 @@ export default defineComponent({
 				},
 			],
 			walletStore: WalletStore(),
+			currentPage: ref(1),
+			totalDataRowsCount: ROWS_PER_PAGE,
+			ROWS_PER_PAGE,
+			dataSource: [] as DaoTableData[],
+			currentPageCursor: {
+				endCursor: null,
+				startCursor: null,
+			},
+			PaginationCallType,
 		};
 	},
 	methods: {
+		handlePaginationCall(type: PaginationCallType, pageNumber?: string) {
+			switch (type) {
+				case PaginationCallType.NAV_PREV:
+					this.fetchDaoData(
+						null,
+						null,
+						ROWS_PER_PAGE,
+						this.currentPageCursor.startCursor
+					);
+					break;
+				case PaginationCallType.NAV_NEXT:
+					this.fetchDaoData(
+						ROWS_PER_PAGE,
+						this.currentPageCursor.endCursor,
+						null,
+						null
+					);
+					break;
+				case PaginationCallType.JUMP_PAGE:
+					this.handlePageJump(pageNumber as string);
+					break;
+				case PaginationCallType.FIRST_PAGE:
+					this.fetchDaoData(ROWS_PER_PAGE, null, null, null, 1);
+					break;
+			}
+		},
+		async handlePageJump(pageNumber: string) {
+			if (+pageNumber === 1) {
+				this.handlePaginationCall(PaginationCallType.FIRST_PAGE);
+			} else {
+				await this.getCursorDetails(+pageNumber);
+				this.handlePaginationCall(PaginationCallType.NAV_NEXT);
+			}
+		},
 		handleSelectDAO(data: DaoTableData) {
 			this.formState.govt_id = data.token_id;
 			this.formState.dao_id = data.dao_id;
@@ -233,7 +314,80 @@ export default defineComponent({
 			setSelectedKeys(e.target.value ? [e.target.value] : []);
 		},
 		handleFilterData(value: string, record: DaoTableData) {
+			// TODO: update to use filter from backend (for name)
 			return record.name.toString().toLowerCase().includes(value.toLowerCase());
+		},
+		async getCursorDetails(pageNumber: number) {
+			const cursorRes = await executeReq(
+				getCursorReq(pageNumber, ROWS_PER_PAGE)
+			).catch((error) =>
+				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message)
+			);
+
+			if (
+				cursorRes &&
+				cursorRes.allSigmaDaos &&
+				cursorRes.allSigmaDaos.pageInfo
+			) {
+				const pageInfo = cursorRes.allSigmaDaos.pageInfo;
+				this.currentPageCursor.endCursor = pageInfo.endCursor;
+				this.currentPageCursor.startCursor = pageInfo.startCursor;
+			}
+		},
+		async fetchDaoData(
+			first: number | null,
+			endCursor: string | null,
+			last: number | null,
+			startCursor: string | null,
+			currentPage?: number
+		) {
+			const res = await executeReq(
+				getAllDaoReq(first, endCursor, last, startCursor)
+			).catch((error) =>
+				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message)
+			);
+			if (res && res.allSigmaDaos) {
+				if (res.allSigmaDaos.nodes.length) {
+					// clean existing data in temp array with change of page
+					if (this.dataSource.length) {
+						this.dataSource = [];
+					}
+					res.allSigmaDaos.nodes.map(async (item: any, index: number) => {
+						if (item.appParams) {
+							item.appParams = JSON.parse(item.appParams);
+						}
+						const globalState = decodeAppParamsState(item.appParams.dt.gd);
+						const tokenData = await getAssetInformation(item.assetId);
+						let data = {
+							key: index,
+							dao_id: +item.appId,
+							token_id: +item.assetId,
+							token_name: tokenData.name as string,
+							name: globalState.get(GLOBAL_STATE_MAP_KEY.DaoName) as string,
+							link: globalState.get(GLOBAL_STATE_MAP_KEY.Url) as string,
+						};
+						this.dataSource.push(data);
+
+						// pushing data to store only if it doesn't exists
+						let isCached = false;
+						isCached = this.formState.psqlData.has(+item.appId);
+						if (!isCached) {
+							this.formState.psqlData.set(+item.appId, data);
+						}
+					});
+				}
+
+				if (res.allSigmaDaos.pageInfo) {
+					const pageInfo = res.allSigmaDaos.pageInfo;
+					this.currentPageCursor.startCursor = pageInfo.startCursor;
+					this.currentPageCursor.endCursor = pageInfo.endCursor;
+				}
+
+				// setting it only at first call since it doesn't change i.e for page 1
+				if (currentPage === 1 && res.allSigmaDaos.totalCount) {
+					this.totalDataRowsCount = res.allSigmaDaos.totalCount;
+				}
+			}
 		},
 	},
 	setup() {
@@ -243,44 +397,16 @@ export default defineComponent({
 			searchedColumn: "",
 		});
 		const searchInput = ref();
-		const tempArray: Array<DaoTableData> = [];
-		formState.psqlData = tempArray; // prohibit duplication of data
-		// Get all daos
-		// Here 40 --> Page size
-		executeReq(getAllDaoReq(40, null, null, null))
-			.then((res) => {
-				if (res && res.allSigmaDaos && res.allSigmaDaos.nodes.length) {
-					res.allSigmaDaos.nodes.map(async (item: any, index: number) => {
-						if (item.appParams) {
-							item.appParams = JSON.parse(item.appParams);
-						}
-						const globalState = decodeAppParamsState(item.appParams.dt.gd);
-						const tokenData = await getAssetInformation(item.assetId);
-						formState.psqlData.push({
-							key: index,
-							dao_id: item.appId,
-							token_id: item.assetId,
-							token_name: tokenData.name as string,
-							name: globalState.get(GLOBAL_STATE_MAP_KEY.DaoName) as string,
-							link: globalState.get(GLOBAL_STATE_MAP_KEY.Url) as string,
-						});
-					});
-					console.log(res);
-					// total daos
-					console.log(res.allSigmaDaos.totalCount);
-					// pagination info
-					console.log(res.allSigmaDaos.pageInfo);
-				}
-			})
-			.catch((err) => console.error(err));
 
 		return {
 			formState,
 			validateMessages: VALIDATE_MESSAGES,
-			dataSource: formState.psqlData,
 			searchInput,
 			...toRefs(state),
 		};
+	},
+	mounted() {
+		this.handlePaginationCall(PaginationCallType.FIRST_PAGE);
 	},
 });
 </script>

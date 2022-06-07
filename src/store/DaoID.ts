@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { DAO } from "../types";
+import { DAO, DaoTableData } from "../types";
 
 export default defineStore("DaoStore", {
 	state: (): DAO => {
@@ -11,7 +11,7 @@ export default defineStore("DaoStore", {
 			locked: undefined,
 			global_app_state: undefined,
 			show_opt_in: false,
-			psqlData: [],
+			psqlData: new Map<number, DaoTableData>(),
 		};
 	},
 	actions: {
