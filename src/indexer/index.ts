@@ -1,23 +1,10 @@
-import {
-	GLOBAL_STATE,
-	GLOBAL_STATE_MAP_KEY,
-	LOCAL_STATE,
-	LOCAL_STATE_MAP_KEY,
-	APPLICATION_ID,
-	ASSET_ID,
-	KEY_VALUE,
-	APPLICATION,
-	PARAMS,
-	ASSETS,
-	ASSET,
-} from "@/constants";
+import { GLOBAL_STATE_MAP_KEY, LOCAL_STATE_MAP_KEY } from "@/constants";
 import DaoID from "@/store/DaoID";
 import WalletStore from "@/store/WalletStore";
 import ProposalStore from "@/store/ProposalStore";
 import { Key, StateValue } from "@algo-builder/algob/build/types";
 import type { LogicSigAccount } from "algosdk";
 import { getProposalLsig } from "../contract/dao";
-import indexerClient from "../config/indexer.config";
 import { convertToHex } from "@/utility";
 import { SchemaType, UnknownObject } from "@/types";
 import {
@@ -25,6 +12,7 @@ import {
 	lookupApplications,
 	lookupAssetByID,
 	lookupAccountAssets,
+	lookupAccountAppLocalStates,
 } from "@/api";
 
 export const getApplicationGlobalState = async (
@@ -45,25 +33,21 @@ export const getApplicationGlobalState = async (
 
 export const getAccountAppLocalState = async (
 	address: string,
-	applicationId: number
+	appId: number
 ): Promise<Map<string, StateValue> | undefined> => {
 	try {
 		let localStateMap = undefined;
 		// parse local state of DAO app for current user to get their details related to app for UI
-		const localState = await indexerClient
-			.lookupAccountAppLocalStates(address)
-			.do();
-		const parsedLocalState = JSON.parse(JSON.stringify(localState));
-
-		if (parsedLocalState && parsedLocalState[LOCAL_STATE]) {
-			const applicationInfo = parsedLocalState[LOCAL_STATE].find(
-				(appInfo: any) => appInfo[APPLICATION_ID] === applicationId
-			);
-			if (applicationInfo) {
-				localStateMap = decodeStateMap(applicationInfo[KEY_VALUE]);
-			}
+		const hexAddr = convertToHex(address);
+		const localState = await executeReq(
+			lookupAccountAppLocalStates(hexAddr, appId)
+		);
+		if (JSON.parse(localState?.allAccountApps?.nodes[0]?.localstate)?.tkv) {
+			const parsedLocalState = JSON.parse(
+				localState?.allAccountApps?.nodes[0]?.localstate
+			)?.tkv;
+			localStateMap = decodeAppLocalState(parsedLocalState);
 		}
-
 		return localStateMap;
 	} catch (e) {
 		console.log(e);
@@ -136,7 +120,10 @@ export const isAssetOpted = async (
 		const hexAddr = convertToHex(address);
 		const assetInfo = await executeReq(lookupAccountAssets(hexAddr, assetId));
 		// if greater then 0 then asset is opted.
-		return assetInfo?.allAccountAssets?.nodes?.length;
+		if (assetInfo?.allAccountAssets?.nodes?.length) {
+			return true;
+		}
+		return false;
 	} catch (e) {
 		console.error(e);
 		throw e;
@@ -146,27 +133,21 @@ export const isAssetOpted = async (
 /**
  * Check if given application is opted in given address
  * @param address Account address
- * @param applicationId application id
+ * @param appId application id
  */
 export const isApplicationOpted = async (
 	address: string,
-	applicationId: number
+	appId: number
 ): Promise<boolean> => {
 	try {
-		let isApplicationOpted = false;
-		const applicationInfo = await indexerClient
-			.lookupAccountAppLocalStates(address)
-			.do();
-		const parsedApplicationInfo = JSON.parse(JSON.stringify(applicationInfo));
-		if (parsedApplicationInfo && parsedApplicationInfo[LOCAL_STATE]) {
-			const optedApplicationInfo = applicationInfo[LOCAL_STATE].find(
-				(appInfo: any) => (appInfo[APPLICATION_ID] = applicationId)
-			);
-			if (optedApplicationInfo) {
-				isApplicationOpted = true;
-			}
+		const hexAddr = convertToHex(address);
+		const appInfo = await executeReq(
+			lookupAccountAppLocalStates(hexAddr, appId)
+		);
+		if (appInfo?.allAccountApps?.nodes?.length) {
+			return true;
 		}
-		return isApplicationOpted;
+		return false;
 	} catch (e) {
 		console.error(e);
 		throw e;
@@ -191,18 +172,20 @@ export const getGovASATokenAmount = async (
 	}
 };
 
-export function decodeStateMap(state: Array<any>): Map<Key, StateValue> {
+export function decodeAppLocalState(state: any): Map<Key, StateValue> {
 	const stateMap = new Map<Key, StateValue>();
 	if (state) {
-		for (const g of state) {
-			const key = Buffer.from(g.key, "base64").toString();
-			if (g.value.type === SchemaType.BYTES) {
+		for (const key in state) {
+			if (state[key].tt === SchemaType.BYTES) {
 				stateMap.set(
-					key,
-					Buffer.from(g.value.bytes, "base64").toString("ascii")
+					Buffer.from(key, "base64").toString("ascii"),
+					Buffer.from(state[key].tb, "base64").toString("ascii")
 				);
 			} else {
-				stateMap.set(key, g.value.uint);
+				stateMap.set(
+					Buffer.from(key, "base64").toString("ascii"),
+					state[key].ui
+				);
 			}
 		}
 	}

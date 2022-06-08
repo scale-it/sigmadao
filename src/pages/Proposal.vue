@@ -245,9 +245,9 @@ export default defineComponent({
 						}
 					}
 
-					// check if asset is already opted
+					// check if app is already opted
 					const isApplicationAlreadyOpted = await isApplicationOpted(
-						this.walletStore.address,
+						lsig.address(),
 						this.daoStore.dao_id as number
 					);
 					// optin

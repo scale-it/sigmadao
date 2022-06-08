@@ -60,9 +60,12 @@ export const getCursorReq = (pageNumber: number, pageSize: number) => {
   `;
 };
 
-export const lookupApplications = (applicationId: number) => {
-	return `query MyQuery {
-    allSigmaDaos(condition: {appId: "${applicationId}"}) {
+/** LookupApplications
+ * @param appId Application id
+ */
+export const lookupApplications = (appId: number) => {
+	return `query LookupApplications {
+    allSigmaDaos(condition: {appId: "${appId}"}) {
       nodes {
         appParams
       }
@@ -70,8 +73,11 @@ export const lookupApplications = (applicationId: number) => {
   }`;
 };
 
+/** LookupAssetByID
+ * @param assetId Assrt ID
+ */
 export const lookupAssetByID = (assetId: number) => {
-	return `query MyQuery {
+	return `query LookupAssetByID {
     allAssets(condition: {index: "${assetId}"}) {
         nodes {
           params
@@ -80,8 +86,12 @@ export const lookupAssetByID = (assetId: number) => {
   }`;
 };
 
+/** LookupAccountAssets.
+ * @param addr Address
+ * @param assetId Asset ID
+ */
 export const lookupAccountAssets = (addr: string, assetId: number) => {
-	return `query MyQuery {
+	return `query LookupAccountAssets {
     allAccountAssets(
       condition: {
         assetid: "${assetId}"
@@ -90,6 +100,23 @@ export const lookupAccountAssets = (addr: string, assetId: number) => {
     ) {
       nodes {
         amount
+      }
+    }
+  }`;
+};
+
+/** lookupAccountAppLocalStates
+ * @param addr Address
+ * @param appId Application ID
+ */
+export const lookupAccountAppLocalStates = (addr: string, appId: number) => {
+	return `query LookupAccountAppLocalStates {
+    allAccountApps(
+      condition: { addr: "${"\\\\x" + addr}", app: "${appId}" }
+    ) {
+      nodes {
+        app
+        localstate
       }
     }
   }`;
