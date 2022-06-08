@@ -22,15 +22,16 @@ export const getApplicationGlobalState = async (
 		let globalState = undefined;
 		// get global state of application
 		const globalStateRes = await executeReq(lookupApplications(applicationId));
-		if (globalStateRes?.allSigmaDaos?.nodes.length && JSON.parse(
-			globalStateRes.allSigmaDaos.nodes[0].appParams
-		)) {
+		if (
+			globalStateRes?.allSigmaDaos?.nodes.length &&
+			JSON.parse(globalStateRes.allSigmaDaos.nodes[0].appParams).dt.gd
+		) {
 			const parsedGlobalState = JSON.parse(
 				globalStateRes.allSigmaDaos.nodes[0].appParams
 			).dt.gd;
 			globalState = decodeAppParamsState(parsedGlobalState);
 		}
-		return decodeAppParamsState(globalState);
+		return globalState;
 	} catch (e) {
 		console.log(e);
 		throw e;
@@ -48,7 +49,10 @@ export const getAccountAppLocalState = async (
 		const localState = await executeReq(
 			lookupAccountAppLocalStates(hexAddr, appId)
 		);
-		if (localState?.allAccountApps?.nodes.length && JSON.parse(localState?.allAccountApps?.nodes[0]?.localstate)?.tkv) {
+		if (
+			localState?.allAccountApps?.nodes.length &&
+			JSON.parse(localState?.allAccountApps?.nodes[0]?.localstate)?.tkv
+		) {
 			const parsedLocalState = JSON.parse(
 				localState?.allAccountApps?.nodes[0]?.localstate
 			)?.tkv;
