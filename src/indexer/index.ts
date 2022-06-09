@@ -15,13 +15,17 @@ import {
 	lookupAccountAppLocalStates,
 } from "@/api";
 
+/**
+ * Get global state
+ * @param appId application id
+ */
 export const getApplicationGlobalState = async (
-	applicationId: number
+	appId: number
 ): Promise<Map<string, StateValue> | undefined> => {
 	try {
 		let globalState = undefined;
 		// get global state of application
-		const globalStateRes = await executeReq(lookupApplications(applicationId));
+		const globalStateRes = await executeReq(lookupApplications(appId));
 		if (
 			globalStateRes?.allSigmaDaos?.nodes.length &&
 			JSON.parse(globalStateRes.allSigmaDaos.nodes[0].appParams).dt.gd
@@ -38,6 +42,11 @@ export const getApplicationGlobalState = async (
 	}
 };
 
+/**
+ * Get app local state
+ * @param address address
+ * @param appId application id
+ */
 export const getAccountAppLocalState = async (
 	address: string,
 	appId: number
@@ -65,6 +74,9 @@ export const getAccountAppLocalState = async (
 	}
 };
 
+/**
+ * Search app and account
+ */
 export const searchApplicationAndAccount = async () => {
 	const daoIdStore = DaoID();
 	const walletStore = WalletStore();
@@ -164,6 +176,11 @@ export const isApplicationOpted = async (
 	}
 };
 
+/**
+ * Get GOV ASA token amount
+ * @param address Account address
+ * @param assetId application id
+ */
 export const getGovASATokenAmount = async (
 	address: string,
 	assetId: number
@@ -182,6 +199,10 @@ export const getGovASATokenAmount = async (
 	}
 };
 
+/**
+ * Decode app local state
+ * @param state State to be decoded
+ */
 export function decodeAppLocalState(state: any): Map<Key, StateValue> {
 	const stateMap = new Map<Key, StateValue>();
 	if (state) {
@@ -202,6 +223,10 @@ export function decodeAppLocalState(state: any): Map<Key, StateValue> {
 	return stateMap;
 }
 
+/**
+ * Decode app params state
+ * @param state State to be decoded
+ */
 export function decodeAppParamsState(state: any): Map<Key, StateValue> {
 	const stateMap = new Map<Key, StateValue>();
 	if (state) {
@@ -222,6 +247,10 @@ export function decodeAppParamsState(state: any): Map<Key, StateValue> {
 	return stateMap;
 }
 
+/**
+ * Get asset information
+ * @param assetId Asset ID
+ */
 export async function getAssetInformation(
 	assetId: number
 ): Promise<UnknownObject> {

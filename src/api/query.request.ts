@@ -74,7 +74,7 @@ export const lookupApplications = (appId: number) => {
 };
 
 /** LookupAssetByID
- * @param assetId Assrt ID
+ * @param assetId Asset ID
  */
 export const lookupAssetByID = (assetId: number) => {
 	return `query LookupAssetByID {
