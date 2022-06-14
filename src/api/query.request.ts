@@ -59,3 +59,65 @@ export const getCursorReq = (pageNumber: number, pageSize: number) => {
   }
   `;
 };
+
+/** LookupApplications
+ * @param appId Application id
+ */
+export const lookupApplications = (appId: number) => {
+	return `query LookupApplications {
+    allSigmaDaos(condition: {appId: "${appId}"}) {
+      nodes {
+        appParams
+      }
+    }
+  }`;
+};
+
+/** LookupAssetByID
+ * @param assetId Asset ID
+ */
+export const lookupAssetByID = (assetId: number) => {
+	return `query LookupAssetByID {
+    allAssets(condition: {index: "${assetId}"}) {
+        nodes {
+          params
+        }
+    }
+  }`;
+};
+
+/** LookupAccountAssets.
+ * @param addr Address
+ * @param assetId Asset ID
+ */
+export const lookupAccountAssets = (addr: string, assetId: number) => {
+	return `query LookupAccountAssets {
+    allAccountAssets(
+      condition: {
+        assetid: "${assetId}"
+        addr: "${"\\\\x" + addr}"
+      }
+    ) {
+      nodes {
+        amount
+      }
+    }
+  }`;
+};
+
+/** lookupAccountAppLocalStates
+ * @param addr Address
+ * @param appId Application ID
+ */
+export const lookupAccountAppLocalStates = (addr: string, appId: number) => {
+	return `query LookupAccountAppLocalStates {
+    allAccountApps(
+      condition: { addr: "${"\\\\x" + addr}", app: "${appId}" }
+    ) {
+      nodes {
+        app
+        localstate
+      }
+    }
+  }`;
+};

@@ -362,7 +362,7 @@ export default defineComponent({
 							key: index,
 							dao_id: +item.appId,
 							token_id: +item.assetId,
-							token_name: tokenData.name as string,
+							token_name: tokenData.an as string,
 							name: globalState.get(GLOBAL_STATE_MAP_KEY.DaoName) as string,
 							link: globalState.get(GLOBAL_STATE_MAP_KEY.Url) as string,
 						};

@@ -152,7 +152,6 @@ export default defineComponent({
 		},
 		async searchID() {
 			if (this.daoID) {
-				const tempDaoID: number = +this.daoID;
 				this.daoID = +this.daoID;
 				// TODO: update to use filter from backend (for daoID)
 				// to get gov token id

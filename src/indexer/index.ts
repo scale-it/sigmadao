@@ -1,80 +1,72 @@
-import {
-	GLOBAL_STATE,
-	GLOBAL_STATE_MAP_KEY,
-	LOCAL_STATE,
-	LOCAL_STATE_MAP_KEY,
-	APPLICATION_ID,
-	ASSET_ID,
-	KEY_VALUE,
-	APPLICATION,
-	PARAMS,
-	ASSETS,
-	ASSET,
-} from "@/constants";
+import { GLOBAL_STATE_MAP_KEY, LOCAL_STATE_MAP_KEY } from "@/constants";
 import DaoID from "@/store/DaoID";
 import WalletStore from "@/store/WalletStore";
 import ProposalStore from "@/store/ProposalStore";
 import { Key, StateValue } from "@algo-builder/algob/build/types";
 import type { LogicSigAccount } from "algosdk";
 import { getProposalLsig } from "../contract/dao";
-import indexerClient from "../config/indexer.config";
+import { convertToHex } from "@/utility";
 import { SchemaType, UnknownObject } from "@/types";
+import {
+	executeReq,
+	lookupApplications,
+	lookupAssetByID,
+	lookupAccountAssets,
+	lookupAccountAppLocalStates,
+} from "@/api";
 
-export const searchForAssetsByName = async (
-	assetName: string
-): Promise<Record<string, any> | undefined> => {
-	try {
-		const accountInfo = await indexerClient
-			.searchForAssets()
-			.name(assetName)
-			.do();
-		return JSON.parse(JSON.stringify(accountInfo));
-	} catch (e) {
-		console.log(e);
-		throw e;
-	}
-};
-
+/**
+ * Get global state
+ * @param appId application id
+ */
 export const getApplicationGlobalState = async (
-	applicationId: number
+	appId: number
 ): Promise<Map<string, StateValue> | undefined> => {
 	try {
+		let globalState = undefined;
 		// get global state of application
-		const applicationInfo = await indexerClient
-			.lookupApplications(applicationId)
-			.do();
-
-		const globalState = applicationInfo[APPLICATION][PARAMS][GLOBAL_STATE];
-		// parse global state of DAO app to get details for UI
-		const globalStateMap = decodeStateMap(globalState);
-		return globalStateMap;
+		const globalStateRes = await executeReq(lookupApplications(appId));
+		if (
+			globalStateRes?.allSigmaDaos?.nodes.length &&
+			JSON.parse(globalStateRes.allSigmaDaos.nodes[0].appParams).dt.gd
+		) {
+			const parsedGlobalState = JSON.parse(
+				globalStateRes.allSigmaDaos.nodes[0].appParams
+			).dt.gd;
+			globalState = decodeAppParamsState(parsedGlobalState);
+		}
+		return globalState;
 	} catch (e) {
 		console.log(e);
 		throw e;
 	}
 };
 
+/**
+ * Get app local state
+ * @param address address
+ * @param appId application id
+ */
 export const getAccountAppLocalState = async (
 	address: string,
-	applicationId: number
+	appId: number
 ): Promise<Map<string, StateValue> | undefined> => {
 	try {
 		let localStateMap = undefined;
 		// parse local state of DAO app for current user to get their details related to app for UI
-		const localState = await indexerClient
-			.lookupAccountAppLocalStates(address)
-			.do();
-		const parsedLocalState = JSON.parse(JSON.stringify(localState));
-
-		if (parsedLocalState && parsedLocalState[LOCAL_STATE]) {
-			const applicationInfo = parsedLocalState[LOCAL_STATE].find(
-				(appInfo: any) => appInfo[APPLICATION_ID] === applicationId
-			);
-			if (applicationInfo) {
-				localStateMap = decodeStateMap(applicationInfo[KEY_VALUE]);
-			}
+		const hexAddr = convertToHex(address);
+		const localState = await executeReq(
+			lookupAccountAppLocalStates(hexAddr, appId)
+		);
+		if (
+			localState?.allAccountApps?.nodes.length &&
+			JSON.parse(localState?.allAccountApps?.nodes[0]?.localstate)?.tkv
+		) {
+			const parsedLocalState = JSON.parse(
+				localState?.allAccountApps?.nodes[0]?.localstate
+			)?.tkv;
+			localStateMap = decodeAppLocalState(parsedLocalState);
 		}
-
 		return localStateMap;
 	} catch (e) {
 		console.log(e);
@@ -82,6 +74,9 @@ export const getAccountAppLocalState = async (
 	}
 };
 
+/**
+ * Search app and account
+ */
 export const searchApplicationAndAccount = async () => {
 	const daoIdStore = DaoID();
 	const walletStore = WalletStore();
@@ -144,18 +139,13 @@ export const isAssetOpted = async (
 	assetId: number
 ): Promise<boolean> => {
 	try {
-		let isAssetOpted = false;
-		const assetInfo = await indexerClient.lookupAccountAssets(address).do();
-
-		if (assetInfo.assets) {
-			const optedAssetInfo = assetInfo.assets.find(
-				(asset: any) => asset[ASSET_ID] === assetId
-			);
-			if (optedAssetInfo) {
-				isAssetOpted = true;
-			}
+		const hexAddr = convertToHex(address);
+		const assetInfo = await executeReq(lookupAccountAssets(hexAddr, assetId));
+		// if greater then 0 then asset is opted.
+		if (assetInfo?.allAccountAssets?.nodes?.length) {
+			return true;
 		}
-		return isAssetOpted;
+		return false;
 	} catch (e) {
 		console.error(e);
 		throw e;
@@ -165,47 +155,42 @@ export const isAssetOpted = async (
 /**
  * Check if given application is opted in given address
  * @param address Account address
- * @param applicationId application id
+ * @param appId application id
  */
 export const isApplicationOpted = async (
 	address: string,
-	applicationId: number
+	appId: number
 ): Promise<boolean> => {
 	try {
-		let isApplicationOpted = false;
-		const applicationInfo = await indexerClient
-			.lookupAccountAppLocalStates(address)
-			.do();
-		const parsedApplicationInfo = JSON.parse(JSON.stringify(applicationInfo));
-		if (parsedApplicationInfo && parsedApplicationInfo[LOCAL_STATE]) {
-			const optedApplicationInfo = applicationInfo[LOCAL_STATE].find(
-				(appInfo: any) => (appInfo[APPLICATION_ID] = applicationId)
-			);
-			if (optedApplicationInfo) {
-				isApplicationOpted = true;
-			}
+		const hexAddr = convertToHex(address);
+		const appInfo = await executeReq(
+			lookupAccountAppLocalStates(hexAddr, appId)
+		);
+		if (appInfo?.allAccountApps?.nodes?.length) {
+			return true;
 		}
-		return isApplicationOpted;
+		return false;
 	} catch (e) {
 		console.error(e);
 		throw e;
 	}
 };
 
+/**
+ * Get GOV ASA token amount
+ * @param address Account address
+ * @param assetId application id
+ */
 export const getGovASATokenAmount = async (
 	address: string,
-	govtID: number
+	assetId: number
 ): Promise<number> => {
 	try {
-		const assetInfo = await indexerClient.lookupAccountAssets(address).do();
+		const hexAddr = convertToHex(address);
+		const assetInfo = await executeReq(lookupAccountAssets(hexAddr, assetId));
 		let amount = 0;
-		if (assetInfo[ASSETS]) {
-			const govtAssetInfo = assetInfo[ASSETS].find(
-				(assetInfo: any) => assetInfo[ASSET_ID] === govtID
-			);
-			if (govtAssetInfo) {
-				amount = govtAssetInfo.amount;
-			}
+		if (assetInfo?.allAccountAssets?.nodes[0]?.amount) {
+			amount = parseInt(assetInfo.allAccountAssets.nodes[0].amount);
 		}
 		return amount;
 	} catch (e) {
@@ -214,24 +199,34 @@ export const getGovASATokenAmount = async (
 	}
 };
 
-export function decodeStateMap(state: Array<any>): Map<Key, StateValue> {
+/**
+ * Decode app local state
+ * @param state State to be decoded
+ */
+export function decodeAppLocalState(state: any): Map<Key, StateValue> {
 	const stateMap = new Map<Key, StateValue>();
 	if (state) {
-		for (const g of state) {
-			const key = Buffer.from(g.key, "base64").toString();
-			if (g.value.type === SchemaType.BYTES) {
+		for (const key in state) {
+			if (state[key].tt === SchemaType.BYTES) {
 				stateMap.set(
-					key,
-					Buffer.from(g.value.bytes, "base64").toString("ascii")
+					Buffer.from(key, "base64").toString("ascii"),
+					Buffer.from(state[key].tb, "base64").toString("ascii")
 				);
 			} else {
-				stateMap.set(key, g.value.uint);
+				stateMap.set(
+					Buffer.from(key, "base64").toString("ascii"),
+					state[key].ui
+				);
 			}
 		}
 	}
 	return stateMap;
 }
 
+/**
+ * Decode app params state
+ * @param state State to be decoded
+ */
 export function decodeAppParamsState(state: any): Map<Key, StateValue> {
 	const stateMap = new Map<Key, StateValue>();
 	if (state) {
@@ -252,12 +247,16 @@ export function decodeAppParamsState(state: any): Map<Key, StateValue> {
 	return stateMap;
 }
 
+/**
+ * Get asset information
+ * @param assetId Asset ID
+ */
 export async function getAssetInformation(
 	assetId: number
 ): Promise<UnknownObject> {
 	try {
-		const assetInfo = await indexerClient.lookupAssetByID(assetId).do();
-		return assetInfo[ASSET][PARAMS];
+		const assetInfo = await executeReq(lookupAssetByID(assetId));
+		return JSON.parse(assetInfo.allAssets.nodes[0].params);
 	} catch (e) {
 		console.error(e);
 		throw e;

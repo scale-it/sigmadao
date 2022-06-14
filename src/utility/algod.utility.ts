@@ -91,3 +91,8 @@ export const optInDaoApp = async (
 		throw error;
 	}
 };
+
+export const convertToHex = (address: string) => {
+	const pk = algosdk.decodeAddress(address);
+	return Buffer.from(pk.publicKey).toString("hex");
+};
