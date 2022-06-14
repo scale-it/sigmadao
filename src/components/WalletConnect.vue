@@ -4,6 +4,32 @@
 			<a-col>
 				<a-dropdown>
 					<template #overlay>
+						<a-menu @click="handleWalletConnect">
+							<a-menu-item :key="WalletType.ALGOSIGNER">
+								Algosigner
+							</a-menu-item>
+							<a-menu-item :key="WalletType.MY_ALGO">
+								MyAlgo Wallet
+							</a-menu-item>
+							<a-menu-item :key="WalletType.WALLET_CONNECT">
+								Wallet Connect
+							</a-menu-item>
+						</a-menu>
+					</template>
+					<a-button>
+						<span v-if="selectedWallet === WalletType.NONE">
+							Connect Wallet</span
+						>
+						<span v-else>Selected Wallet : {{ selectedWallet }}</span>
+
+						<DownOutlined />
+					</a-button>
+				</a-dropdown>
+			</a-col>
+
+			<a-col v-if="selectedWallet !== WalletType.NONE">
+				<a-dropdown>
+					<template #overlay>
 						<a-menu @click="handleNetworkConnect">
 							<a-menu-item :key="NetworkTypes.MAIN_NET"> MainNet </a-menu-item>
 							<a-menu-item :key="NetworkTypes.TEST_NET"> TestNet </a-menu-item>
@@ -19,28 +45,6 @@
 							Select Network</span
 						>
 						<span v-else>Selected Network : {{ selectedNetwork }}</span>
-						<DownOutlined />
-					</a-button>
-				</a-dropdown>
-			</a-col>
-
-			<a-col v-if="selectedNetwork !== NetworkTypes.NONE">
-				<a-dropdown>
-					<template #overlay>
-						<a-menu @click="handleWalletConnect">
-							<a-menu-item :key="WalletType.ALGOSIGNER">
-								Algosigner
-							</a-menu-item>
-							<a-menu-item :key="WalletType.MY_ALGO">
-								MyAlgo Wallet
-							</a-menu-item>
-							<a-menu-item :key="WalletType.WALLET_CONNECT">
-								Wallet Connect
-							</a-menu-item>
-						</a-menu>
-					</template>
-					<a-button>
-						Connect Wallet
 						<DownOutlined />
 					</a-button>
 				</a-dropdown>
@@ -282,14 +286,16 @@ export default defineComponent({
 		},
 		// eslint-disable-next-line
 		handleWalletConnect(e: any) {
+			this.handleLogOut();
 			console.log("changing wallet kind", e.key);
-			this.connectWallet(e.key);
+			this.selectedWallet = e.key;
+			this.setWalletType(e.key);
 		},
 		handleNetworkConnect(e: any) {
 			if (e.key) {
-				this.handleLogOut();
 				this.selectedNetwork = e.key;
 				this.walletStore.setNetworkTypes(e.key);
+				this.connectWallet(this.walletStore.walletKind);
 			}
 		},
 		handleAddressSwitch(e: any) {
@@ -308,6 +314,8 @@ export default defineComponent({
 			DaoID().handleLogOut();
 			this.setWalletType(WalletType.NONE);
 			this.selectedWallet = WalletType.NONE;
+			this.selectedNetwork = NetworkTypes.NONE;
+			this.walletStore.setNetworkTypes(NetworkTypes.NONE);
 		},
 		getTruncatedAddress(addr: string) {
 			return addr.substring(0, 4) + "..." + addr.slice(-4);
