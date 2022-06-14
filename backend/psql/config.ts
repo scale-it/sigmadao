@@ -1,7 +1,7 @@
 // PostgreSQL parameters to pass to the URL origin
-const POSTGRES_UNAME = process.env.POSTGRES_UNAME || "algorand";
+const POSTGRES_UNAME = process.env.POSTGRES_UNAME || "sigma_dao_user";
 const POSTGRES_DBNAME = process.env.POSTGRES_DBNAME || "pgdb";
-const POSTGRES_PASS = process.env.POSTGRES_PASS || "indexer";
+const POSTGRES_PASS = process.env.POSTGRES_PASS || "SigmaDao@1234";
 const POSTGRES_HOST = process.env.POSTGRES_HOST || "localhost";
 const POSTGRES_PORT = process.env.POSTGRES_PORT || 5432;
 
