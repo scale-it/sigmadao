@@ -17,13 +17,17 @@
 						</a-menu>
 					</template>
 					<a-button>
-						Connect Wallet
+						<span v-if="selectedWallet === WalletType.NONE">
+							Connect Wallet</span
+						>
+						<span v-else>Selected Wallet : {{ selectedWallet }}</span>
+
 						<DownOutlined />
 					</a-button>
 				</a-dropdown>
 			</a-col>
 
-			<a-col v-if="selectedWallet !== 0">
+			<a-col v-if="selectedWallet !== WalletType.NONE">
 				<a-dropdown>
 					<template #overlay>
 						<a-menu @click="handleNetworkConnect">
@@ -310,6 +314,8 @@ export default defineComponent({
 			DaoID().handleLogOut();
 			this.setWalletType(WalletType.NONE);
 			this.selectedWallet = WalletType.NONE;
+			this.selectedNetwork = NetworkTypes.NONE;
+			this.walletStore.setNetworkTypes(NetworkTypes.NONE);
 		},
 		getTruncatedAddress(addr: string) {
 			return addr.substring(0, 4) + "..." + addr.slice(-4);
