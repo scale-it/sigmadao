@@ -1,11 +1,9 @@
 import { BACKEND_PORT } from "./config";
 import { dbUrl } from "./psql";
+const { MutationPlugin } = require("graphile-build");
 const { postgraphile } = require("postgraphile");
 const express = require("express");
-const cors = require("cors");
 const app = express();
-
-app.use(cors());
 
 app.use(
 	postgraphile(dbUrl, "public", {
@@ -15,6 +13,11 @@ app.use(
 		enhanceGraphiql: true,
 		graphqlRoute: "/api",
 		graphiqlRoute: "/graphiql",
+		disableDefaultMutations: true, // disables the default mutation only
+		enableCors: true,
+		skipPlugins: [
+			MutationPlugin, // disables the mutation permanently
+		],
 	})
 );
 
