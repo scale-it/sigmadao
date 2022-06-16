@@ -1,7 +1,7 @@
 import { compileSignature } from "@/utility";
 
 const proposalLsig = (app_id: number, addr: string) => {
-	return `#pragma version 4
+	return `#pragma version 6
     global GroupSize
     int 1
     ==
