@@ -1,7 +1,7 @@
 import { compileSignature } from "@/utility";
 
 const daoFundLsig = (app_id: number) => {
-	return `#pragma version 4
+	return `#pragma version 6
     global GroupSize
     int 1
     ==
