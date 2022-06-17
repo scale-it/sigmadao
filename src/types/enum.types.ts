@@ -36,6 +36,7 @@ export enum EndPoint {
 	ADD_PROPOSAL = "/addProposal",
 	ALL_DAO = "/",
 	VOTE_TOKEN = "/voteTokens",
+	CREATE_DAO = "/createDao",
 }
 
 export enum DAOActions {
@@ -66,4 +67,11 @@ export enum PaginationCallType {
 	NAV_NEXT,
 	JUMP_PAGE,
 	FIRST_PAGE,
+}
+
+export enum DurationType {
+	DAYS,
+	HOURS,
+	MINUTES,
+	SECONDS,
 }

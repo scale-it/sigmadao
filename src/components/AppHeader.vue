@@ -20,13 +20,15 @@
 									>All DAOs</a-button
 								>
 							</router-link>
-							<a-button
-								class="menu_option"
-								:type="isLinkActive(NavigationKey.CREATE_DAO)"
-								@click="() => handleMenuClick(NavigationKey.CREATE_DAO)"
-								>Create DAO</a-button
-							>
-
+							<router-link :to="{ path: EndPoint.CREATE_DAO }">
+								<a-button
+									class="menu_option"
+									:type="isLinkActive(NavigationKey.CREATE_DAO)"
+									@click="() => handleMenuClick(NavigationKey.CREATE_DAO)"
+									:disabled="!walletStore.address"
+									>Create DAO</a-button
+								>
+							</router-link>
 							<router-link :to="{ path: EndPoint.ADD_PROPOSAL }">
 								<a-button
 									class="menu_option"
