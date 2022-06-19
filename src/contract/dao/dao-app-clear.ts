@@ -1,6 +1,6 @@
 import { compileToUnit8Array } from "@/utility";
 
-const daoAppClear = ` #pragma version 6
+const daoAppClear = `#pragma version 6
     int 1
     return`;
 
