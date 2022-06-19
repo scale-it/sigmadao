@@ -17,9 +17,9 @@ export const GLOBAL_STATE_MAP_KEY = {
 	Url: "url",
 };
 
-export const DAY_TO_MILLISECONDS = 1000 * 60 * 60 * 24;
-export const DAY_TO_SECONDS = 24 * 60 * 60;
-export const HOUR_TO_SECONDS = 60 * 60;
+export const DAY_TO_MILLISECONDS = 1000 *DAY_TO_SECONDS;
+export const DAY_TO_SECONDS = 24 * HOUR_TO_SECONDS;
+export const HOUR_TO_SECONDS = 60 * MINUTE_TO_SECONDS;
 export const MINUTE_TO_SECONDS = 60;
 
 export const ProposalType = {
