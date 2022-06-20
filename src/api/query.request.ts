@@ -121,3 +121,18 @@ export const lookupAccountAppLocalStates = (addr: string, appId: number) => {
     }
   }`;
 };
+
+/** LookUpSigmaDaoByAppId
+ * @param appId Application ID
+ */
+export const getDaoInfoByAppIdReq = (appId: number) => {
+	return `query SearchByAppId {
+    allSigmaDaos(condition: {appId: "${appId}"}) {
+      nodes {
+        appId
+        appParams
+        assetId
+      }
+    }
+  }`;
+};
