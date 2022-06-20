@@ -22,9 +22,10 @@
 				@validate-messages="validateMessages"
 			>
 				<a-form-item
-					label="Token Asset Index"
+					label="Gov Token ID"
 					name="token_id"
 					:rules="[{ required: true, type: 'number' }]"
+					extra="ASA which will define Gov DAO token membership."
 				>
 					<a-input-number v-model:value="formState.token_id" />
 				</a-form-item>
@@ -32,6 +33,7 @@
 					label="Minimum Deposit Amount"
 					name="min_deposit_amt"
 					:rules="[{ required: true, type: 'number' }]"
+					extra="Minimum deposit amount of the gov tokens required to make a proposal."
 				>
 					<a-input-number v-model:value="formState.min_deposit_amt" />
 				</a-form-item>
@@ -39,6 +41,7 @@
 					label="Minimum Support"
 					name="min_support"
 					:rules="[{ required: true, type: 'number' }]"
+					extra="Minimum number of yes token votes to validate the proposal."
 				>
 					<a-input-number v-model:value="formState.min_support" />
 				</a-form-item>
@@ -46,6 +49,7 @@
 					label="Minimum Duration"
 					name="min_duration"
 					:rules="[{ required: true, type: 'number' }]"
+					extra="Minimum voting time for a new proposal."
 				>
 					<a-form-item-rest>
 						<a-radio-group
@@ -63,7 +67,10 @@
 				<a-form-item
 					label="Maximum Duration"
 					name="max_duration"
-					:rules="[{ required: true, type: 'number' }]"
+					extra="Maximum voting time for a new proposal."
+					:rules="[
+						{ required: true, type: 'number', validator: validateMaxDuration },
+					]"
 				>
 					<a-form-item-rest>
 						<a-radio-group
@@ -82,6 +89,7 @@
 					label="URL"
 					name="url"
 					:rules="[{ required: true, type: 'url' }]"
+					extra="Website with more information about the DAO."
 				>
 					<a-input v-model:value="formState.url" />
 				</a-form-item>
@@ -122,8 +130,10 @@ import { defineComponent, reactive } from "vue";
 import CreateDAOStore from "../store/CreateDaoStore";
 import { DurationType, CreateDaoFormState } from "@/types";
 import { MetaType } from "@algo-builder/web/build/types";
-import { getCompiledDaoApproval } from "@/contract/dao/dao-app-approval";
-import { getCompiledDaoClear } from "@/contract/dao/dao-app-clear";
+import { getCompiledDaoApproval, getCompiledDaoClear } from "@/contract/dao";
+import { Rule } from "ant-design-vue/lib/form";
+import { convertDurationTypeToSeconds } from "@/utility";
+import { getAssetInformation } from "@/indexer";
 
 export default defineComponent({
 	name: "CreateDaoPage",
@@ -147,18 +157,29 @@ export default defineComponent({
 		};
 	},
 	methods: {
-		convertToSeconds(type: DurationType, value: number): number {
-			switch (type) {
-				case DurationType.DAYS:
-					return value * DAY_TO_SECONDS;
-				case DurationType.HOURS:
-					return value * HOUR_TO_SECONDS;
-				case DurationType.MINUTES:
-					return value * MINUTE_TO_SECONDS;
-				case DurationType.SECONDS:
-					return value;
-				default:
-					return value;
+		async validateMaxDuration(_rule: Rule, value: string) {
+			if (value === null) {
+				return Promise.reject("Please input the maximum duration.");
+			} else {
+				if (
+					this.formState.max_duration !== undefined &&
+					this.formState.min_duration !== undefined
+				) {
+					const max_duration = convertDurationTypeToSeconds(
+						this.maxDurationInputType,
+						this.formState.max_duration
+					);
+					const min_duration = convertDurationTypeToSeconds(
+						this.minDurationInputType,
+						this.formState.min_duration
+					);
+					if (max_duration < min_duration) {
+						return Promise.reject(
+							"Maximum duration for voting should be alteast equal to minumum duration"
+						);
+					} else return Promise.resolve();
+				}
+				return Promise.resolve();
 			}
 		},
 		async onFinish(value: CreateDaoFormState) {
@@ -173,17 +194,21 @@ export default defineComponent({
 			} = value;
 
 			if (min_duration) {
-				min_duration = this.convertToSeconds(
+				min_duration = convertDurationTypeToSeconds(
 					this.minDurationInputType,
 					min_duration
 				);
 			}
 			if (max_duration) {
-				max_duration = this.convertToSeconds(
+				max_duration = convertDurationTypeToSeconds(
 					this.maxDurationInputType,
 					max_duration
 				);
 			}
+			await getAssetInformation(token_id as number).catch((error) => {
+				this.error = `Please enter a valid Gov Token ID. ${token_id} Gov Token ID doesn't exists`;
+				throw error;
+			});
 
 			loadingMessage(this.key);
 			const deployApp: types.DeployAppParam[] = [
