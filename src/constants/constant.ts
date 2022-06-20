@@ -16,11 +16,10 @@ export const GLOBAL_STATE_MAP_KEY = {
 	DaoName: "dao_name",
 	Url: "url",
 };
-
-export const DAY_TO_MILLISECONDS = 1000 *DAY_TO_SECONDS;
-export const DAY_TO_SECONDS = 24 * HOUR_TO_SECONDS;
-export const HOUR_TO_SECONDS = 60 * MINUTE_TO_SECONDS;
 export const MINUTE_TO_SECONDS = 60;
+export const HOUR_TO_SECONDS = 60 * MINUTE_TO_SECONDS;
+export const DAY_TO_SECONDS = 24 * HOUR_TO_SECONDS;
+export const DAY_TO_MILLISECONDS = 1000 * DAY_TO_SECONDS;
 
 export const ProposalType = {
 	ALGO_TRANSFER: 1,

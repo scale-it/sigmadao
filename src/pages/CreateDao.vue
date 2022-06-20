@@ -112,11 +112,8 @@
 import {
 	createDaoMessage,
 	DAO_CONTRACT_STATE_CONFIG,
-	DAY_TO_SECONDS,
 	errorMessage,
-	HOUR_TO_SECONDS,
 	loadingMessage,
-	MINUTE_TO_SECONDS,
 	openErrorNotificationWithIcon,
 	openSuccessNotificationWithIcon,
 	SUCCESSFUL,
