@@ -75,3 +75,8 @@ export enum DurationType {
 	MINUTES,
 	SECONDS,
 }
+
+export enum SearchDaoType {
+	SEARCH_BY_APPLCATION_ID,
+	SEARCH_BY_DAO_NAME,
+}

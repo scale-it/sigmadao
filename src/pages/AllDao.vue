@@ -152,8 +152,13 @@ import {
 } from "@/indexer";
 import { defineComponent, reactive, ref, toRefs } from "vue";
 import DaoStore from "../store/DaoID";
-import { executeReq, getAllDaoReq, getCursorReq } from "@/api";
-import { DaoTableData, PaginationCallType } from "@/types";
+import {
+	executeReq,
+	getAllDaoReq,
+	getCursorReq,
+	getSearchByAppIdReq,
+} from "@/api";
+import { DaoTableData, PaginationCallType, SearchDaoType } from "@/types";
 import WalletStore from "@/store/WalletStore";
 import {
 	SearchOutlined,
@@ -262,6 +267,7 @@ export default defineComponent({
 		handleSelectDAO(data: DaoTableData) {
 			this.formState.govt_id = data.token_id;
 			this.formState.dao_id = data.dao_id;
+			this.searchDaoBy(SearchDaoType.SEARCH_BY_APPLCATION_ID, data.dao_id);
 			loadingMessage(this.key);
 			searchApplicationAndAccount()
 				.then(() => {
@@ -387,6 +393,19 @@ export default defineComponent({
 				if (currentPage === 1 && res.allSigmaDaos.totalCount) {
 					this.totalDataRowsCount = res.allSigmaDaos.totalCount;
 				}
+			}
+		},
+		async searchDaoBy(searchDaoType: SearchDaoType, appId: number) {
+			switch (searchDaoType) {
+				case SearchDaoType.SEARCH_BY_APPLCATION_ID:
+					executeReq(getSearchByAppIdReq(appId)).then((data) => {
+						// search response
+						console.log(data.allSigmaDaos.nodes[0]);
+					});
+					break;
+				case SearchDaoType.SEARCH_BY_DAO_NAME:
+					// TODO: WIP -> backend support needed
+					break;
 			}
 		},
 	},
