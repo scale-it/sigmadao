@@ -1,13 +1,13 @@
 .margin_top_sm {
-	margin-top: 1rem;
+	margin-top: 1rem !important;
 }
 
 .margin_bottom_sm {
-	margin-bottom: 1rem;
+	margin-bottom: 1rem !important;
 }
 
 .padding_sm {
-	padding: 1rem;
+	padding: 1rem !important;
 }
 
 .margin_top_large {

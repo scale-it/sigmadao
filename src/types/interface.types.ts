@@ -60,3 +60,13 @@ export interface DaoTableData {
 export interface UnknownObject {
 	[key: string]: string | number | boolean;
 }
+
+export interface CreateDaoFormState {
+	token_id?: number; // gov asa asset index
+	min_deposit_amt?: number; // deposit required to make a proposal
+	min_support?: number; // minimum number of yes power votes to validate proposal
+	min_duration?: number; // minimum voting time in number of seconds
+	max_duration?: number; // maximum voting time in number of seconds
+	url?: string;
+	dao_name?: string;
+}

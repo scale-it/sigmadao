@@ -3,6 +3,7 @@ import AddProposal from "../pages/Proposal.vue";
 import VotePage from "../pages/Vote.vue";
 import AllDao from "../pages/AllDao.vue";
 import VoteToken from "../pages/Token.vue";
+import CreateDaoPage from "../pages/CreateDao.vue";
 import { EndPoint } from "@/types";
 
 const routes = [
@@ -28,6 +29,12 @@ const routes = [
 		path: EndPoint.VOTE_TOKEN,
 		name: "VoteToken",
 		component: VoteToken,
+		props: true,
+	},
+	{
+		path: EndPoint.CREATE_DAO,
+		name: "CreateDaoPage",
+		component: CreateDaoPage,
 		props: true,
 	},
 ];

@@ -69,6 +69,11 @@ export const compileSignature = async (proposalSrc: string) => {
 	return new algosdk.LogicSigAccount(program);
 };
 
+export const compileToUnit8Array = async (appProgram: string) => {
+	const response = await algodClient.compile(appProgram).do();
+	return new Uint8Array(Buffer.from(response["result"], "base64"));
+};
+
 export const optInDaoApp = async (
 	from: string,
 	appID: number,
