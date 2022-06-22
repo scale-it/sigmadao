@@ -54,4 +54,4 @@ yarn build
 
 Checkout the [deployment documentation](https://vuejs.org/guide/best-practices/production-deployment.html)
 
-P.S: This is beta software.
+P.S: This is a beta software.
