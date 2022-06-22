@@ -2,7 +2,7 @@
 
 # Sigma Dao
 
-Sigma Dao is a web application that let's an user create a dao, add proposal, deposit tokens and vote.
+Sigma Dao is a web application that let's a user create a DAO, enable them to Add Proposal, Deposit and Withdraw Tokens and also allow them to Vote.
 
 Wallets supported by Sigma Dao are:
 
