@@ -36,6 +36,8 @@ Start the development server on http://localhost:3000
 yarn dev
 ```
 
+Backend is running on [postgraphile](https://www.graphile.org/postgraphile/) which connects to PostgreSQL database. [Postgraphile](https://www.graphile.org/postgraphile/) has automatic resolver which reads the schema of table and function for auto query generation.
+
 Start the backend development server on http://localhost:4000/graphiql
 
 ```bash
