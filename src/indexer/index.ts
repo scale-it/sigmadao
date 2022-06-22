@@ -6,13 +6,19 @@ import { Key, StateValue } from "@algo-builder/algob/build/types";
 import type { LogicSigAccount } from "algosdk";
 import { getProposalLsig } from "../contract/dao";
 import { convertToHex } from "@/utility";
-import { SchemaType, UnknownObject } from "@/types";
+import {
+	DaoTableData,
+	SchemaType,
+	SearchDaoType,
+	UnknownObject,
+} from "@/types";
 import {
 	executeReq,
 	lookupApplications,
 	lookupAssetByID,
 	lookupAccountAssets,
 	lookupAccountAppLocalStates,
+	getDaoInfoByAppIdReq,
 } from "@/api";
 
 /**
@@ -260,5 +266,45 @@ export async function getAssetInformation(
 	} catch (e) {
 		console.error(e);
 		throw e;
+	}
+}
+
+/**
+ * Get parsed DAO information
+ * @param params object to decode
+ */
+export async function decodePSQLAppParams(params: any): Promise<DaoTableData> {
+	const appParams = JSON.parse(params.appParams);
+	const globalState = decodeAppParamsState(appParams.dt.gd);
+	const tokenData = await getAssetInformation(params.assetId);
+	return {
+		dao_id: +params.appId,
+		token_id: +params.assetId,
+		token_name: tokenData.an as string,
+		name: globalState.get(GLOBAL_STATE_MAP_KEY.DaoName) as string,
+		link: globalState.get(GLOBAL_STATE_MAP_KEY.Url) as string,
+	};
+}
+
+/**
+ * Get dao information
+ * @param searchDaoType parameter to query
+ * @param value paramter value
+ */
+export async function handleDaoSearch(
+	searchDaoType: SearchDaoType,
+	value: number | string
+): Promise<DaoTableData | false> {
+	switch (searchDaoType) {
+		case SearchDaoType.SEARCH_BY_APPLCATION_ID: {
+			const response = await executeReq(getDaoInfoByAppIdReq(value as number));
+			if (response.allSigmaDaos.nodes[0]) {
+				return decodePSQLAppParams(response.allSigmaDaos.nodes[0]);
+			} else return false;
+		}
+		// TODO: WIP -> backend support needed
+		// case SearchDaoType.SEARCH_BY_DAO_NAME:
+		default:
+			return false;
 	}
 }

@@ -134,7 +134,6 @@
 import {
 	daoAppMessage,
 	errorMessage,
-	GLOBAL_STATE_MAP_KEY,
 	loadingMessage,
 	openErrorNotificationWithIcon,
 	openSuccessNotificationWithIcon,
@@ -145,19 +144,13 @@ import {
 	VALIDATE_MESSAGES,
 } from "@/constants";
 import {
-	decodeAppParamsState,
-	getAssetInformation,
+	decodePSQLAppParams,
 	isApplicationOpted,
 	searchApplicationAndAccount,
 } from "@/indexer";
 import { defineComponent, reactive, ref, toRefs } from "vue";
 import DaoStore from "../store/DaoID";
-import {
-	executeReq,
-	getAllDaoReq,
-	getCursorReq,
-	getDaoInfoByAppIdReq,
-} from "@/api";
+import { executeReq, getAllDaoReq, getCursorReq } from "@/api";
 import { DaoTableData, PaginationCallType, SearchDaoType } from "@/types";
 import WalletStore from "@/store/WalletStore";
 import {
@@ -267,7 +260,6 @@ export default defineComponent({
 		handleSelectDAO(data: DaoTableData) {
 			this.formState.govt_id = data.token_id;
 			this.formState.dao_id = data.dao_id;
-			this.handleDaoSearch(SearchDaoType.SEARCH_BY_APPLCATION_ID, data.dao_id);
 			loadingMessage(this.key);
 			searchApplicationAndAccount()
 				.then(() => {
@@ -359,26 +351,15 @@ export default defineComponent({
 						this.dataSource = [];
 					}
 					res.allSigmaDaos.nodes.map(async (item: any, index: number) => {
-						if (item.appParams) {
-							item.appParams = JSON.parse(item.appParams);
-						}
-						const globalState = decodeAppParamsState(item.appParams.dt.gd);
-						const tokenData = await getAssetInformation(item.assetId);
-						let data = {
-							key: index,
-							dao_id: +item.appId,
-							token_id: +item.assetId,
-							token_name: tokenData.an as string,
-							name: globalState.get(GLOBAL_STATE_MAP_KEY.DaoName) as string,
-							link: globalState.get(GLOBAL_STATE_MAP_KEY.Url) as string,
-						};
-						this.dataSource.push(data);
+						let parsedData = await decodePSQLAppParams(item);
+						parsedData["key"] = index; // for antd table
+						this.dataSource.push(parsedData);
 
 						// pushing data to store only if it doesn't exists
 						let isCached = false;
 						isCached = this.formState.psqlData.has(+item.appId);
 						if (!isCached) {
-							this.formState.psqlData.set(+item.appId, data);
+							this.formState.psqlData.set(+item.appId, parsedData);
 						}
 					});
 				}
@@ -393,19 +374,6 @@ export default defineComponent({
 				if (currentPage === 1 && res.allSigmaDaos.totalCount) {
 					this.totalDataRowsCount = res.allSigmaDaos.totalCount;
 				}
-			}
-		},
-		async handleDaoSearch(searchDaoType: SearchDaoType, appId: number) {
-			switch (searchDaoType) {
-				case SearchDaoType.SEARCH_BY_APPLCATION_ID:
-					executeReq(getDaoInfoByAppIdReq(appId)).then((data) => {
-						// search response
-						console.log(data.allSigmaDaos.nodes[0]);
-					});
-					break;
-				case SearchDaoType.SEARCH_BY_DAO_NAME:
-					// TODO: WIP -> backend support needed
-					break;
 			}
 		},
 	},
