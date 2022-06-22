@@ -32,10 +32,8 @@ export const getAllDaoReq = (
         appParams
       }
       pageInfo {
-        endCursor
         startCursor
-        hasNextPage
-        hasPreviousPage
+        endCursor
       }
       totalCount
     }
