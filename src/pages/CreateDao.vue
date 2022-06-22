@@ -98,7 +98,7 @@
 					name="dao_name"
 					:rules="[{ required: true }]"
 				>
-					<a-input v-model:value="formState.dao_name" />
+					<a-input maxlength="32" v-model:value="formState.dao_name" />
 				</a-form-item>
 				<a-form-item :wrapper-col="{ offset: 10, span: 20 }">
 					<a-button type="primary" html-type="submit">Submit</a-button>
