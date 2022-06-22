@@ -24,6 +24,10 @@ Install the dependencies
 yarn install
 ```
 
+## Setup the Sigma Dao role and table in PostgreSQL with read only access to database
+
+Follow the examples/dao [README.MD](https://github.com/scale-it/algo-builder/blob/develop/examples/dao/README.md#setup-sigma-dao) in algo-builder to setup the Sigma Dao role and table in PostgreSQL.
+
 ## Development
 
 Start the development server on http://localhost:3000
