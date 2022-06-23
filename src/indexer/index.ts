@@ -271,7 +271,7 @@ export async function getAssetInformation(
 
 /**
  * Get parsed DAO information
- * @param params object to decode
+ * @param params object to be decoded
  */
 export async function decodePSQLAppParams(params: any): Promise<DaoTableData> {
 	const appParams = JSON.parse(params.appParams);
