@@ -144,7 +144,7 @@ import {
 	VALIDATE_MESSAGES,
 } from "@/constants";
 import {
-	decodePSQLAppParams,
+	decodeDaoAppParams,
 	isApplicationOpted,
 	searchApplicationAndAccount,
 } from "@/indexer";
@@ -351,7 +351,7 @@ export default defineComponent({
 						this.dataSource = [];
 					}
 					res.allSigmaDaos.nodes.map(async (item: any, index: number) => {
-						let parsedData = await decodePSQLAppParams(item);
+						let parsedData = await decodeDaoAppParams(item);
 						parsedData["key"] = index; // for antd table
 						this.dataSource.push(parsedData);
 

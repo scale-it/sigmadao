@@ -271,9 +271,9 @@ export async function getAssetInformation(
 
 /**
  * Get parsed DAO information
- * @param params object to decode
+ * @param params object to be decoded
  */
-export async function decodePSQLAppParams(params: any): Promise<DaoTableData> {
+export async function decodeDaoAppParams(params: any): Promise<DaoTableData> {
 	const appParams = JSON.parse(params.appParams);
 	const globalState = decodeAppParamsState(appParams.dt.gd);
 	const tokenData = await getAssetInformation(params.assetId);
@@ -299,7 +299,7 @@ export async function handleDaoSearch(
 		case SearchDaoType.SEARCH_BY_APPLCATION_ID: {
 			const response = await executeReq(getDaoInfoByAppIdReq(value as number));
 			if (response.allSigmaDaos.nodes[0]) {
-				return decodePSQLAppParams(response.allSigmaDaos.nodes[0]);
+				return decodeDaoAppParams(response.allSigmaDaos.nodes[0]);
 			} else return false;
 		}
 		// TODO: WIP -> backend support needed
