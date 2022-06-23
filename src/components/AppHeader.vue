@@ -99,9 +99,13 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import WalletConnect from "./WalletConnect.vue";
-import { NavigationKey, EndPoint } from "../types/enum.types";
+import { NavigationKey, EndPoint, SearchDaoType } from "../types/enum.types";
 import DaoStore from "../store/DaoID";
-import { isApplicationOpted, searchApplicationAndAccount } from "@/indexer";
+import {
+	handleDaoSearch,
+	isApplicationOpted,
+	searchApplicationAndAccount,
+} from "@/indexer";
 import { storeToRefs } from "pinia";
 import {
 	daoAppMessage,
@@ -115,7 +119,6 @@ import {
 } from "@/constants";
 import WalletStore from "@/store/WalletStore";
 import { optInDaoApp } from "@/utility";
-import { DaoTableData } from "@/types";
 
 export default defineComponent({
 	components: {
@@ -155,15 +158,13 @@ export default defineComponent({
 		async searchID() {
 			if (this.daoID) {
 				this.daoID = +this.daoID;
-				// TODO: update to use filter from backend (for daoID)
-				// to get gov token id
-				let daoData: DaoTableData | undefined = undefined;
-				if (this.psqlData) {
-					daoData = this.psqlData.get(this.daoID);
-				}
+				const response = await handleDaoSearch(
+					SearchDaoType.SEARCH_BY_APPLCATION_ID,
+					this.daoID
+				);
 
-				if (daoData) {
-					this.govtId = daoData.token_id;
+				if (response) {
+					this.govtId = response.token_id;
 					loadingMessage(this.key);
 					searchApplicationAndAccount()
 						.then(() => {
