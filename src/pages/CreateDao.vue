@@ -222,6 +222,7 @@ export default defineComponent({
 						approvalProgramBytes: await getCompiledDaoApproval(),
 						clearProgramBytes: await getCompiledDaoClear(),
 						...DAO_CONTRACT_STATE_CONFIG,
+						foreignAssets: [token_id as number],
 						appArgs: [
 							`int:${min_deposit_amt}`,
 							`int:${min_support}`,
