@@ -54,7 +54,7 @@ export interface DaoTableData {
 	token_name: string;
 	name: string;
 	link: string;
-	key: number;
+	key?: number;
 }
 
 export interface UnknownObject {
