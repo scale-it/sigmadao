@@ -134,12 +134,12 @@ const daoAppApproval = `#pragma version 6
     int 0
     byte "id"
     app_local_get_ex
-    store 9
-    store 8
+    store 11
+    store 10
     global GroupSize
     int 1
     ==
-    load 9
+    load 11
     int 1
     ==
     &&
@@ -271,8 +271,8 @@ const daoAppApproval = `#pragma version 6
     txna Accounts 1
     concat
     app_local_get_ex
-    store 7
-    store 6
+    store 9
+    store 8
     global LatestTimestamp
     int 1
     byte "execute_before"
@@ -377,7 +377,7 @@ const daoAppApproval = `#pragma version 6
     int 1
     ==
     assert
-    load 7
+    load 9
     int 1
     ==
     bnz main_l32
@@ -390,7 +390,7 @@ const daoAppApproval = `#pragma version 6
     int 1
     return
     main_l32:
-    load 6
+    load 8
     int 1
     byte "id"
     app_local_get
@@ -665,8 +665,8 @@ const daoAppApproval = `#pragma version 6
     txna Accounts 1
     concat
     app_local_get_ex
-    store 7
-    store 6
+    store 9
+    store 8
     global GroupSize
     int 1
     ==
@@ -689,11 +689,11 @@ const daoAppApproval = `#pragma version 6
     >
     &&
     assert
-    load 7
+    load 9
     int 0
     ==
     bnz main_l70
-    load 6
+    load 8
     int 1
     byte "id"
     app_local_get
@@ -1079,6 +1079,13 @@ const daoAppApproval = `#pragma version 6
     btoi
     <
     &&
+    txna ApplicationArgs 6
+    btoi
+    asset_params_get AssetTotal
+    store 7
+    store 6
+    load 7
+    &&
     assert
     byte "deposit"
     txna ApplicationArgs 0
@@ -1106,11 +1113,8 @@ const daoAppApproval = `#pragma version 6
     txna ApplicationArgs 6
     btoi
     app_global_put
-    byte "SigmaDAO created"
-    log
     int 1
-    return
-`;
+    return`;
 
 export const getCompiledDaoApproval = async () => {
 	return await compileToUnit8Array(daoAppApproval);

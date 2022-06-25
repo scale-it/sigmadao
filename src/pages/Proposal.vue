@@ -146,6 +146,8 @@ import {
 	errorMessage,
 	proposalMessage,
 	SUCCESSFUL,
+	openErrorNotificationWithIcon,
+	UNSUCCESSFUL,
 } from "@/constants";
 import { DateRange, DAOActions } from "@/types";
 import { defineComponent, reactive } from "vue";
@@ -288,7 +290,9 @@ export default defineComponent({
 					console.log(response);
 				}
 			} catch (error) {
+				this.error = error.message;
 				errorMessage(this.key);
+				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message);
 				console.error(error);
 			}
 		},
@@ -350,8 +354,9 @@ export default defineComponent({
 				let response = await optInToApp(lsig, execParam);
 				console.log(response);
 			} catch (error) {
+				this.error = error.message;
 				errorMessage(this.key);
-				console.error(error);
+				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message);
 			}
 		},
 	},
