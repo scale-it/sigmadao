@@ -171,7 +171,7 @@ export default defineComponent({
 			key: "DaoKey",
 			columns: [
 				{
-					title: "Dao App ID",
+					title: "DAO App ID",
 					key: "dao_id",
 					dataIndex: "dao_id",
 				},

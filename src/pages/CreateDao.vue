@@ -22,35 +22,49 @@
 				@validate-messages="validateMessages"
 			>
 				<a-form-item
-					label="Gov Token ID"
 					name="token_id"
 					:rules="[{ required: true, type: 'number' }]"
-					extra="ASA which will define Gov DAO token membership."
 				>
+					<template #label>
+						<div class="margin_right_extra_sm">Gov Token ID</div>
+						<info-tool-tip
+							data="ASA which will define Gov DAO token membership."
+						/>
+					</template>
 					<a-input-number v-model:value="formState.token_id" />
 				</a-form-item>
 				<a-form-item
-					label="Minimum Deposit Amount"
 					name="min_deposit_amt"
 					:rules="[{ required: true, type: 'number' }]"
-					extra="Minimum deposit amount of the gov tokens required to make a proposal."
 				>
+					<template #label>
+						<div class="margin_right_extra_sm">Minimum Deposit Amount</div>
+						<info-tool-tip
+							data="Minimum deposit amount of the gov tokens required to make a proposal."
+						/>
+					</template>
 					<a-input-number v-model:value="formState.min_deposit_amt" />
 				</a-form-item>
 				<a-form-item
-					label="Minimum Support"
 					name="min_support"
 					:rules="[{ required: true, type: 'number' }]"
-					extra="Minimum number of yes token votes to validate the proposal."
 				>
+					<template #label>
+						<div class="margin_right_extra_sm">Minimum Support</div>
+						<info-tool-tip
+							data="Minimum number of yes token votes to validate the proposal."
+						/>
+					</template>
 					<a-input-number v-model:value="formState.min_support" />
 				</a-form-item>
 				<a-form-item
-					label="Minimum Duration"
 					name="min_duration"
 					:rules="[{ required: true, type: 'number' }]"
-					extra="Minimum voting time for a new proposal."
 				>
+					<template #label>
+						<div class="margin_right_extra_sm">Minimum Duration</div>
+						<info-tool-tip data="Minimum voting time for a new proposal." />
+					</template>
 					<a-form-item-rest>
 						<a-radio-group
 							class="margin_bottom_sm"
@@ -58,20 +72,20 @@
 						>
 							<a-radio :value="DurationType.DAYS">Days</a-radio>
 							<a-radio :value="DurationType.HOURS">Hours</a-radio>
-							<a-radio :value="DurationType.MINUTES">Minutes</a-radio>
-							<a-radio :value="DurationType.SECONDS">Seconds</a-radio>
 						</a-radio-group>
 					</a-form-item-rest>
 					<a-input-number v-model:value="formState.min_duration" />
 				</a-form-item>
 				<a-form-item
-					label="Maximum Duration"
 					name="max_duration"
-					extra="Maximum voting time for a new proposal."
 					:rules="[
 						{ required: true, type: 'number', validator: validateMaxDuration },
 					]"
 				>
+					<template #label>
+						<div class="margin_right_extra_sm">Maximum Duration</div>
+						<info-tool-tip data="Maximum voting time for a new proposal." />
+					</template>
 					<a-form-item-rest>
 						<a-radio-group
 							class="margin_bottom_sm"
@@ -79,18 +93,17 @@
 						>
 							<a-radio :value="DurationType.DAYS">Days</a-radio>
 							<a-radio :value="DurationType.HOURS">Hours</a-radio>
-							<a-radio :value="DurationType.MINUTES">Minutes</a-radio>
-							<a-radio :value="DurationType.SECONDS">Seconds</a-radio>
 						</a-radio-group>
 					</a-form-item-rest>
 					<a-input-number v-model:value="formState.max_duration" />
 				</a-form-item>
-				<a-form-item
-					label="URL"
-					name="url"
-					:rules="[{ required: true, type: 'url' }]"
-					extra="Website with more information about the DAO."
-				>
+				<a-form-item name="url" :rules="[{ required: true, type: 'url' }]">
+					<template #label>
+						<div class="margin_right_extra_sm">URL</div>
+						<info-tool-tip
+							data="Website with more information about the DAO."
+						/>
+					</template>
 					<a-input v-model:value="formState.url" />
 				</a-form-item>
 				<a-form-item
@@ -131,9 +144,13 @@ import { getCompiledDaoApproval, getCompiledDaoClear } from "@/contract/dao";
 import { Rule } from "ant-design-vue/lib/form";
 import { convertDurationTypeToSeconds } from "@/utility";
 import { getAssetInformation } from "@/indexer";
+import InfoToolTip from "../components/InfoToolTip.vue";
 
 export default defineComponent({
 	name: "CreateDaoPage",
+	components: {
+		InfoToolTip,
+	},
 	data() {
 		return {
 			error: "",

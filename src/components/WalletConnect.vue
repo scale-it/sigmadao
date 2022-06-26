@@ -67,7 +67,7 @@
 					</span>
 					<a-row type="flex" style="width: 100%">
 						<a-col :flex="1">
-							<span style="margin-top: 5px">
+							<span class="margin_right_extra_sm margin_top_extra_sm">
 								<a-typography-text strong>Wallet: </a-typography-text>
 								<a-typography-link>{{ selectedWallet }}</a-typography-link>
 							</span>

@@ -1,6 +1,6 @@
 <template>
 	<div class="bottom_center">
-		<p>All rights reserved</p>
+		<p>© 2022 Algo Builder - All Rights Reserved</p>
 		<div>
 			<h3 class="margin_top_large">
 				Powered by
