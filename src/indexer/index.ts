@@ -306,12 +306,13 @@ export async function handleDaoSearch(
 		}
 		case SearchDaoType.SEARCH_BY_DAO_NAME: {
 			// TODO: Paginate it
-			const response = await executeReq(getDaoInfoByAppNameReq(value as string, 40, null, null, null));
-			console.log(response)
+			const response = await executeReq(
+				getDaoInfoByAppNameReq(value as string, 40, null, null, null)
+			);
+			console.log(response);
 			return false;
 		}
 		default:
 			return false;
 	}
 }
-
