@@ -301,18 +301,17 @@ export async function handleDaoSearch(
 			const response = await executeReq(getDaoInfoByAppIdReq(value as number));
 			if (response.allSigmaDaos.nodes[0]) {
 				return decodeDaoAppParams(response.allSigmaDaos.nodes[0]);
-			} else return false;
-		}
-		case SearchDaoType.SEARCH_BY_DAO_NAME:
-			executeReq(getDaoInfoByAppNameReq(value as string, 2, null, null, null))
-				.then((response) => {
-					console.log(response);
-				})
-				.catch((error) => {
-					console.error(error);
-				});
+			}
 			return false;
+		}
+		case SearchDaoType.SEARCH_BY_DAO_NAME: {
+			// TODO: Paginate it
+			const response = await executeReq(getDaoInfoByAppNameReq(value as string, 40, null, null, null));
+			console.log(response)
+			return false;
+		}
 		default:
 			return false;
 	}
 }
+
