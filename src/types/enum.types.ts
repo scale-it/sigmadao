@@ -72,8 +72,6 @@ export enum PaginationCallType {
 export enum DurationType {
 	DAYS,
 	HOURS,
-	MINUTES,
-	SECONDS,
 }
 
 export enum SearchDaoType {

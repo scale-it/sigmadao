@@ -19,10 +19,6 @@ export const convertDurationTypeToSeconds = (
 			return value * DAY_TO_SECONDS;
 		case DurationType.HOURS:
 			return value * HOUR_TO_SECONDS;
-		case DurationType.MINUTES:
-			return value * MINUTE_TO_SECONDS;
-		case DurationType.SECONDS:
-			return value;
 		default:
 			return value;
 	}

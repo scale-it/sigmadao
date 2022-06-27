@@ -77,12 +77,25 @@
 							<a-descriptions-item label="Govt Token ID">
 								{{ govtId }}
 							</a-descriptions-item>
-							<a-descriptions-item label="*available">{{
-								availableTokens
-							}}</a-descriptions-item>
-							<a-descriptions-item label="*locked">{{
-								lockedTokens
-							}}</a-descriptions-item>
+							<a-descriptions-item>
+								<template #label>
+									available
+									<info-tool-tip
+										data="The tokens are available for you to deposit and vote."
+									/>
+								</template>
+								{{ availableTokens }}</a-descriptions-item
+							>
+							<a-descriptions-item>
+								<template #label>
+									locked
+									<info-tool-tip
+										data="The tokens are locked for the voting period. You can
+												withdraw them once the voting period ends."
+									/>
+								</template>
+								{{ lockedTokens }}</a-descriptions-item
+							>
 						</a-descriptions>
 					</a-col>
 				</a-row>
@@ -119,10 +132,12 @@ import {
 } from "@/constants";
 import WalletStore from "@/store/WalletStore";
 import { optInDaoApp } from "@/utility";
+import InfoToolTip from "./InfoToolTip.vue";
 
 export default defineComponent({
 	components: {
 		WalletConnect,
+		InfoToolTip,
 	},
 	data() {
 		const daoStore = storeToRefs(DaoStore());
