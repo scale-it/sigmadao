@@ -78,5 +78,3 @@ export const DAO_CONTRACT_STATE_CONFIG = {
 	globalInts: 5,
 	globalBytes: 2,
 };
-
-export const INFO_ICON_COLOR = "#1890ff";
