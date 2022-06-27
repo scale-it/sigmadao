@@ -134,3 +134,43 @@ export const getDaoInfoByAppIdReq = (appId: number) => {
     }
   }`;
 };
+
+/** SearchByDaoName
+ * @param daoName Dao name to be searched
+ * @param first Similar to limit in PostreSQL. E.g first 10 entries of row after cursor pointer
+ * @param after End cursor pointer
+ * @param last  Similar to limit in PostreSQL. E.g last 10 entries of row before cursor pointer
+ * @param before Start cursor pointer
+ */
+export const getDaoInfoByAppNameReq = (
+	daoName: string,
+	first: number | null,
+	after: string | null,
+	last: number | null,
+	before: string | null
+) => {
+	// the cursor needs to be wrapped inside double quotes
+	after = quotesWrapper(after);
+	before = quotesWrapper(before);
+	return `query SearchByDaoName {
+    searchSigmaDaos(
+      daotobesearched: "${daoName}"
+      first: ${first}
+      after: ${after}
+      before: ${before}
+      last: ${last}
+    ) {
+      nodes {
+        appId
+        appParams
+        assetId
+        daoName
+      }
+      pageInfo {
+        endCursor
+        startCursor
+      }
+      totalCount
+    }
+  }`;
+};

@@ -19,6 +19,7 @@ import {
 	lookupAccountAssets,
 	lookupAccountAppLocalStates,
 	getDaoInfoByAppIdReq,
+	getDaoInfoByAppNameReq,
 } from "@/api";
 
 /**
@@ -302,8 +303,15 @@ export async function handleDaoSearch(
 				return decodeDaoAppParams(response.allSigmaDaos.nodes[0]);
 			} else return false;
 		}
-		// TODO: WIP -> backend support needed
-		// case SearchDaoType.SEARCH_BY_DAO_NAME:
+		case SearchDaoType.SEARCH_BY_DAO_NAME:
+			executeReq(getDaoInfoByAppNameReq(value as string, 2, null, null, null))
+				.then((response) => {
+					console.log(response);
+				})
+				.catch((error) => {
+					console.error(error);
+				});
+			return false;
 		default:
 			return false;
 	}
