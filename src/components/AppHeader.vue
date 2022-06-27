@@ -88,7 +88,7 @@
 							>
 							<a-descriptions-item>
 								<template #label>
-									*locked
+									locked
 									<info-tool-tip
 										data="The tokens are locked for the voting period. You can
 												withdraw them once the voting period is finished."
