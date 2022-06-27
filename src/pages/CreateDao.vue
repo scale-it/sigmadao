@@ -28,7 +28,7 @@
 					<template #label>
 						<div class="margin_right_extra_sm">Gov Token ID</div>
 						<info-tool-tip
-							data="ASA which will define Gov DAO token membership."
+							data="ASA that will define Gov DAO token membership."
 						/>
 					</template>
 					<a-input-number v-model:value="formState.token_id" />
