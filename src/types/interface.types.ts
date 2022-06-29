@@ -57,6 +57,23 @@ export interface DaoTableData {
 	key?: number;
 }
 
+// Proposal Table interfaces
+export interface ProposalTableData {
+	key?: number;
+	name: string;
+	msg: string;
+	type: number;
+	url: string;
+	url_hash: string;
+	voting_start: number; // seconds
+	voting_end: number; // seconds
+	execute_before: number; // seconds
+}
+
+export interface ProposalTableStore {
+	psqlData: Map<number, ProposalTableData>;
+}
+
 export interface UnknownObject {
 	[key: string]: string | number | boolean;
 }

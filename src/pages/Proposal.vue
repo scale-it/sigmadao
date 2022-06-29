@@ -132,6 +132,11 @@
 			</a-form>
 		</a-col>
 	</a-row>
+	<a-row>
+		<a-col :span="20" :offset="2">
+			<ProposalTable />
+		</a-col>
+	</a-row>
 </template>
 
 <script lang="ts">
@@ -160,10 +165,12 @@ import { getProposalLsig, getDaoFundLSig } from "../contract/dao";
 import { fundAmount, convertToSeconds, optInToApp } from "../utility";
 import { APP_NOT_FOUND, TOKEN_NOT_FOUND } from "@/constants";
 import { isApplicationOpted } from "@/indexer";
+import ProposalTable from "@/components/ProposalTable.vue";
 const { getApplicationAddress } = require("algosdk");
 
 export default defineComponent({
 	name: "AddProposal",
+	components: { ProposalTable },
 	data() {
 		return {
 			ProposalType,

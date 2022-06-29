@@ -21,6 +21,26 @@ export const HOUR_TO_SECONDS = 60 * MINUTE_TO_SECONDS;
 export const DAY_TO_SECONDS = 24 * HOUR_TO_SECONDS;
 export const DAY_TO_MILLISECONDS = 1000 * DAY_TO_SECONDS;
 
+export const ProposalType = {
+	ALGO_TRANSFER: 1,
+	ASA_TRANSFER: 2,
+	MESSAGE: 3,
+	[1]: "Algo Transer",
+	[2]: "ASA Transfer",
+	[3]: "Message"
+};
+
+export const PROPOSAL_LOCAL_STATE_MAP_KEY = {
+	Name: "name",
+	Message: "msg",
+	Url: "url",
+	Type: "type",
+	Url_Hash: "url_hash",
+	Voting_Start: "voting_start",
+	Voting_End: "voting_end",
+	Execute_Before: "Execute_Before",
+};
+
 export const MILLI_SECOND = 1000;
 
 export const daoAppMessage = {
