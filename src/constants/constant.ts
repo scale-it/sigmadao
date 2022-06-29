@@ -27,7 +27,7 @@ export const ProposalType = {
 	MESSAGE: 3,
 	[1]: "Algo Transer",
 	[2]: "ASA Transfer",
-	[3]: "Message"
+	[3]: "Message",
 };
 
 export const PROPOSAL_LOCAL_STATE_MAP_KEY = {
