@@ -12,9 +12,9 @@
 				</a-col>
 			</template>
 			<template #bodyCell="{ record, column }">
-				<template v-if="column.key === 'url'">
+				<template v-if="column.key === 'name'">
 					<a :href="'//' + record.url" target="_blank">
-						{{ record.url }}
+						{{ record.name }}
 					</a>
 				</template>
 				<template v-if="column.key === 'voting_start'">
@@ -103,11 +103,6 @@ export default defineComponent({
 					title: "Message",
 					key: "msg",
 					dataIndex: "msg",
-				},
-				{
-					title: "Link",
-					key: "url",
-					dataIndex: "url",
 				},
 				{
 					title: "Voting Start - Voting End",
