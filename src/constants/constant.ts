@@ -21,12 +21,6 @@ export const HOUR_TO_SECONDS = 60 * MINUTE_TO_SECONDS;
 export const DAY_TO_SECONDS = 24 * HOUR_TO_SECONDS;
 export const DAY_TO_MILLISECONDS = 1000 * DAY_TO_SECONDS;
 
-export const ProposalType = {
-	ALGO_TRANSFER: 1,
-	ASA_TRANSFER: 2,
-	MESSAGE: 3,
-};
-
 export const MILLI_SECOND = 1000;
 
 export const daoAppMessage = {
