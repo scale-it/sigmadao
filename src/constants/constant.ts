@@ -25,7 +25,7 @@ export const ProposalType = {
 	ALGO_TRANSFER: 1,
 	ASA_TRANSFER: 2,
 	MESSAGE: 3,
-	[1]: "Algo Transer",
+	[1]: "Algo Transfer",
 	[2]: "ASA Transfer",
 	[3]: "Message",
 };
