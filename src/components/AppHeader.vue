@@ -15,16 +15,14 @@
 							<router-link :to="{ path: EndPoint.ALL_DAO }">
 								<a-button
 									class="menu_option"
-									:type="isLinkActive(NavigationKey.DAOs)"
-									@click="() => handleMenuClick(NavigationKey.DAOs)"
+									:type="isLinkActive(EndPoint.ALL_DAO)"
 									>All DAOs</a-button
 								>
 							</router-link>
 							<router-link :to="{ path: EndPoint.CREATE_DAO }">
 								<a-button
 									class="menu_option"
-									:type="isLinkActive(NavigationKey.CREATE_DAO)"
-									@click="() => handleMenuClick(NavigationKey.CREATE_DAO)"
+									:type="isLinkActive(EndPoint.CREATE_DAO)"
 									:disabled="!walletStore.address"
 									>Create DAO</a-button
 								>
@@ -32,8 +30,7 @@
 							<router-link :to="{ path: EndPoint.ADD_PROPOSAL }">
 								<a-button
 									class="menu_option"
-									:type="isLinkActive(NavigationKey.ADD_PROPOSAL)"
-									@click="() => handleMenuClick(NavigationKey.ADD_PROPOSAL)"
+									:type="isLinkActive(EndPoint.ADD_PROPOSAL)"
 									:disabled="DaoStore().disableActions"
 									>Add Proposal</a-button
 								>
@@ -41,8 +38,7 @@
 							<router-link :to="{ path: EndPoint.VOTE_TOKEN }">
 								<a-button
 									class="menu_option"
-									:type="isLinkActive(NavigationKey.VOTE_TOKEN)"
-									@click="() => handleMenuClick(NavigationKey.VOTE_TOKEN)"
+									:type="isLinkActive(EndPoint.VOTE_TOKEN)"
 									:disabled="DaoStore().disableActions"
 									>Deposit Vote Tokens</a-button
 								>
@@ -50,8 +46,7 @@
 							<router-link :to="{ path: EndPoint.VOTE }">
 								<a-button
 									class="menu_option"
-									:type="isLinkActive(NavigationKey.PROPOSALS)"
-									@click="() => handleMenuClick(NavigationKey.PROPOSALS)"
+									:type="isLinkActive(EndPoint.VOTE)"
 									:disabled="DaoStore().disableActions"
 									>Vote</a-button
 								>
@@ -112,7 +107,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import WalletConnect from "./WalletConnect.vue";
-import { NavigationKey, EndPoint, SearchDaoType } from "../types/enum.types";
+import { EndPoint, SearchDaoType } from "../types/enum.types";
 import DaoStore from "../store/DaoID";
 import {
 	handleDaoSearch,
@@ -143,8 +138,6 @@ export default defineComponent({
 		const daoStore = storeToRefs(DaoStore());
 		const walletStore = WalletStore();
 		return {
-			currentPageKey: 0,
-			NavigationKey: NavigationKey,
 			EndPoint,
 			daoID: daoStore.dao_id,
 			govtId: daoStore.govt_id,
@@ -160,12 +153,9 @@ export default defineComponent({
 		};
 	},
 	methods: {
-		handleMenuClick(value: number) {
-			this.currentPageKey = value;
-			console.log(value);
-		},
-		isLinkActive(currentPage: number) {
-			if (this.currentPageKey === currentPage) {
+		isLinkActive(currentPage: EndPoint) {
+			const currentPagePath = this.$route.path;
+			if (currentPagePath === currentPage) {
 				return "link";
 			}
 			return "text";
