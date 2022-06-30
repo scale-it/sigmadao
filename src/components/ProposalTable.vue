@@ -228,11 +228,7 @@ export default defineComponent({
 				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message)
 			);
 
-			if (
-				cursorRes &&
-				cursorRes.searchSigmaDaosProposals &&
-				cursorRes.searchSigmaDaosProposals.pageInfo
-			) {
+			if (cursorRes.searchSigmaDaosProposals.pageInfo ?? false) {
 				const pageInfo = cursorRes.searchSigmaDaosProposals.pageInfo;
 				this.currentPageCursor.endCursor = pageInfo.endCursor;
 				this.currentPageCursor.startCursor = pageInfo.startCursor;
