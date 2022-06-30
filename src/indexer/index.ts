@@ -260,30 +260,6 @@ export function decodeAppParamsState(state: any): Map<Key, StateValue> {
 }
 
 /**
- * Decode local app params state
- * @param state State to be decoded
- */
-export function decodeLocalAppParamsState(state: any): Map<Key, StateValue> {
-	const stateMap = new Map<Key, StateValue>();
-	if (state) {
-		for (const key in state) {
-			if (state[key].tt === SchemaType.BYTES) {
-				stateMap.set(
-					Buffer.from(key, "base64").toString("ascii"),
-					Buffer.from(state[key].tb, "base64").toString("ascii")
-				);
-			} else {
-				stateMap.set(
-					Buffer.from(key, "base64").toString("ascii"),
-					state[key].ui
-				);
-			}
-		}
-	}
-	return stateMap;
-}
-
-/**
  * Get asset information
  * @param assetId Asset ID
  */
@@ -324,7 +300,7 @@ export async function decodeProposalParams(
 	params: any
 ): Promise<ProposalTableData> {
 	const appParams = JSON.parse(params);
-	const globalState = decodeLocalAppParamsState(appParams.tkv);
+	const globalState = decodeAppLocalState(appParams.tkv);
 	return {
 		name: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Name) as string,
 		msg: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Message) as string,
