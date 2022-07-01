@@ -151,13 +151,14 @@ import {
 import { defineComponent, reactive, ref, toRefs } from "vue";
 import DaoStore from "../store/DaoID";
 import { executeReq, getAllDaoReq, getCursorReq } from "@/api";
-import { DaoTableData, PaginationCallType, SearchDaoType } from "@/types";
+import { DaoTableData, PaginationCallType, EndPoint } from "@/types";
 import WalletStore from "@/store/WalletStore";
 import {
 	SearchOutlined,
 	LeftOutlined,
 	RightOutlined,
 } from "@ant-design/icons-vue";
+import { redirectTo } from "@/utility";
 
 export default defineComponent({
 	name: "AllDao",
@@ -220,6 +221,7 @@ export default defineComponent({
 				startCursor: null,
 			},
 			PaginationCallType,
+			EndPoint,
 		};
 	},
 	methods: {
@@ -268,6 +270,7 @@ export default defineComponent({
 						SUCCESSFUL,
 						daoAppMessage.SUCCESSFUL(data.dao_id)
 					);
+					redirectTo(this.$router, EndPoint.ADD_PROPOSAL);
 					if (this.walletStore.address) {
 						isApplicationOpted(this.walletStore.address, data.dao_id)
 							.then((appIsOptedIn: boolean) => {

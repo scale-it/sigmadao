@@ -138,11 +138,11 @@ import WalletStore from "@/store/WalletStore";
 import { types } from "@algo-builder/web";
 import { defineComponent, reactive } from "vue";
 import CreateDAOStore from "../store/CreateDaoStore";
-import { DurationType, CreateDaoFormState } from "@/types";
+import { DurationType, CreateDaoFormState, EndPoint } from "@/types";
 import { MetaType } from "@algo-builder/web/build/types";
 import { getCompiledDaoApproval, getCompiledDaoClear } from "@/contract/dao";
 import { Rule } from "ant-design-vue/lib/form";
-import { convertDurationTypeToSeconds } from "@/utility";
+import { convertDurationTypeToSeconds, redirectTo } from "@/utility";
 import { getAssetInformation } from "@/indexer";
 import InfoToolTip from "../components/InfoToolTip.vue";
 
@@ -158,6 +158,7 @@ export default defineComponent({
 			minDurationInputType: DurationType.HOURS,
 			maxDurationInputType: DurationType.HOURS,
 			DurationType,
+			EndPoint,
 		};
 	},
 	setup() {
@@ -261,6 +262,7 @@ export default defineComponent({
 					createDaoMessage.SUCCESSFUL
 				);
 				successMessage(this.key);
+				redirectTo(this.$router, EndPoint.ADD_PROPOSAL);
 			} catch (error) {
 				this.error = error.message;
 				errorMessage(this.key);

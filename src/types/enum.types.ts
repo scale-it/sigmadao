@@ -12,14 +12,6 @@ export enum ASA {
 	WALLET_CONNECT,
 }
 
-export enum NavigationKey {
-	DAOs,
-	CREATE_DAO,
-	PROPOSALS,
-	ADD_PROPOSAL,
-	VOTE_TOKEN,
-}
-
 export enum VoteTokenType {
 	DEPOSIT_TOKEN = "1",
 	WITHDRAW_TOKEN = "2",
