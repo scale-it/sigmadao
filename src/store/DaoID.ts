@@ -40,7 +40,15 @@ export default defineStore("DaoStore", {
 	getters: {
 		// if dao id is not selected or if app is not opted in
 		disableActions(state) {
+			console.log(!state.dao_id, !state.show_opt_in);
+			console.log(!state.dao_id || !state.show_opt_in);
 			return !state.dao_id || state.show_opt_in;
 		},
+		isDaoSelected(state) {
+			return state.dao_id;
+		},
+		getDaoId(state) {
+			return state.dao_id;
+		}
 	},
 });

@@ -31,7 +31,6 @@
 								<a-button
 									class="menu_option"
 									:type="isLinkActive(EndPoint.ADD_PROPOSAL)"
-									:disabled="DaoStore().disableActions"
 									>Add Proposal</a-button
 								>
 							</router-link>

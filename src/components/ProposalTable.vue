@@ -100,11 +100,6 @@ export default defineComponent({
 					dataIndex: "type",
 				},
 				{
-					title: "Message",
-					key: "msg",
-					dataIndex: "msg",
-				},
-				{
 					title: "Voting Start - Voting End",
 					key: "voting_start",
 					dataIndex: "voting_start",
