@@ -98,7 +98,7 @@ import {
 	PaginationCallType,
 	ProposalFilterType,
 } from "@/types";
-import { defineComponent, reactive, ref, toRefs } from "vue";
+import { defineComponent, reactive, ref } from "vue";
 import DaoID from "../store/DaoID";
 import ProposalTableStore from "../store/ProposalTableStore";
 import { secToFormat } from "../utility";
