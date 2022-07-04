@@ -1,6 +1,6 @@
 <template>
 	<a-row justify="end">
-		<a-col class="menu" :span="8">
+		<a-col class="menu" :span="10">
 			<a-radio-group
 				v-model:value="this.proposalStore.filterType"
 				name="radioGroup"
@@ -21,7 +21,7 @@
 			</a-radio-group>
 		</a-col>
 	</a-row>
-	<div>
+	<div class="tableContainer">
 		<a-table
 			:dataSource="dataSource"
 			:columns="columns"
@@ -48,6 +48,18 @@
 				</template>
 				<template v-if="column.key === 'type'">
 					{{ ProposalType[record.type] }}
+				</template>
+				<template v-if="column.key === 'action'">
+					<a-button type="link" @click="() => handleSelectProposal(record)">
+						Use
+					</a-button>
+					<a-button
+						type="link"
+						danger
+						@click="() => handleCloseProposal(record)"
+					>
+						Delete
+					</a-button>
 				</template>
 			</template>
 		</a-table>
@@ -108,9 +120,13 @@ import {
 	searchProposalsByAppIdReq,
 	getProposalCursorReq,
 } from "@/api";
+import { MoreOutlined } from "@ant-design/icons-vue";
 
 export default defineComponent({
 	name: "ProposalTable",
+	components: {
+		MoreOutlined,
+	},
 	data() {
 		return {
 			key: "ProposalKey",
@@ -161,7 +177,6 @@ export default defineComponent({
 	},
 	methods: {
 		handleFilter() {
-			console.log("called");
 			this.handlePagination(PaginationCallType.FIRST_PAGE);
 		},
 		handlePagination(type: PaginationCallType, pageNumber?: string) {
@@ -273,6 +288,12 @@ export default defineComponent({
 				this.currentPageCursor.endCursor = pageInfo.endCursor;
 				this.currentPageCursor.startCursor = pageInfo.startCursor;
 			}
+		},
+		async handleSelectProposal() {
+			console.log("Proposal Selected");
+		},
+		async handleCloseProposal(record: any) {
+			console.log("closed", record);
 		},
 	},
 	mounted() {

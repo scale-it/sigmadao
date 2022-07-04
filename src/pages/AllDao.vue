@@ -1,5 +1,5 @@
 <template>
-	<div class="dao_table_container">
+	<div class="tableContainer">
 		<a-table
 			:dataSource="dataSource"
 			:columns="columns"
