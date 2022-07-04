@@ -1,5 +1,27 @@
 <template>
-	<div class="dao_table_container">
+	<a-row justify="end">
+		<a-col class="menu" :span="8">
+			<a-radio-group
+				v-model:value="this.proposalStore.filterType"
+				name="radioGroup"
+				@change="handleFilter"
+			>
+				<a-radio :value="ProposalFilterType.All">{{
+					ProposalFilterType[ProposalFilterType.All]
+				}}</a-radio>
+				<a-radio :value="ProposalFilterType.Active">{{
+					ProposalFilterType[ProposalFilterType.Active]
+				}}</a-radio>
+				<a-radio :value="ProposalFilterType.Future">{{
+					ProposalFilterType[ProposalFilterType.Future]
+				}}</a-radio>
+				<a-radio :value="ProposalFilterType.Past">{{
+					ProposalFilterType[ProposalFilterType.Past]
+				}}</a-radio>
+			</a-radio-group>
+		</a-col>
+	</a-row>
+	<div>
 		<a-table
 			:dataSource="dataSource"
 			:columns="columns"
@@ -71,7 +93,11 @@ import {
 	ROWS_PER_PAGE,
 	ProposalType,
 } from "@/constants";
-import { ProposalTableData, PaginationCallType } from "@/types";
+import {
+	ProposalTableData,
+	PaginationCallType,
+	ProposalFilterType,
+} from "@/types";
 import { defineComponent, reactive, ref, toRefs } from "vue";
 import DaoID from "../store/DaoID";
 import ProposalTableStore from "../store/ProposalTableStore";
@@ -130,9 +156,14 @@ export default defineComponent({
 			proposalStore,
 			daoStore,
 			validateMessages: VALIDATE_MESSAGES,
+			ProposalFilterType,
 		};
 	},
 	methods: {
+		handleFilter() {
+			console.log("called");
+			this.handlePagination(PaginationCallType.FIRST_PAGE);
+		},
 		handlePagination(type: PaginationCallType, pageNumber?: string) {
 			switch (type) {
 				case PaginationCallType.NAV_PREV:
@@ -166,20 +197,27 @@ export default defineComponent({
 			startCursor: string | null,
 			currentPage?: number
 		) {
-			const appId = this.daoStore.dao_id as number;
+			const appId = 483;
 			const res = await executeReq(
-				searchProposalsByAppIdReq(appId, first, endCursor, last, startCursor)
+				searchProposalsByAppIdReq(
+					appId,
+					this.proposalStore.filterType,
+					first,
+					endCursor,
+					last,
+					startCursor
+				)
 			).catch((error) =>
 				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message)
 			);
 
-			if (res && res.searchSigmaDaosProposals) {
-				if (res.searchSigmaDaosProposals.nodes.length) {
+			if (res && res.sigmaDaosProposalFilter) {
+				if (res.sigmaDaosProposalFilter.nodes.length) {
 					// clean existing data in temp array with change of page
 					if (this.dataSource.length) {
 						this.dataSource = [];
 					}
-					res.searchSigmaDaosProposals.nodes.map(
+					res.sigmaDaosProposalFilter.nodes.map(
 						async (item: any, index: number) => {
 							let parsedData = await decodeProposalParams(item.localstate);
 							parsedData["key"] = index; // for antd table
@@ -193,17 +231,19 @@ export default defineComponent({
 							}
 						}
 					);
+				} else {
+					this.dataSource = [];
 				}
 
-				if (res.searchSigmaDaosProposals.pageInfo) {
-					const pageInfo = res.searchSigmaDaosProposals.pageInfo;
+				if (res.sigmaDaosProposalFilter.pageInfo) {
+					const pageInfo = res.sigmaDaosProposalFilter.pageInfo;
 					this.currentPageCursor.startCursor = pageInfo.startCursor;
 					this.currentPageCursor.endCursor = pageInfo.endCursor;
 				}
 
 				// setting it only at first call since it doesn't change i.e for page 1
-				if (currentPage === 1 && res.searchSigmaDaosProposals.totalCount) {
-					this.totalDataRowsCount = res.searchSigmaDaosProposals.totalCount;
+				if (currentPage === 1 && res.sigmaDaosProposalFilter.totalCount) {
+					this.totalDataRowsCount = res.sigmaDaosProposalFilter.totalCount;
 				}
 			}
 		},
@@ -216,15 +256,20 @@ export default defineComponent({
 			}
 		},
 		async getCursorDetails(pageNumber: number) {
-			const appId = this.daoStore.dao_id as number;
+			const appId = 483;
 			const cursorRes = await executeReq(
-				getProposalCursorReq(appId, pageNumber, ROWS_PER_PAGE)
+				getProposalCursorReq(
+					appId,
+					this.proposalStore.filterType,
+					pageNumber,
+					ROWS_PER_PAGE
+				)
 			).catch((error) =>
 				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message)
 			);
 
-			if (cursorRes.searchSigmaDaosProposals.pageInfo ?? false) {
-				const pageInfo = cursorRes.searchSigmaDaosProposals.pageInfo;
+			if (cursorRes.sigmaDaosProposalFilter.pageInfo ?? false) {
+				const pageInfo = cursorRes.sigmaDaosProposalFilter.pageInfo;
 				this.currentPageCursor.endCursor = pageInfo.endCursor;
 				this.currentPageCursor.startCursor = pageInfo.startCursor;
 			}

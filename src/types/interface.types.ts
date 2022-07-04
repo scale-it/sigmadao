@@ -4,6 +4,7 @@ import {
 	StateValue,
 	WebModeTypes,
 	WalletType,
+	ProposalFilterType,
 } from "@/types";
 
 export interface WalletStoreState {
@@ -71,6 +72,7 @@ export interface ProposalTableData {
 }
 
 export interface ProposalTableStore {
+	filterType: ProposalFilterType;
 	psqlData: Map<number, ProposalTableData>;
 }
 
