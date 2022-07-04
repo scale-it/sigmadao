@@ -1,6 +1,6 @@
 <template>
-	<a-row justify="end">
-		<a-col class="menu" :span="10">
+	<a-row>
+		<a-col :xs="{ offset: 1 }" :lg="{ offset: 15 }">
 			<a-radio-group
 				v-model:value="this.proposalStore.filterType"
 				name="radioGroup"
