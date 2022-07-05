@@ -327,10 +327,10 @@ export default defineComponent({
 		) {
 			setSelectedKeys(e.target.value ? [e.target.value] : []);
 		},
-		async handleFilterData() {
+		handleFilterData() {
 			this.isFilterActive = true;
 			this.dataSource = [];
-			return this.handlePaginationCall(PaginationCallType.FIRST_PAGE);
+			this.handlePaginationCall(PaginationCallType.FIRST_PAGE);
 		},
 		async getCursorDetails(pageNumber: number) {
 			const cursorRes = await executeReq(
