@@ -51,6 +51,6 @@ export default defineStore("DaoStore", {
 		},
 		getDaoId(state) {
 			return state.dao_id;
-		}
+		},
 	},
 });

@@ -212,7 +212,7 @@ export default defineComponent({
 			startCursor: string | null,
 			currentPage?: number
 		) {
-			const appId = 483;
+			const appId = this.daoStore.dao_id as number;
 			const res = await executeReq(
 				searchProposalsByAppIdReq(
 					appId,
@@ -271,7 +271,7 @@ export default defineComponent({
 			}
 		},
 		async getCursorDetails(pageNumber: number) {
-			const appId = 483;
+			const appId = this.daoStore.dao_id as number;
 			const cursorRes = await executeReq(
 				getProposalCursorReq(
 					appId,
