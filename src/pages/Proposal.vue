@@ -334,6 +334,7 @@ export default defineComponent({
 					let response = await this.walletStore.webMode.executeTx(
 						addProposalTx
 					);
+					this.handleCancel();
 					successMessage(this.key);
 					openSuccessNotificationWithIcon(
 						SUCCESSFUL,
@@ -350,6 +351,7 @@ export default defineComponent({
 		},
 		onFinishFailed(errorinfo: Event) {
 			console.warn("Failed:", errorinfo);
+			this.handleCancel();
 		},
 		disabledDate(current: number | Date) {
 			// Can not select day before today
