@@ -174,3 +174,27 @@ export const getDaoInfoByAppNameReq = (
     }
   }`;
 };
+
+/** Get start and end cursor for dao name search. For page = 2 to n-1.
+ * @param daoName Dao name to be searched
+ * @param pageNumber Page number user is trying to visit
+ * @param pageSize Number of entries to be in table in single page
+ */
+export const getDaoInfoByAppNameCursorReq = (
+	daoName: string,
+	pageNumber: number,
+	pageSize: number
+) => {
+	return `
+  query SearchByDaoName {
+    searchSigmaDaos(daotobesearched: "${daoName}" first: ${
+		(pageNumber - 1) * pageSize
+	}) {
+      pageInfo {
+        endCursor
+        startCursor
+      }
+    }
+  }
+  `;
+};

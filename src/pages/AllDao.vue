@@ -145,13 +145,24 @@ import {
 } from "@/constants";
 import {
 	decodeDaoAppParams,
+	handleDaoSearch,
 	isApplicationOpted,
 	searchApplicationAndAccount,
 } from "@/indexer";
 import { defineComponent, reactive, ref, toRefs } from "vue";
 import DaoStore from "../store/DaoID";
-import { executeReq, getAllDaoReq, getCursorReq } from "@/api";
-import { DaoTableData, PaginationCallType, EndPoint } from "@/types";
+import {
+	executeReq,
+	getAllDaoReq,
+	getCursorReq,
+	getDaoInfoByAppNameCursorReq,
+} from "@/api";
+import {
+	DaoTableData,
+	PaginationCallType,
+	EndPoint,
+	SearchDaoType,
+} from "@/types";
 import WalletStore from "@/store/WalletStore";
 import {
 	SearchOutlined,
@@ -181,8 +192,6 @@ export default defineComponent({
 					key: "name",
 					dataIndex: "name",
 					customFilterDropdown: true,
-					onFilter: (value: string, record: DaoTableData) =>
-						this.handleFilterData(value, record),
 					onFilterDropdownVisibleChange: (visible: boolean) => {
 						if (visible && this.$refs.searchInput) {
 							setTimeout(() => {
@@ -222,13 +231,19 @@ export default defineComponent({
 			},
 			PaginationCallType,
 			EndPoint,
+			isFilterActive: false,
 		};
 	},
 	methods: {
 		handlePaginationCall(type: PaginationCallType, pageNumber?: string) {
+			// calls handleDaoNameSearch if user is using filter else fetchDaoData
+			const dynamicCallback =
+				this.isFilterActive && this.searchText
+					? this.handleDaoNameSearch
+					: this.fetchDaoData;
 			switch (type) {
 				case PaginationCallType.NAV_PREV:
-					this.fetchDaoData(
+					dynamicCallback(
 						null,
 						null,
 						ROWS_PER_PAGE,
@@ -236,7 +251,7 @@ export default defineComponent({
 					);
 					break;
 				case PaginationCallType.NAV_NEXT:
-					this.fetchDaoData(
+					dynamicCallback(
 						ROWS_PER_PAGE,
 						this.currentPageCursor.endCursor,
 						null,
@@ -247,7 +262,7 @@ export default defineComponent({
 					this.handlePageJump(pageNumber as string);
 					break;
 				case PaginationCallType.FIRST_PAGE:
-					this.fetchDaoData(ROWS_PER_PAGE, null, null, null, 1);
+					dynamicCallback(ROWS_PER_PAGE, null, null, null, 1);
 					break;
 			}
 		},
@@ -255,8 +270,24 @@ export default defineComponent({
 			if (+pageNumber === 1) {
 				this.handlePaginationCall(PaginationCallType.FIRST_PAGE);
 			} else {
-				await this.getCursorDetails(+pageNumber);
+				if (this.isFilterActive && this.searchText) {
+					await this.getDaoNameCursorDetails(+pageNumber);
+				} else {
+					await this.getCursorDetails(+pageNumber);
+				}
 				this.handlePaginationCall(PaginationCallType.NAV_NEXT);
+			}
+		},
+		async getDaoNameCursorDetails(pageNumber: number) {
+			const cursorRes = await executeReq(
+				getDaoInfoByAppNameCursorReq(this.searchText, pageNumber, ROWS_PER_PAGE)
+			).catch((error) =>
+				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message)
+			);
+			if (cursorRes?.searchSigmaDaos?.pageInfo) {
+				const pageInfo = cursorRes.searchSigmaDaos.pageInfo;
+				this.currentPageCursor.endCursor = pageInfo.endCursor;
+				this.currentPageCursor.startCursor = pageInfo.startCursor;
 			}
 		},
 		handleSelectDAO(data: DaoTableData) {
@@ -303,10 +334,13 @@ export default defineComponent({
 			confirm();
 			this.searchText = selectedKeys[0];
 			this.searchedColumn = dataIndex;
+			this.handleFilterData();
 		},
 		handleReset(clearFilters: (param: any) => void) {
-			clearFilters({ confirm: true });
+			this.isFilterActive = false;
 			this.searchText = "";
+			clearFilters({ confirm: true });
+			this.handlePaginationCall(PaginationCallType.FIRST_PAGE);
 		},
 		handleInputChange(
 			e: any,
@@ -314,9 +348,10 @@ export default defineComponent({
 		) {
 			setSelectedKeys(e.target.value ? [e.target.value] : []);
 		},
-		handleFilterData(value: string, record: DaoTableData) {
-			// TODO: update to use filter from backend (for name)
-			return record.name.toString().toLowerCase().includes(value.toLowerCase());
+		handleFilterData() {
+			this.isFilterActive = true;
+			this.dataSource = [];
+			this.handlePaginationCall(PaginationCallType.FIRST_PAGE);
 		},
 		async getCursorDetails(pageNumber: number) {
 			const cursorRes = await executeReq(
@@ -325,11 +360,7 @@ export default defineComponent({
 				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message)
 			);
 
-			if (
-				cursorRes &&
-				cursorRes.allSigmaDaos &&
-				cursorRes.allSigmaDaos.pageInfo
-			) {
+			if (cursorRes?.allSigmaDaos?.pageInfo) {
 				const pageInfo = cursorRes.allSigmaDaos.pageInfo;
 				this.currentPageCursor.endCursor = pageInfo.endCursor;
 				this.currentPageCursor.startCursor = pageInfo.startCursor;
@@ -376,6 +407,35 @@ export default defineComponent({
 				// setting it only at first call since it doesn't change i.e for page 1
 				if (currentPage === 1 && res.allSigmaDaos.totalCount) {
 					this.totalDataRowsCount = res.allSigmaDaos.totalCount;
+				}
+			}
+		},
+		async handleDaoNameSearch(
+			first: number | null,
+			endCursor: string | null,
+			last: number | null,
+			startCursor: string | null
+		) {
+			const response = await handleDaoSearch(
+				SearchDaoType.SEARCH_BY_DAO_NAME,
+				this.searchText,
+				first,
+				endCursor,
+				last,
+				startCursor
+			).catch((error) =>
+				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message)
+			);
+			if (response) {
+				if (response.pageInfo) {
+					const pageInfo = response.pageInfo;
+					this.currentPageCursor.startCursor = pageInfo.startCursor;
+					this.currentPageCursor.endCursor = pageInfo.endCursor;
+				}
+				this.dataSource = response.dataSource;
+
+				if (response.totalCount) {
+					this.totalDataRowsCount = response.totalCount;
 				}
 			}
 		},
