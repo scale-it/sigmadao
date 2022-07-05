@@ -187,17 +187,13 @@ export default defineComponent({
 					key: "name",
 					dataIndex: "name",
 					customFilterDropdown: true,
-					// onFilter: (value: string, record: DaoTableData) => {
-					// 	console.log("filter active");
-					// 	return this.handleFilterData(value, record);
-					// },
-					// onFilterDropdownVisibleChange: (visible: boolean) => {
-					// 	if (visible && this.$refs.searchInput) {
-					// 		setTimeout(() => {
-					// 			(this.$refs.searchInput as any).focus();
-					// 		}, 100);
-					// 	}
-					// },
+					onFilterDropdownVisibleChange: (visible: boolean) => {
+						if (visible && this.$refs.searchInput) {
+							setTimeout(() => {
+								(this.$refs.searchInput as any).focus();
+							}, 100);
+						}
+					},
 				},
 				{
 					title: "Token Name",
@@ -235,11 +231,11 @@ export default defineComponent({
 	},
 	methods: {
 		handlePaginationCall(type: PaginationCallType, pageNumber?: string) {
+			// calls handleDaoNameSearch if user is using filter else fetchDaoData
 			const dynamicCallback =
 				this.isFilterActive && this.searchText
 					? this.handleDaoNameSearch
 					: this.fetchDaoData;
-			console.log("wwww");
 			switch (type) {
 				case PaginationCallType.NAV_PREV:
 					dynamicCallback(
@@ -322,8 +318,8 @@ export default defineComponent({
 		handleReset(clearFilters: (param: any) => void) {
 			this.isFilterActive = false;
 			this.searchText = "";
-			console.log("filter reset");
 			clearFilters({ confirm: true });
+			this.handlePaginationCall(PaginationCallType.FIRST_PAGE);
 		},
 		handleInputChange(
 			e: any,
@@ -332,12 +328,9 @@ export default defineComponent({
 			setSelectedKeys(e.target.value ? [e.target.value] : []);
 		},
 		async handleFilterData() {
-			console.log("filter is called");
 			this.isFilterActive = true;
 			this.dataSource = [];
-			// this.handleDaoNameSearch(ROWS_PER_PAGE,null,null,nullS)
 			return this.handlePaginationCall(PaginationCallType.FIRST_PAGE);
-			// return record.name.toString().toLowerCase().includes(value.toLowerCase());
 		},
 		async getCursorDetails(pageNumber: number) {
 			const cursorRes = await executeReq(
@@ -406,8 +399,7 @@ export default defineComponent({
 			last: number | null,
 			startCursor: string | null
 		) {
-			console.log("i m called");
-			const res = await handleDaoSearch(
+			const response = await handleDaoSearch(
 				SearchDaoType.SEARCH_BY_DAO_NAME,
 				this.searchText,
 				first,
@@ -417,16 +409,14 @@ export default defineComponent({
 			).catch((error) =>
 				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message)
 			);
-			if (res) {
-				console.log("value", res);
-				if (res.pageInfo) {
-					const pageInfo = res.pageInfo;
+			if (response) {
+				if (response.pageInfo) {
+					const pageInfo = response.pageInfo;
 					this.currentPageCursor.startCursor = pageInfo.startCursor;
 					this.currentPageCursor.endCursor = pageInfo.endCursor;
 				}
-				return (this.dataSource = res.dataSource);
+				this.dataSource = response.dataSource;
 			}
-			return;
 		},
 	},
 	setup() {

@@ -318,7 +318,7 @@ export async function handleDaoSearch(
 					response.searchSigmaDaos.nodes.map(
 						async (item: any, index: number): Promise<DaoTableData> => {
 							{
-								let parsedData = await decodeDaoAppParams(item);
+								const parsedData = await decodeDaoAppParams(item);
 								parsedData["key"] = index;
 								return parsedData;
 							}
