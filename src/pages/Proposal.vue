@@ -27,7 +27,6 @@
 			<a-modal
 				v-model:visible="visible"
 				title="Add Proposal"
-				@ok="onFinish"
 				okText="Submit"
 				:ok-button-props="{
 					form: 'add-proposal',
@@ -236,7 +235,6 @@ export default defineComponent({
 	},
 	methods: {
 		async onFinish(values: any) {
-			console.log(values);
 			try {
 				let {
 					amount,
@@ -261,7 +259,6 @@ export default defineComponent({
 					const startTime = convertToSeconds(vote_date[0]);
 					const endTime = convertToSeconds(vote_date[1]);
 					const executeBefore = endTime + 7 * 60; // end time + 7 minutes in seconds
-
 					// Default proposal params. Other params are added based on proposal type in below switch case.
 					const proposalParams = [
 						DAOActions.ADD_PROPOSAL,
@@ -274,7 +271,6 @@ export default defineComponent({
 						`int:${executeBefore}`, // execute_before
 						`int:${proposal_type}`, // type
 					];
-
 					switch (proposal_type) {
 						case ProposalType.ALGO_TRANSFER: {
 							proposalParams.push(
@@ -298,7 +294,6 @@ export default defineComponent({
 							break;
 						}
 					}
-
 					// check if app is already opted
 					const isApplicationAlreadyOpted = await isApplicationOpted(
 						lsig.address(),
