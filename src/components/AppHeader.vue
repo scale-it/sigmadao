@@ -165,7 +165,11 @@ export default defineComponent({
 				this.daoID = +this.daoID;
 				const response = await handleDaoSearch(
 					SearchDaoType.SEARCH_BY_APPLCATION_ID,
-					this.daoID
+					this.daoID,
+					null,
+					null,
+					null,
+					null
 				);
 
 				if (response) {

@@ -294,8 +294,13 @@ export async function decodeDaoAppParams(params: any): Promise<DaoTableData> {
  */
 export async function handleDaoSearch(
 	searchDaoType: SearchDaoType,
-	value: number | string
-): Promise<DaoTableData | false> {
+	value: number | string,
+	first: number | null,
+	after: string | null,
+	last: number | null,
+	before: string | null
+): Promise<any> {
+	let dataSource: Array<DaoTableData> = [];
 	switch (searchDaoType) {
 		case SearchDaoType.SEARCH_BY_APPLCATION_ID: {
 			const response = await executeReq(getDaoInfoByAppIdReq(value as number));
@@ -305,12 +310,24 @@ export async function handleDaoSearch(
 			return false;
 		}
 		case SearchDaoType.SEARCH_BY_DAO_NAME: {
-			// TODO: Paginate it
 			const response = await executeReq(
-				getDaoInfoByAppNameReq(value as string, 40, null, null, null)
+				getDaoInfoByAppNameReq(value as string, first, after, last, before)
 			);
-			console.log(response);
-			return false;
+			if (response?.searchSigmaDaos?.nodes) {
+				dataSource = await Promise.all(
+					response.searchSigmaDaos.nodes.map(
+						async (item: any, index: number): Promise<DaoTableData> => {
+							{
+								let parsedData = await decodeDaoAppParams(item);
+								parsedData["key"] = index;
+								return parsedData;
+							}
+						}
+					)
+				);
+			}
+			const pageInfo = response?.searchSigmaDaos?.pageInfo;
+			return { dataSource, pageInfo };
 		}
 		default:
 			return false;

@@ -56,7 +56,7 @@
 			</template>
 
 			<template #bodyCell="{ text, record, column }">
-				<span v-if="searchText && searchedColumn === column.dataIndex">
+				<!-- <span v-if="searchText && searchedColumn === column.dataIndex">
 					<template
 						v-for="(fragment, i) in text
 							.toString()
@@ -71,7 +71,7 @@
 						</mark>
 						<template v-else>{{ fragment }}</template>
 					</template>
-				</span>
+				</span> -->
 				<template v-if="column.key === 'link'">
 					<a :href="'//' + record.link" target="_blank">
 						{{ record.link }}
@@ -145,13 +145,19 @@ import {
 } from "@/constants";
 import {
 	decodeDaoAppParams,
+	handleDaoSearch,
 	isApplicationOpted,
 	searchApplicationAndAccount,
 } from "@/indexer";
 import { defineComponent, reactive, ref, toRefs } from "vue";
 import DaoStore from "../store/DaoID";
 import { executeReq, getAllDaoReq, getCursorReq } from "@/api";
-import { DaoTableData, PaginationCallType, EndPoint } from "@/types";
+import {
+	DaoTableData,
+	PaginationCallType,
+	EndPoint,
+	SearchDaoType,
+} from "@/types";
 import WalletStore from "@/store/WalletStore";
 import {
 	SearchOutlined,
@@ -181,8 +187,10 @@ export default defineComponent({
 					key: "name",
 					dataIndex: "name",
 					customFilterDropdown: true,
-					onFilter: (value: string, record: DaoTableData) =>
-						this.handleFilterData(value, record),
+					onFilter: (value: string, record: DaoTableData) => {
+						console.log("filter active");
+						return this.handleFilterData(value, record);
+					},
 					onFilterDropdownVisibleChange: (visible: boolean) => {
 						if (visible && this.$refs.searchInput) {
 							setTimeout(() => {
@@ -222,32 +230,38 @@ export default defineComponent({
 			},
 			PaginationCallType,
 			EndPoint,
+			isFilterActive: false,
 		};
 	},
 	methods: {
 		handlePaginationCall(type: PaginationCallType, pageNumber?: string) {
+			// const dynamicCallback =
+			// 	this.isFilterActive && this.searchText
+			// 		? this.handleDaoNameSearch
+			// 		: this.fetchDaoData;
+			console.log("wwww");
 			switch (type) {
-				case PaginationCallType.NAV_PREV:
-					this.fetchDaoData(
-						null,
-						null,
-						ROWS_PER_PAGE,
-						this.currentPageCursor.startCursor
-					);
-					break;
-				case PaginationCallType.NAV_NEXT:
-					this.fetchDaoData(
-						ROWS_PER_PAGE,
-						this.currentPageCursor.endCursor,
-						null,
-						null
-					);
-					break;
-				case PaginationCallType.JUMP_PAGE:
-					this.handlePageJump(pageNumber as string);
-					break;
+				// case PaginationCallType.NAV_PREV:
+				// 	dynamicCallback(
+				// 		null,
+				// 		null,
+				// 		ROWS_PER_PAGE,
+				// 		this.currentPageCursor.startCursor
+				// 	);
+				// 	break;
+				// case PaginationCallType.NAV_NEXT:
+				// 	dynamicCallback(
+				// 		ROWS_PER_PAGE,
+				// 		this.currentPageCursor.endCursor,
+				// 		null,
+				// 		null
+				// 	);
+				// 	break;
+				// case PaginationCallType.JUMP_PAGE:
+				// 	this.handlePageJump(pageNumber as string);
+				// 	break;
 				case PaginationCallType.FIRST_PAGE:
-					this.fetchDaoData(ROWS_PER_PAGE, null, null, null, 1);
+					this.handleDaoNameSearch(ROWS_PER_PAGE, null, null, null);
 					break;
 			}
 		},
@@ -305,8 +319,10 @@ export default defineComponent({
 			this.searchedColumn = dataIndex;
 		},
 		handleReset(clearFilters: (param: any) => void) {
-			clearFilters({ confirm: true });
+			this.isFilterActive = false;
 			this.searchText = "";
+			console.log("filter reset");
+			clearFilters({ confirm: true });
 		},
 		handleInputChange(
 			e: any,
@@ -314,8 +330,12 @@ export default defineComponent({
 		) {
 			setSelectedKeys(e.target.value ? [e.target.value] : []);
 		},
-		handleFilterData(value: string, record: DaoTableData) {
-			// TODO: update to use filter from backend (for name)
+		async handleFilterData(value: string, record: DaoTableData) {
+			console.log("filter is called");
+			this.isFilterActive = true;
+			this.dataSource = [];
+			// this.handleDaoNameSearch(ROWS_PER_PAGE,null,null,nullS)
+			// return this.handlePaginationCall(PaginationCallType.FIRST_PAGE);\
 			return record.name.toString().toLowerCase().includes(value.toLowerCase());
 		},
 		async getCursorDetails(pageNumber: number) {
@@ -378,6 +398,34 @@ export default defineComponent({
 					this.totalDataRowsCount = res.allSigmaDaos.totalCount;
 				}
 			}
+		},
+		async handleDaoNameSearch(
+			first: number | null,
+			endCursor: string | null,
+			last: number | null,
+			startCursor: string | null
+		) {
+			console.log("i m called");
+			const res = await handleDaoSearch(
+				SearchDaoType.SEARCH_BY_DAO_NAME,
+				this.searchText,
+				first,
+				endCursor,
+				last,
+				startCursor
+			).catch((error) =>
+				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message)
+			);
+			if (res) {
+				console.log("value", res);
+				if (res.pageInfo) {
+					const pageInfo = res.pageInfo;
+					this.currentPageCursor.startCursor = pageInfo.startCursor;
+					this.currentPageCursor.endCursor = pageInfo.endCursor;
+				}
+				return (this.dataSource = res.dataSource);
+			}
+			return;
 		},
 	},
 	setup() {
