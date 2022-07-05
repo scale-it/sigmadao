@@ -56,7 +56,7 @@
 			</template>
 
 			<template #bodyCell="{ text, record, column }">
-				<!-- <span v-if="searchText && searchedColumn === column.dataIndex">
+				<span v-if="searchText && searchedColumn === column.dataIndex">
 					<template
 						v-for="(fragment, i) in text
 							.toString()
@@ -71,7 +71,7 @@
 						</mark>
 						<template v-else>{{ fragment }}</template>
 					</template>
-				</span> -->
+				</span>
 				<template v-if="column.key === 'link'">
 					<a :href="'//' + record.link" target="_blank">
 						{{ record.link }}
@@ -187,17 +187,17 @@ export default defineComponent({
 					key: "name",
 					dataIndex: "name",
 					customFilterDropdown: true,
-					onFilter: (value: string, record: DaoTableData) => {
-						console.log("filter active");
-						return this.handleFilterData(value, record);
-					},
-					onFilterDropdownVisibleChange: (visible: boolean) => {
-						if (visible && this.$refs.searchInput) {
-							setTimeout(() => {
-								(this.$refs.searchInput as any).focus();
-							}, 100);
-						}
-					},
+					// onFilter: (value: string, record: DaoTableData) => {
+					// 	console.log("filter active");
+					// 	return this.handleFilterData(value, record);
+					// },
+					// onFilterDropdownVisibleChange: (visible: boolean) => {
+					// 	if (visible && this.$refs.searchInput) {
+					// 		setTimeout(() => {
+					// 			(this.$refs.searchInput as any).focus();
+					// 		}, 100);
+					// 	}
+					// },
 				},
 				{
 					title: "Token Name",
@@ -235,31 +235,31 @@ export default defineComponent({
 	},
 	methods: {
 		handlePaginationCall(type: PaginationCallType, pageNumber?: string) {
-			// const dynamicCallback =
-			// 	this.isFilterActive && this.searchText
-			// 		? this.handleDaoNameSearch
-			// 		: this.fetchDaoData;
+			const dynamicCallback =
+				this.isFilterActive && this.searchText
+					? this.handleDaoNameSearch
+					: this.fetchDaoData;
 			console.log("wwww");
 			switch (type) {
-				// case PaginationCallType.NAV_PREV:
-				// 	dynamicCallback(
-				// 		null,
-				// 		null,
-				// 		ROWS_PER_PAGE,
-				// 		this.currentPageCursor.startCursor
-				// 	);
-				// 	break;
-				// case PaginationCallType.NAV_NEXT:
-				// 	dynamicCallback(
-				// 		ROWS_PER_PAGE,
-				// 		this.currentPageCursor.endCursor,
-				// 		null,
-				// 		null
-				// 	);
-				// 	break;
-				// case PaginationCallType.JUMP_PAGE:
-				// 	this.handlePageJump(pageNumber as string);
-				// 	break;
+				case PaginationCallType.NAV_PREV:
+					dynamicCallback(
+						null,
+						null,
+						ROWS_PER_PAGE,
+						this.currentPageCursor.startCursor
+					);
+					break;
+				case PaginationCallType.NAV_NEXT:
+					dynamicCallback(
+						ROWS_PER_PAGE,
+						this.currentPageCursor.endCursor,
+						null,
+						null
+					);
+					break;
+				case PaginationCallType.JUMP_PAGE:
+					this.handlePageJump(pageNumber as string);
+					break;
 				case PaginationCallType.FIRST_PAGE:
 					this.handleDaoNameSearch(ROWS_PER_PAGE, null, null, null);
 					break;
@@ -317,6 +317,7 @@ export default defineComponent({
 			confirm();
 			this.searchText = selectedKeys[0];
 			this.searchedColumn = dataIndex;
+			this.handleFilterData();
 		},
 		handleReset(clearFilters: (param: any) => void) {
 			this.isFilterActive = false;
@@ -330,13 +331,13 @@ export default defineComponent({
 		) {
 			setSelectedKeys(e.target.value ? [e.target.value] : []);
 		},
-		async handleFilterData(value: string, record: DaoTableData) {
+		async handleFilterData() {
 			console.log("filter is called");
 			this.isFilterActive = true;
 			this.dataSource = [];
 			// this.handleDaoNameSearch(ROWS_PER_PAGE,null,null,nullS)
-			// return this.handlePaginationCall(PaginationCallType.FIRST_PAGE);\
-			return record.name.toString().toLowerCase().includes(value.toLowerCase());
+			return this.handlePaginationCall(PaginationCallType.FIRST_PAGE);
+			// return record.name.toString().toLowerCase().includes(value.toLowerCase());
 		},
 		async getCursorDetails(pageNumber: number) {
 			const cursorRes = await executeReq(
