@@ -151,7 +151,12 @@ import {
 } from "@/indexer";
 import { defineComponent, reactive, ref, toRefs } from "vue";
 import DaoStore from "../store/DaoID";
-import { executeReq, getAllDaoReq, getCursorReq } from "@/api";
+import {
+	executeReq,
+	getAllDaoReq,
+	getCursorReq,
+	getDaoInfoByAppNameCursorReq,
+} from "@/api";
 import {
 	DaoTableData,
 	PaginationCallType,
@@ -257,7 +262,7 @@ export default defineComponent({
 					this.handlePageJump(pageNumber as string);
 					break;
 				case PaginationCallType.FIRST_PAGE:
-					this.handleDaoNameSearch(ROWS_PER_PAGE, null, null, null);
+					dynamicCallback(ROWS_PER_PAGE, null, null, null, 1);
 					break;
 			}
 		},
@@ -265,8 +270,24 @@ export default defineComponent({
 			if (+pageNumber === 1) {
 				this.handlePaginationCall(PaginationCallType.FIRST_PAGE);
 			} else {
-				await this.getCursorDetails(+pageNumber);
+				if (this.isFilterActive && this.searchText) {
+					await this.getDaoNameCursorDetails(+pageNumber);
+				} else {
+					await this.getCursorDetails(+pageNumber);
+				}
 				this.handlePaginationCall(PaginationCallType.NAV_NEXT);
+			}
+		},
+		async getDaoNameCursorDetails(pageNumber: number) {
+			const cursorRes = await executeReq(
+				getDaoInfoByAppNameCursorReq(this.searchText, pageNumber, ROWS_PER_PAGE)
+			).catch((error) =>
+				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message)
+			);
+			if (cursorRes?.searchSigmaDaos?.pageInfo) {
+				const pageInfo = cursorRes.searchSigmaDaos.pageInfo;
+				this.currentPageCursor.endCursor = pageInfo.endCursor;
+				this.currentPageCursor.startCursor = pageInfo.startCursor;
 			}
 		},
 		handleSelectDAO(data: DaoTableData) {
@@ -339,11 +360,7 @@ export default defineComponent({
 				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message)
 			);
 
-			if (
-				cursorRes &&
-				cursorRes.allSigmaDaos &&
-				cursorRes.allSigmaDaos.pageInfo
-			) {
+			if (cursorRes?.allSigmaDaos?.pageInfo) {
 				const pageInfo = cursorRes.allSigmaDaos.pageInfo;
 				this.currentPageCursor.endCursor = pageInfo.endCursor;
 				this.currentPageCursor.startCursor = pageInfo.startCursor;
@@ -416,6 +433,10 @@ export default defineComponent({
 					this.currentPageCursor.endCursor = pageInfo.endCursor;
 				}
 				this.dataSource = response.dataSource;
+
+				if (response.totalCount) {
+					this.totalDataRowsCount = response.totalCount;
+				}
 			}
 		},
 	},

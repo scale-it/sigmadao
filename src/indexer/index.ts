@@ -327,7 +327,8 @@ export async function handleDaoSearch(
 				);
 			}
 			const pageInfo = response?.searchSigmaDaos?.pageInfo;
-			return { dataSource, pageInfo };
+			const totalCount = response?.searchSigmaDaos?.totalCount;
+			return { dataSource, pageInfo, totalCount };
 		}
 		default:
 			return false;
