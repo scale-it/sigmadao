@@ -295,9 +295,13 @@ export default defineComponent({
 		async handleCloseProposal(record: any) {
 			console.log("closed", record);
 		},
+		async loadTable() {
+			this.handlePagination(PaginationCallType.FIRST_PAGE);
+		},
 	},
 	mounted() {
-		this.handlePagination(PaginationCallType.FIRST_PAGE);
+		this.proposalStore.loadTable = this.loadTable;
+		this.loadTable();
 	},
 });
 </script>

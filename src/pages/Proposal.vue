@@ -194,6 +194,7 @@ import { isApplicationOpted } from "@/indexer";
 import ProposalTable from "@/components/ProposalTable.vue";
 import type { FormInstance } from "ant-design-vue";
 import DaoStore from "../store/DaoID";
+import ProposalTableStore from "../store/ProposalTableStore";
 const { getApplicationAddress } = require("algosdk");
 
 export default defineComponent({
@@ -210,6 +211,7 @@ export default defineComponent({
 	setup() {
 		const formState = reactive(ProposalStore());
 		const walletStore = reactive(WalletStore());
+		const proposalStore = reactive(ProposalTableStore());
 		const daoStore = reactive(DaoID());
 		const visible = ref<boolean>(false);
 		const formRef = ref<FormInstance>();
@@ -231,6 +233,7 @@ export default defineComponent({
 			visible,
 			showModal,
 			handleCancel,
+			proposalStore,
 		};
 	},
 	methods: {
@@ -330,6 +333,7 @@ export default defineComponent({
 						addProposalTx
 					);
 					this.handleCancel();
+					this.proposalStore.loadTable();
 					successMessage(this.key);
 					openSuccessNotificationWithIcon(
 						SUCCESSFUL,

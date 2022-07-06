@@ -75,6 +75,7 @@ export interface ProposalTableData {
 export interface ProposalTableStore {
 	filterType: ProposalFilterType;
 	psqlData: Map<number, ProposalTableData>;
+	loadTable: () => void;
 }
 
 export interface UnknownObject {

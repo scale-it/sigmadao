@@ -10,6 +10,12 @@ export default defineStore("ProposalTableStore", {
 		return {
 			filterType: ProposalFilterType.All,
 			psqlData: new Map<number, ProposalTableData>(),
+			loadTable: Function,
 		};
+	},
+	actions: {
+		loadTable() {
+			this.loadTable();
+		},
 	},
 });
