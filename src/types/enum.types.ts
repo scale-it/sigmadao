@@ -54,6 +54,13 @@ export enum SchemaType {
 	BYTES,
 }
 
+export enum EncodingType {
+	BASE64,
+	BASE32,
+	HEX,
+	UTF8,
+}
+
 export enum PaginationCallType {
 	NAV_PREV,
 	NAV_NEXT,
