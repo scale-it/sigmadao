@@ -104,6 +104,7 @@ import {
 	UNSUCCESSFUL,
 	ROWS_PER_PAGE,
 	ProposalType,
+	PROPOSAL_LOCAL_STATE_MAP_KEY,
 } from "@/constants";
 import {
 	ProposalTableData,
@@ -133,18 +134,18 @@ export default defineComponent({
 			columns: [
 				{
 					title: "Proposal Name",
-					key: "name",
-					dataIndex: "name",
+					key: PROPOSAL_LOCAL_STATE_MAP_KEY.Name,
+					dataIndex: PROPOSAL_LOCAL_STATE_MAP_KEY.Name,
 				},
 				{
 					title: "Proposal Type",
-					key: "type",
-					dataIndex: "type",
+					key: PROPOSAL_LOCAL_STATE_MAP_KEY.Type,
+					dataIndex: PROPOSAL_LOCAL_STATE_MAP_KEY.Type,
 				},
 				{
 					title: "Voting Start - Voting End",
-					key: "voting_start",
-					dataIndex: "voting_start",
+					key: PROPOSAL_LOCAL_STATE_MAP_KEY.Voting_Start,
+					dataIndex: PROPOSAL_LOCAL_STATE_MAP_KEY.Voting_Start,
 				},
 				{
 					title: "Action",
