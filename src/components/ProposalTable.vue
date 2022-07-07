@@ -227,7 +227,7 @@ export default defineComponent({
 				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message)
 			);
 
-			if (res && res.sigmaDaosProposalFilter) {
+			if (res?.sigmaDaosProposalFilter) {
 				if (res.sigmaDaosProposalFilter.nodes.length) {
 					// clean existing data in temp array with change of page
 					if (this.dataSource.length) {
