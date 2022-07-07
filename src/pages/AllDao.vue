@@ -1,5 +1,5 @@
 <template>
-	<div class="tableContainer">
+	<div class="table_container">
 		<a-table
 			:dataSource="dataSource"
 			:columns="columns"
