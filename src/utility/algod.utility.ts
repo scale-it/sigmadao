@@ -4,7 +4,7 @@ import { algodClient } from "@/config/algob.config";
 import type { LogicSigAccount } from "algosdk";
 import { EncodingType } from "@/types";
 import algosdk from "algosdk";
-const base32 = require('hi-base32');
+const base32 = require("hi-base32");
 const confirmedRound = "confirmed-round";
 
 export const fundAmount = async (
@@ -123,7 +123,7 @@ const convertToBuffer = (s: string, encoding?: EncodingType): Buffer => {
 			return Buffer.from(s);
 		}
 	}
-}
+};
 
 export const convertToHex = (address: string) => {
 	const pk = algosdk.decodeAddress(address);
@@ -134,6 +134,6 @@ export const convertHexToAlgorandAddr = (hex: string) => {
 	try {
 		return algosdk.encodeAddress(convertToBuffer(hex, EncodingType.HEX));
 	} catch (error) {
-		console.log(error)
+		console.log(error);
 	}
-}
+};
