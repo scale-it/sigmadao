@@ -98,35 +98,10 @@
 		</a-table>
 	</div>
 	<a-col :offset="15">
-		<a-pagination
-			:hideOnSinglePage="true"
-			v-model:current="currentPage"
-			:pageSize="ROWS_PER_PAGE"
-			:total="totalDataRowsCount"
-		>
-			<template #itemRender="{ type, originalElement }">
-				<a
-					v-if="type === 'prev'"
-					@click="handlePaginationCall(PaginationCallType.NAV_PREV)"
-					><left-outlined
-				/></a>
-				<a
-					v-else-if="type === 'next'"
-					@click="handlePaginationCall(PaginationCallType.NAV_NEXT)"
-					><right-outlined
-				/></a>
-				<component
-					@click="
-						handlePaginationCall(
-							PaginationCallType.JUMP_PAGE,
-							originalElement.children[0].children
-						)
-					"
-					:is="originalElement"
-					v-else
-				></component>
-			</template>
-		</a-pagination>
+		<TablePagination
+			v-bind:totalDataRowsCount="totalDataRowsCount"
+			:paginationHandler="handlePaginationCall"
+		/>
 	</a-col>
 </template>
 
@@ -164,19 +139,15 @@ import {
 	SearchDaoType,
 } from "@/types";
 import WalletStore from "@/store/WalletStore";
-import {
-	SearchOutlined,
-	LeftOutlined,
-	RightOutlined,
-} from "@ant-design/icons-vue";
+import { SearchOutlined } from "@ant-design/icons-vue";
+import TablePagination from "../UIKit/TablePagination.vue";
 import { redirectTo } from "@/utility";
 
 export default defineComponent({
 	name: "AllDao",
 	components: {
 		SearchOutlined,
-		LeftOutlined,
-		RightOutlined,
+		TablePagination,
 	},
 	data() {
 		return {
@@ -221,7 +192,6 @@ export default defineComponent({
 				},
 			],
 			walletStore: WalletStore(),
-			currentPage: ref(1),
 			totalDataRowsCount: ROWS_PER_PAGE,
 			ROWS_PER_PAGE,
 			dataSource: [] as DaoTableData[],
@@ -404,11 +374,7 @@ export default defineComponent({
 					this.currentPageCursor.startCursor = pageInfo.startCursor;
 					this.currentPageCursor.endCursor = pageInfo.endCursor;
 				}
-
-				// setting it only at first call since it doesn't change i.e for page 1
-				if (currentPage === 1 && res.allSigmaDaos.totalCount) {
-					this.totalDataRowsCount = res.allSigmaDaos.totalCount;
-				}
+				this.totalDataRowsCount = res.allSigmaDaos.totalCount;
 			}
 		},
 		async handleDaoNameSearch(

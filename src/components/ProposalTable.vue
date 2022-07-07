@@ -4,7 +4,7 @@
 			<a-radio-group
 				v-model:value="this.proposalStore.filterType"
 				name="radioGroup"
-				@change="handleFilter"
+				@change="handlePagination(PaginationCallType.FIRST_PAGE)"
 			>
 				<a-radio :value="ProposalFilterType.All">{{
 					ProposalFilterType[ProposalFilterType.All]
@@ -65,35 +65,10 @@
 		</a-table>
 	</div>
 	<a-col :offset="15">
-		<a-pagination
-			:hideOnSinglePage="true"
-			v-model:current="currentPage"
-			:pageSize="ROWS_PER_PAGE"
-			:total="totalDataRowsCount"
-		>
-			<template #itemRender="{ type, originalElement }">
-				<a
-					v-if="type === 'prev'"
-					@click="handlePagination(PaginationCallType.NAV_PREV)"
-					><left-outlined
-				/></a>
-				<a
-					v-else-if="type === 'next'"
-					@click="handlePagination(PaginationCallType.NAV_NEXT)"
-					><right-outlined
-				/></a>
-				<component
-					@click="
-						handlePagination(
-							PaginationCallType.JUMP_PAGE,
-							originalElement.children[0].children
-						)
-					"
-					:is="originalElement"
-					v-else
-				></component>
-			</template>
-		</a-pagination>
+		<TablePagination
+			v-bind:totalDataRowsCount="totalDataRowsCount"
+			:paginationHandler="handlePagination"
+		/>
 	</a-col>
 </template>
 
@@ -116,17 +91,17 @@ import DaoID from "../store/DaoID";
 import ProposalTableStore from "../store/ProposalTableStore";
 import { secToFormat } from "../utility";
 import { decodeProposalParams } from "@/indexer";
+import TablePagination from "../UIKit/TablePagination.vue";
 import {
 	executeReq,
 	searchProposalsByAppIdReq,
 	getProposalCursorReq,
 } from "@/api";
-import { MoreOutlined } from "@ant-design/icons-vue";
 
 export default defineComponent({
 	name: "ProposalTable",
 	components: {
-		MoreOutlined,
+		TablePagination,
 	},
 	data() {
 		return {
@@ -152,7 +127,6 @@ export default defineComponent({
 					key: "action",
 				},
 			],
-			currentPage: ref(1),
 			totalDataRowsCount: ROWS_PER_PAGE,
 			ROWS_PER_PAGE,
 			dataSource: [] as ProposalTableData[],
@@ -177,9 +151,6 @@ export default defineComponent({
 		};
 	},
 	methods: {
-		handleFilter() {
-			this.handlePagination(PaginationCallType.FIRST_PAGE);
-		},
 		handlePagination(type: PaginationCallType, pageNumber?: string) {
 			switch (type) {
 				case PaginationCallType.NAV_PREV:
@@ -257,10 +228,7 @@ export default defineComponent({
 					this.currentPageCursor.endCursor = pageInfo.endCursor;
 				}
 
-				// setting it only at first call since it doesn't change i.e for page 1
-				if (currentPage === 1 && res.sigmaDaosProposalFilter.totalCount) {
-					this.totalDataRowsCount = res.sigmaDaosProposalFilter.totalCount;
-				}
+				this.totalDataRowsCount = res.sigmaDaosProposalFilter.totalCount;
 			}
 		},
 		async handlePageJump(pageNumber: string) {
