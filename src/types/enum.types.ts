@@ -84,7 +84,7 @@ export enum DateTimeFormat {
 
 export enum ProposalFilterType {
 	All = 1,
-	Active = 2,
-	Future = 3,
+	Ongoing = 2,
+	Active = 3,
 	Past = 4,
 }

@@ -6,18 +6,12 @@
 				name="radioGroup"
 				@change="handlePagination(PaginationCallType.FIRST_PAGE)"
 			>
-				<a-radio :value="ProposalFilterType.All">{{
-					ProposalFilterType[ProposalFilterType.All]
-				}}</a-radio>
-				<a-radio :value="ProposalFilterType.Ongoing">{{
-					ProposalFilterType[ProposalFilterType.Ongoing]
-				}}</a-radio>
-				<a-radio :value="ProposalFilterType.Active">{{
-					ProposalFilterType[ProposalFilterType.Active]
-				}}</a-radio>
-				<a-radio :value="ProposalFilterType.Past">{{
-					ProposalFilterType[ProposalFilterType.Past]
-				}}</a-radio>
+				<a-radio
+					v-for="item in radioGroupData"
+					:key="item.id"
+					:value="item.value"
+					>{{ ProposalFilterType[item.value] }}</a-radio
+				>
 			</a-radio-group>
 		</a-col>
 	</a-row>
@@ -126,6 +120,24 @@ export default defineComponent({
 				{
 					title: "Action",
 					key: "action",
+				},
+			],
+			radioGroupData: [
+				{
+					id: 1,
+					value: ProposalFilterType.All,
+				},
+				{
+					id: 2,
+					value: ProposalFilterType.Ongoing,
+				},
+				{
+					id: 3,
+					value: ProposalFilterType.Active,
+				},
+				{
+					id: 4,
+					value: ProposalFilterType.Past,
 				},
 			],
 			totalDataRowsCount: ROWS_PER_PAGE,
