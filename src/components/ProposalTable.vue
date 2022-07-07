@@ -9,11 +9,11 @@
 				<a-radio :value="ProposalFilterType.All">{{
 					ProposalFilterType[ProposalFilterType.All]
 				}}</a-radio>
+				<a-radio :value="ProposalFilterType.Ongoing">{{
+					ProposalFilterType[ProposalFilterType.Ongoing]
+				}}</a-radio>
 				<a-radio :value="ProposalFilterType.Active">{{
 					ProposalFilterType[ProposalFilterType.Active]
-				}}</a-radio>
-				<a-radio :value="ProposalFilterType.Future">{{
-					ProposalFilterType[ProposalFilterType.Future]
 				}}</a-radio>
 				<a-radio :value="ProposalFilterType.Past">{{
 					ProposalFilterType[ProposalFilterType.Past]
@@ -41,9 +41,9 @@
 				</template>
 				<template v-if="column.key === 'voting_start'">
 					{{
-						secToFormat(record.voting_start, "lll") +
+						secToFormat(record.voting_start, DateTimeFormat.DAY_TIME_WITH_DAY) +
 						" - " +
-						secToFormat(record.voting_end, "lll")
+						secToFormat(record.voting_end, DateTimeFormat.DAY_TIME_WITH_DAY)
 					}}
 				</template>
 				<template v-if="column.key === 'type'">
@@ -85,6 +85,7 @@ import {
 	ProposalTableData,
 	PaginationCallType,
 	ProposalFilterType,
+	DateTimeFormat,
 } from "@/types";
 import { defineComponent, reactive, ref } from "vue";
 import DaoID from "../store/DaoID";
@@ -136,6 +137,7 @@ export default defineComponent({
 			},
 			PaginationCallType,
 			ProposalType,
+			DateTimeFormat,
 			secToFormat,
 		};
 	},

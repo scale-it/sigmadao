@@ -78,6 +78,10 @@ export enum SearchDaoType {
 	SEARCH_BY_DAO_NAME,
 }
 
+export enum DateTimeFormat {
+	DAY_TIME_WITH_DAY = "lll",
+}
+
 export enum ProposalFilterType {
 	All = 1,
 	Active = 2,
