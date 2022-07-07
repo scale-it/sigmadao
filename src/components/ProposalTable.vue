@@ -58,7 +58,7 @@
 						danger
 						@click="() => handleCloseProposal(record)"
 					>
-						Delete
+						Close
 					</a-button>
 				</template>
 			</template>

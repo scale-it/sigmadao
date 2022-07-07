@@ -17,7 +17,7 @@
 						class="margin_bottom_sm"
 						:disabled="!DaoStore().isDaoSelected"
 						type="primary"
-						@click="showModal"
+						@click="toggleModalVisible"
 					>
 						Add Proposal</a-button
 					>
@@ -25,7 +25,7 @@
 			</a-row>
 
 			<a-modal
-				v-model:visible="visible"
+				v-model:visible="isModalVisible"
 				title="Add Proposal"
 				okText="Submit"
 				:ok-button-props="{
@@ -213,16 +213,8 @@ export default defineComponent({
 		const walletStore = reactive(WalletStore());
 		const proposalStore = reactive(ProposalTableStore());
 		const daoStore = reactive(DaoID());
-		const visible = ref<boolean>(false);
+		const isModalVisible = ref<boolean>(false);
 		const formRef = ref<FormInstance>();
-
-		const showModal = () => {
-			visible.value = true;
-		};
-
-		const handleCancel = () => {
-			visible.value = false;
-		};
 
 		return {
 			formRef,
@@ -230,13 +222,14 @@ export default defineComponent({
 			walletStore,
 			daoStore,
 			validateMessages: VALIDATE_MESSAGES,
-			visible,
-			showModal,
-			handleCancel,
+			isModalVisible,
 			proposalStore,
 		};
 	},
 	methods: {
+		toggleModalVisible() {
+			this.isModalVisible = !this.isModalVisible;
+		},
 		async onFinish(values: any) {
 			try {
 				let {
@@ -332,7 +325,7 @@ export default defineComponent({
 					let response = await this.walletStore.webMode.executeTx(
 						addProposalTx
 					);
-					this.handleCancel();
+					this.toggleModalVisible();
 					this.proposalStore.loadTable();
 					successMessage(this.key);
 					openSuccessNotificationWithIcon(
@@ -350,7 +343,7 @@ export default defineComponent({
 		},
 		onFinishFailed(errorinfo: Event) {
 			console.warn("Failed:", errorinfo);
-			this.handleCancel();
+			this.toggleModalVisible();
 		},
 		disabledDate(current: number | Date) {
 			// Can not select day before today
