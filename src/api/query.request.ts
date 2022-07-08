@@ -198,3 +198,73 @@ export const getDaoInfoByAppNameCursorReq = (
   }
   `;
 };
+/** SearchByDaoName
+ * @param appId Application id
+ * @param filterType filter type
+ * @param first Similar to limit in PostreSQL. E.g first 10 entries of row after cursor pointer
+ * @param after End cursor pointer
+ * @param last  Similar to limit in PostreSQL. E.g last 10 entries of row before cursor pointer
+ * @param before Start cursor pointer
+ */
+export const searchProposalsByAppIdReq = (
+	appId: number,
+	filterType: number,
+	first: number | null,
+	after: string | null,
+	last: number | null,
+	before: string | null
+) => {
+	// the cursor needs to be wrapped inside double quotes
+	after = quotesWrapper(after);
+	before = quotesWrapper(before);
+	return `
+  query SearchSigmaDaosProposalsByAppId {
+    sigmaDaosProposalFilter(
+      appid: "${appId}"
+      filtertype: ${filterType}
+      first: ${first}
+      after: ${after}
+      before: ${before}
+      last: ${last}
+    ) {
+      nodes {
+        votingStart
+        votingEnd
+        app
+        addr
+        localstate
+      }
+      pageInfo {
+        startCursor
+        endCursor
+      }
+      totalCount
+    }
+  }`;
+};
+/** Get start and end cursor. For page = 2 to n-1.
+ * @param appId Application id
+ * @param filterType filter type
+ * @param pageNumber Page number user is trying to visit
+ * @param pageSize Number of entries to be in table in single page
+ */
+export const getProposalCursorReq = (
+	appId: number,
+	filterType: number,
+	pageNumber: number,
+	pageSize: number
+) => {
+	return `
+  query Cursor {
+    sigmaDaosProposalFilter(appid: "${appId}", filtertype:  ${filterType}, first: ${
+		(pageNumber - 1) * pageSize
+	}) {
+      pageInfo {
+        startCursor
+        endCursor
+      }
+      totalCount
+    }
+  }
+  `;
+};

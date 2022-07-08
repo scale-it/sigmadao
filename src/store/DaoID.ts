@@ -11,6 +11,7 @@ export default defineStore("DaoStore", {
 			locked: undefined,
 			global_app_state: undefined,
 			show_opt_in: false,
+			searchDaoId: undefined,
 			psqlData: new Map<number, DaoTableData>(),
 		};
 	},
@@ -35,12 +36,16 @@ export default defineStore("DaoStore", {
 			this.locked = undefined;
 			this.global_app_state = undefined;
 			this.show_opt_in = false;
+			this.searchDaoId = undefined;
 		},
 	},
 	getters: {
 		// if dao id is not selected or if app is not opted in
 		disableActions(state) {
 			return !state.dao_id || state.show_opt_in;
+		},
+		isDaoSelected(state) {
+			return state.dao_id;
 		},
 	},
 });

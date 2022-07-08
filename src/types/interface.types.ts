@@ -4,6 +4,7 @@ import {
 	StateValue,
 	WebModeTypes,
 	WalletType,
+	ProposalFilterType,
 } from "@/types";
 
 export interface WalletStoreState {
@@ -21,6 +22,7 @@ export interface DAO {
 	locked?: number;
 	global_app_state?: Map<Key, StateValue>;
 	show_opt_in: boolean;
+	searchDaoId?: number;
 	psqlData: Map<number, DaoTableData>;
 }
 
@@ -55,6 +57,25 @@ export interface DaoTableData {
 	name: string;
 	link: string;
 	key?: number;
+}
+
+// Proposal Table interfaces
+export interface ProposalTableData {
+	key?: number;
+	name: string;
+	msg: string;
+	type: number;
+	url: string;
+	url_hash: string;
+	voting_start: number; // seconds
+	voting_end: number; // seconds
+	execute_before: number; // seconds
+}
+
+export interface ProposalTableStore {
+	filterType: ProposalFilterType;
+	psqlData: Map<number, ProposalTableData>;
+	loadTable: () => void;
 }
 
 export interface UnknownObject {

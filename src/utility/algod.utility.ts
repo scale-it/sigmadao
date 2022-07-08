@@ -2,7 +2,9 @@ import { types, tx as webTx } from "@algo-builder/web";
 import { types as aTypes } from "@algo-builder/algob";
 import { algodClient } from "@/config/algob.config";
 import type { LogicSigAccount } from "algosdk";
+import { EncodingType } from "@/types";
 import algosdk from "algosdk";
+const base32 = require("hi-base32");
 const confirmedRound = "confirmed-round";
 
 export const fundAmount = async (
@@ -97,7 +99,41 @@ export const optInDaoApp = async (
 	}
 };
 
+/**
+ * Description : converts string into buffer as per encoding type
+ * @param s : string to be converted
+ * @param encoding : encoding type
+ */
+const convertToBuffer = (s: string, encoding?: EncodingType): Buffer => {
+	switch (encoding) {
+		case EncodingType.BASE64: {
+			return Buffer.from(s, "base64");
+		}
+		case EncodingType.BASE32: {
+			return Buffer.from(base32.decode(s));
+		}
+		case EncodingType.HEX: {
+			return Buffer.from(s, "hex");
+		}
+		case EncodingType.UTF8: {
+			return Buffer.from(s);
+		}
+		default: {
+			// default encoding (utf-8)
+			return Buffer.from(s);
+		}
+	}
+};
+
 export const convertToHex = (address: string) => {
 	const pk = algosdk.decodeAddress(address);
 	return Buffer.from(pk.publicKey).toString("hex");
+};
+
+export const convertHexToAlgorandAddr = (hex: string) => {
+	try {
+		return algosdk.encodeAddress(convertToBuffer(hex, EncodingType.HEX));
+	} catch (error) {
+		console.log(error);
+	}
 };

@@ -11,125 +11,156 @@
 					@close="error = ''"
 				/>
 			</div>
-			<a-form
-				:label-col="{ span: 10 }"
-				:wrapper-col="{ span: 20 }"
-				:model="formState"
-				name="Add Proposal"
-				autocomplete="off"
-				@finish="onFinish"
-				@finishFailed="onFinishFailed"
-				@validate-messages="validateMessages"
+			<a-row class="opt_btn">
+				<a-col class="menu" :span="24">
+					<a-button
+						class="margin_bottom_sm"
+						:disabled="!DaoStore().isDaoSelected"
+						type="primary"
+						@click="toggleModalVisible"
+					>
+						Add Proposal</a-button
+					>
+				</a-col>
+			</a-row>
+
+			<a-modal
+				v-model:visible="isModalVisible"
+				title="Add Proposal"
+				okText="Submit"
+				:ok-button-props="{
+					form: 'add-proposal',
+					key: 'submit',
+					htmlType: 'submit',
+				}"
 			>
-				<a-form-item
-					label="URL"
-					name="url"
-					:rules="[{ required: true, type: 'url' }]"
-				>
-					<a-input v-model:value="formState.url" />
-				</a-form-item>
-				<a-form-item
-					label="URL Hash"
-					name="url_hash"
-					:rules="[{ required: true }]"
-				>
-					<a-input v-model:value="formState.url_hash" />
-				</a-form-item>
-				<a-form-item
-					label="Proposal Account Address"
-					name="proposalAddress"
-					:rules="[
-						{
-							required: true,
-						},
-					]"
-				>
-					<a-input v-model:value="formState.proposalAddress" :disabled="true" />
-				</a-form-item>
-				<a-form-item
-					label="Voting Date"
-					name="vote_date"
-					:rules="[{ required: true }]"
-				>
-					<a-range-picker
-						format="YYYY-MM-DD HH:mm:ss"
-						value-format="YYYY-MM-DD HH:mm:ss"
-						:disabled-date="disabledDate"
-						:disabled-time="disabledRangeTime"
-						showTime
-						v-model:value="formState.vote_date"
-					/>
-				</a-form-item>
-				<a-form-item
-					label="Proposal Type"
-					name="proposal_type"
-					:rules="[{ required: true }]"
-				>
-					<a-select
-						v-model:value="formState.proposal_type"
-						placeholder="Please select your vote type"
-					>
-						<a-select-option :value="ProposalType.ALGO_TRANSFER"
-							>Algo Transfer</a-select-option
-						>
-						<a-select-option :value="ProposalType.ASA_TRANSFER"
-							>ASA Transfer</a-select-option
-						>
-						<a-select-option :value="ProposalType.MESSAGE"
-							>Message</a-select-option
-						>
-					</a-select>
-				</a-form-item>
-				<div
-					class="flexBox"
-					v-if="
-						formState.proposal_type &&
-						formState.proposal_type !== ProposalType.MESSAGE
-					"
+				<a-form
+					ref="formRef"
+					id="add-proposal"
+					:label-col="{ span: 10 }"
+					:wrapper-col="{ span: 20 }"
+					:model="formState"
+					name="Add Proposal"
+					autocomplete="off"
+					@finish="onFinish"
+					@finishFailed="onFinishFailed"
+					@validate-messages="validateMessages"
 				>
 					<a-form-item
-						label="Recipient"
-						name="recipient"
+						label="URL"
+						name="url"
+						:rules="[{ required: true, type: 'url' }]"
+					>
+						<a-input v-model:value="formState.url" />
+					</a-form-item>
+					<a-form-item
+						label="URL Hash"
+						name="url_hash"
 						:rules="[{ required: true }]"
 					>
-						<a-input v-model:value="formState.recipient" />
+						<a-input v-model:value="formState.url_hash" />
 					</a-form-item>
 					<a-form-item
-						label="Amount"
-						name="amount"
-						:rules="[{ required: true, type: 'number' }]"
+						label="Proposal Account Address"
+						name="proposalAddress"
+						:rules="[
+							{
+								required: true,
+							},
+						]"
 					>
-						<a-input-number v-model:value="formState.amount" />
+						<a-input
+							v-model:value="formState.proposalAddress"
+							:disabled="true"
+						/>
 					</a-form-item>
-				</div>
-				<div
-					class="flexBox"
-					v-if="formState.proposal_type === ProposalType.ASA_TRANSFER"
-				>
 					<a-form-item
-						label="ASA ID"
-						name="asaId"
-						:rules="[{ required: true, type: 'number' }]"
-					>
-						<a-input-number v-model:value="formState.asaId" />
-					</a-form-item>
-				</div>
-				<div
-					class="flexBox"
-					v-if="formState.proposal_type === ProposalType.MESSAGE"
-				>
-					<a-form-item
-						label="Message"
-						name="message"
+						label="Voting Date"
+						name="vote_date"
 						:rules="[{ required: true }]"
 					>
-						<a-input v-model:value="formState.message" />
+						<a-range-picker
+							format="YYYY-MM-DD HH:mm:ss"
+							value-format="YYYY-MM-DD HH:mm:ss"
+							:disabled-date="disabledDate"
+							:disabled-time="disabledRangeTime"
+							showTime
+							v-model:value="formState.vote_date"
+						/>
 					</a-form-item>
-				</div>
-				<a-form-item :wrapper-col="{ offset: 10, span: 20 }">
-					<a-button type="primary" html-type="submit">Submit</a-button>
-				</a-form-item>
-			</a-form>
+					<a-form-item
+						label="Proposal Type"
+						name="proposal_type"
+						:rules="[{ required: true }]"
+					>
+						<a-select
+							v-model:value="formState.proposal_type"
+							placeholder="Please select your vote type"
+						>
+							<a-select-option :value="ProposalType.ALGO_TRANSFER"
+								>Algo Transfer</a-select-option
+							>
+							<a-select-option :value="ProposalType.ASA_TRANSFER"
+								>ASA Transfer</a-select-option
+							>
+							<a-select-option :value="ProposalType.MESSAGE"
+								>Message</a-select-option
+							>
+						</a-select>
+					</a-form-item>
+					<div
+						class="flexBox"
+						v-if="
+							formState.proposal_type &&
+							formState.proposal_type !== ProposalType.MESSAGE
+						"
+					>
+						<a-form-item
+							label="Recipient"
+							name="recipient"
+							:rules="[{ required: true }]"
+						>
+							<a-input v-model:value="formState.recipient" />
+						</a-form-item>
+						<a-form-item
+							label="Amount"
+							name="amount"
+							:rules="[{ required: true, type: 'number' }]"
+						>
+							<a-input-number v-model:value="formState.amount" />
+						</a-form-item>
+					</div>
+					<div
+						class="flexBox"
+						v-if="formState.proposal_type === ProposalType.ASA_TRANSFER"
+					>
+						<a-form-item
+							label="ASA ID"
+							name="asaId"
+							:rules="[{ required: true, type: 'number' }]"
+						>
+							<a-input-number v-model:value="formState.asaId" />
+						</a-form-item>
+					</div>
+					<div
+						class="flexBox"
+						v-if="formState.proposal_type === ProposalType.MESSAGE"
+					>
+						<a-form-item
+							label="Message"
+							name="message"
+							:rules="[{ required: true }]"
+						>
+							<a-input v-model:value="formState.message" />
+						</a-form-item>
+					</div>
+				</a-form>
+			</a-modal>
+		</a-col>
+	</a-row>
+	<a-row>
+		<a-col :span="20" :offset="2">
+			<ProposalTable />
 		</a-col>
 	</a-row>
 </template>
@@ -150,7 +181,7 @@ import {
 	UNSUCCESSFUL,
 } from "@/constants";
 import { DateRange, DAOActions } from "@/types";
-import { defineComponent, reactive } from "vue";
+import { defineComponent, reactive, ref } from "vue";
 import ProposalStore from "../store/ProposalStore";
 import WalletStore from "../store/WalletStore";
 import DaoID from "../store/DaoID";
@@ -160,30 +191,45 @@ import { getProposalLsig, getDaoFundLSig } from "../contract/dao";
 import { fundAmount, convertToSeconds, optInToApp } from "../utility";
 import { APP_NOT_FOUND, TOKEN_NOT_FOUND } from "@/constants";
 import { isApplicationOpted } from "@/indexer";
+import ProposalTable from "@/components/ProposalTable.vue";
+import type { FormInstance } from "ant-design-vue";
+import DaoStore from "../store/DaoID";
+import ProposalTableStore from "../store/ProposalTableStore";
 const { getApplicationAddress } = require("algosdk");
 
 export default defineComponent({
 	name: "AddProposal",
+	components: { ProposalTable },
 	data() {
 		return {
 			ProposalType,
 			error: "",
 			key: "ProposalKey",
+			DaoStore,
 		};
 	},
 	setup() {
 		const formState = reactive(ProposalStore());
 		const walletStore = reactive(WalletStore());
+		const proposalStore = reactive(ProposalTableStore());
 		const daoStore = reactive(DaoID());
+		const isModalVisible = ref<boolean>(false);
+		const formRef = ref<FormInstance>();
 
 		return {
+			formRef,
 			formState,
 			walletStore,
 			daoStore,
 			validateMessages: VALIDATE_MESSAGES,
+			isModalVisible,
+			proposalStore,
 		};
 	},
 	methods: {
+		toggleModalVisible() {
+			this.isModalVisible = !this.isModalVisible;
+		},
 		async onFinish(values: any) {
 			try {
 				let {
@@ -209,7 +255,6 @@ export default defineComponent({
 					const startTime = convertToSeconds(vote_date[0]);
 					const endTime = convertToSeconds(vote_date[1]);
 					const executeBefore = endTime + 7 * 60; // end time + 7 minutes in seconds
-
 					// Default proposal params. Other params are added based on proposal type in below switch case.
 					const proposalParams = [
 						DAOActions.ADD_PROPOSAL,
@@ -222,7 +267,6 @@ export default defineComponent({
 						`int:${executeBefore}`, // execute_before
 						`int:${proposal_type}`, // type
 					];
-
 					switch (proposal_type) {
 						case ProposalType.ALGO_TRANSFER: {
 							proposalParams.push(
@@ -246,7 +290,6 @@ export default defineComponent({
 							break;
 						}
 					}
-
 					// check if app is already opted
 					const isApplicationAlreadyOpted = await isApplicationOpted(
 						lsig.address(),
@@ -282,6 +325,8 @@ export default defineComponent({
 					let response = await this.walletStore.webMode.executeTx(
 						addProposalTx
 					);
+					this.toggleModalVisible();
+					this.proposalStore.loadTable();
 					successMessage(this.key);
 					openSuccessNotificationWithIcon(
 						SUCCESSFUL,
@@ -298,6 +343,7 @@ export default defineComponent({
 		},
 		onFinishFailed(errorinfo: Event) {
 			console.warn("Failed:", errorinfo);
+			this.toggleModalVisible();
 		},
 		disabledDate(current: number | Date) {
 			// Can not select day before today

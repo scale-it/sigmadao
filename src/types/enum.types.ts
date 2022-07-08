@@ -54,6 +54,13 @@ export enum SchemaType {
 	BYTES,
 }
 
+export enum EncodingType {
+	BASE64,
+	BASE32,
+	HEX,
+	UTF8,
+}
+
 export enum PaginationCallType {
 	NAV_PREV,
 	NAV_NEXT,
@@ -69,4 +76,15 @@ export enum DurationType {
 export enum SearchDaoType {
 	SEARCH_BY_APPLCATION_ID,
 	SEARCH_BY_DAO_NAME,
+}
+
+export enum DateTimeFormat {
+	DAY_TIME_WITH_DAY = "lll",
+}
+
+export enum ProposalFilterType {
+	All = 1,
+	Ongoing = 2,
+	Active = 3,
+	Past = 4,
 }

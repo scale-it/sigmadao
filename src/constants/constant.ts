@@ -25,6 +25,20 @@ export const ProposalType = {
 	ALGO_TRANSFER: 1,
 	ASA_TRANSFER: 2,
 	MESSAGE: 3,
+	[1]: "Algo Transfer",
+	[2]: "ASA Transfer",
+	[3]: "Message",
+};
+
+export const PROPOSAL_LOCAL_STATE_MAP_KEY = {
+	Name: "name",
+	Message: "msg",
+	Url: "url",
+	Type: "type",
+	Url_Hash: "url_hash",
+	Voting_Start: "voting_start",
+	Voting_End: "voting_end",
+	Execute_Before: "Execute_Before",
 };
 
 export const MILLI_SECOND = 1000;

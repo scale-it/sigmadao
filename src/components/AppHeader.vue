@@ -31,7 +31,7 @@
 								<a-button
 									class="menu_option"
 									:type="isLinkActive(EndPoint.ADD_PROPOSAL)"
-									:disabled="DaoStore().disableActions"
+									:disabled="!DaoStore().isDaoSelected"
 									>Add Proposal</a-button
 								>
 							</router-link>
@@ -139,7 +139,7 @@ export default defineComponent({
 		const walletStore = WalletStore();
 		return {
 			EndPoint,
-			daoID: daoStore.dao_id,
+			daoID: daoStore.searchDaoId,
 			govtId: daoStore.govt_id,
 			name: daoStore.name,
 			availableTokens: daoStore.available,
@@ -160,7 +160,7 @@ export default defineComponent({
 			}
 			return "text";
 		},
-		async searchID() {
+		async searchID(value: number) {
 			if (this.daoID) {
 				this.daoID = +this.daoID;
 				const response = await handleDaoSearch(
@@ -171,9 +171,10 @@ export default defineComponent({
 					null,
 					null
 				);
-
 				if (response) {
 					this.govtId = response.token_id;
+					this.name = response.name;
+					this.daoID = value;
 					loadingMessage(this.key);
 					searchApplicationAndAccount()
 						.then(() => {

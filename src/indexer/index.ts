@@ -1,4 +1,8 @@
-import { GLOBAL_STATE_MAP_KEY, LOCAL_STATE_MAP_KEY } from "@/constants";
+import {
+	GLOBAL_STATE_MAP_KEY,
+	LOCAL_STATE_MAP_KEY,
+	PROPOSAL_LOCAL_STATE_MAP_KEY,
+} from "@/constants";
 import DaoID from "@/store/DaoID";
 import WalletStore from "@/store/WalletStore";
 import ProposalStore from "@/store/ProposalStore";
@@ -11,6 +15,7 @@ import {
 	SchemaType,
 	SearchDaoType,
 	UnknownObject,
+	ProposalTableData,
 } from "@/types";
 import {
 	executeReq,
@@ -284,6 +289,33 @@ export async function decodeDaoAppParams(params: any): Promise<DaoTableData> {
 		token_name: tokenData.an as string,
 		name: globalState.get(GLOBAL_STATE_MAP_KEY.DaoName) as string,
 		link: globalState.get(GLOBAL_STATE_MAP_KEY.Url) as string,
+	};
+}
+
+/**
+ * Get parsed DAO proposal information
+ * @param params object to be decoded
+ */
+export async function decodeProposalParams(
+	params: any
+): Promise<ProposalTableData> {
+	const appParams = JSON.parse(params);
+	const globalState = decodeAppLocalState(appParams.tkv);
+	return {
+		name: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Name) as string,
+		msg: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Message) as string,
+		url: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Url) as string,
+		type: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Type) as number,
+		url_hash: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Url_Hash) as string,
+		voting_start: globalState.get(
+			PROPOSAL_LOCAL_STATE_MAP_KEY.Voting_Start
+		) as number,
+		voting_end: globalState.get(
+			PROPOSAL_LOCAL_STATE_MAP_KEY.Voting_End
+		) as number,
+		execute_before: globalState.get(
+			PROPOSAL_LOCAL_STATE_MAP_KEY.Execute_Before
+		) as number,
 	};
 }
 
