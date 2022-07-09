@@ -4,6 +4,7 @@ import { ProposalFormState } from "../types";
 export default defineStore("ProposalStore", {
 	state: (): ProposalFormState => {
 		return {
+			proposal_name: "",
 			proposal_type: "",
 			url: "",
 			url_hash: "",
