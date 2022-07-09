@@ -1,5 +1,11 @@
 <img src="./src/assets/logo.png" height="200" title="Sigma Dao" />
 
+# SigmaDao Glimpes:
+
+<img src="./src/assets/Homepage.png" height="200" title="Home Page" />
+<img src="./src/assets/Create-Dao.png" height="200" title="Create Dao" />
+<img src="./src/assets/Add-Proposal.png" height="200" title="Add Proposal" />
+
 # Sigma Dao
 
 Sigma Dao is a web application that let's a user create a DAO, enable them to Add Proposal, Deposit and Withdraw Tokens and also allow them to Vote.
