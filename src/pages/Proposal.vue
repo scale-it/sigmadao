@@ -47,6 +47,13 @@
 					@validate-messages="validateMessages"
 				>
 					<a-form-item
+						label="Name"
+						name="proposal_name"
+						:rules="[{ required: true }]"
+					>
+						<a-input v-model:value="formState.proposal_name" />
+					</a-form-item>
+					<a-form-item
 						label="URL"
 						name="url"
 						:rules="[{ required: true, type: 'url' }]"
@@ -233,6 +240,7 @@ export default defineComponent({
 		async onFinish(values: any) {
 			try {
 				let {
+					proposal_name,
 					amount,
 					recipient,
 					url,
@@ -258,7 +266,7 @@ export default defineComponent({
 					// Default proposal params. Other params are added based on proposal type in below switch case.
 					const proposalParams = [
 						DAOActions.ADD_PROPOSAL,
-						`str:my-custom-proposal`, // name
+						`str:${proposal_name}`, // proposal name
 						`str:${url}`, // url
 						`str:${url_hash}`, // url_hash
 						"str:", // hash_algo (passing null)
