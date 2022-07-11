@@ -1,6 +1,6 @@
 <img src="./src/assets/logo.png" height="200" title="Sigma Dao" />
 
-# SigmaDao Glimpes:
+## SigmaDAO glimpes:
 
 <img src="./src/assets/Homepage.png" height="200" title="Home Page" />
 <img src="./src/assets/Create-Dao.png" height="200" title="Create Dao" />
