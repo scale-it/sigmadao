@@ -230,7 +230,7 @@ export const searchProposalsByAppIdReq = (
       nodes {
         votingStart
         votingEnd
-        app
+        appId
         addr
         localstate
       }
