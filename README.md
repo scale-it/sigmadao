@@ -4,7 +4,7 @@
 
 SigmaDAO is a web application that lets anyone create a DAO, enable them to Add Proposal, Deposit and Withdraw Tokens and also allow them to Vote.
 
-Wallets supported by SigmaDAO are:
+Wallets supported by the SigmaDAO are:
 
 - [AlgoSigner](https://www.purestake.com/technology/algosigner/)
 - [MyAlgo Wallet](https://wallet.myalgo.com/new-account)
