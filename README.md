@@ -1,14 +1,28 @@
-<img src="./src/assets/logo.png" height="200" title="Sigma Dao" />
+<img src="./src/assets/logo.png" height="200" title="SigmaDAO" />
 
-# Sigma Dao
+# SigmaDAO
 
-Sigma Dao is a web application that let's a user create a DAO, enable them to Add Proposal, Deposit and Withdraw Tokens and also allow them to Vote.
+SigmaDAO is a web application that lets anyone create a DAO, enable them to Add Proposal, Deposit and Withdraw Tokens and also allow them to Vote.
 
-Wallets supported by Sigma Dao are:
+Wallets supported by the SigmaDAO are:
 
 - [AlgoSigner](https://www.purestake.com/technology/algosigner/)
 - [MyAlgo Wallet](https://wallet.myalgo.com/new-account)
 - [Wallet Connect](https://walletconnect.com/)
+
+## SigmaDAO glimpes:
+
+Home page of SigmaDAO. All daos are listed on this page, where user can select a DAO.
+
+<img src="./src/assets/Homepage.png" height="200" title="Home Page" />
+
+Create DAO page of SigmaDAO. On this page user can create a DAO.
+
+<img src="./src/assets/Create-Dao.png" height="200" title="Create Dao" />
+
+Add proposal page of SigmaDAO. On this page user can add a proposal on a existing DAO.
+
+<img src="./src/assets/Add-Proposal.png" height="200" title="Add Proposal" />
 
 ## Requirements
 
