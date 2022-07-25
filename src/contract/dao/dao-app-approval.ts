@@ -593,6 +593,10 @@ const daoAppApproval = `#pragma version 6
     ==
     &&
     gtxn 1 AssetSender
+    global ZeroAddress
+    ==
+    &&
+    gtxn 1 Sender
     int 1
     byte "from"
     app_local_get
@@ -792,7 +796,12 @@ const daoAppApproval = `#pragma version 6
     main_l71:
     global GroupSize
     int 1
-    >=
+    >
+    int 1
+    gtxns RekeyTo
+    global ZeroAddress
+    ==
+    &&
     int 1
     gtxns TypeEnum
     int axfer
@@ -834,7 +843,12 @@ const daoAppApproval = `#pragma version 6
     assert
     global GroupSize
     int 1
-    >=
+    >
+    int 1
+    gtxns RekeyTo
+    global ZeroAddress
+    ==
+    &&
     int 1
     gtxns TypeEnum
     int axfer

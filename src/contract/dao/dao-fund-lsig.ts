@@ -55,6 +55,10 @@ const daoFundLsig = (app_id: number) => {
     ==
     ||
     &&
+    gtxn 1 Fee
+    int 0
+    ==
+    &&
     b main_l5
     main_l4:
     txn RekeyTo
@@ -75,6 +79,10 @@ const daoFundLsig = (app_id: number) => {
     txn AssetAmount
     int 0
     ==
+    &&
+    txn Fee
+    int 2000
+    <=
     &&
     main_l5:
     return
