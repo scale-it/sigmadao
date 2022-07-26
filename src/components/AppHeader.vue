@@ -74,7 +74,7 @@
 							</a-descriptions-item>
 							<a-descriptions-item>
 								<template #label>
-									available
+									Available
 									<info-tool-tip
 										data="The tokens are available for you to deposit and vote."
 									/>
@@ -83,7 +83,7 @@
 							>
 							<a-descriptions-item>
 								<template #label>
-									locked
+									Locked
 									<info-tool-tip
 										data="The tokens are locked for the voting period. You can
 												withdraw them once the voting period ends."
