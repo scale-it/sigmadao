@@ -15,6 +15,7 @@ export const LOCAL_STATE_MAP_KEY = {
 export const GLOBAL_STATE_MAP_KEY = {
 	DaoName: "dao_name",
 	Url: "url",
+	Deposit: "deposit",
 };
 export const MINUTE_TO_SECONDS = 60;
 export const HOUR_TO_SECONDS = 60 * MINUTE_TO_SECONDS;

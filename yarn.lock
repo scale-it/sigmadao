@@ -13036,9 +13036,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sigmadao-ui@workspace:.":
+"sigma-dao@workspace:.":
   version: 0.0.0-use.local
-  resolution: "sigmadao-ui@workspace:."
+  resolution: "sigma-dao@workspace:."
   dependencies:
     "@algo-builder/algob": ^5.0.1
     "@algo-builder/web": ^5.0.1

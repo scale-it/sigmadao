@@ -187,6 +187,7 @@ import {
 	openErrorNotificationWithIcon,
 	UNSUCCESSFUL,
 	daoAppMessage,
+	GLOBAL_STATE_MAP_KEY,
 } from "@/constants";
 import { DateRange, DAOActions } from "@/types";
 import { defineComponent, reactive, ref } from "vue";
@@ -355,7 +356,10 @@ export default defineComponent({
 								sk: new Uint8Array(0),
 							},
 							toAccountAddr: getApplicationAddress(this.daoStore.dao_id),
-							amount: 15,
+							amount:
+								(this.daoStore.global_app_state?.get(
+									GLOBAL_STATE_MAP_KEY.Deposit
+								) as number) ?? 15, //  minimun deposit amount taken from dao app global state
 							assetID: this.daoStore.govt_id as number,
 							payFlags: {},
 						},
