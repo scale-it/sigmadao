@@ -87,8 +87,8 @@
 						:rules="[{ required: true }]"
 					>
 						<a-range-picker
-							format="YYYY-MM-DD HH:mm:ss"
-							value-format="YYYY-MM-DD HH:mm:ss"
+							format="YYYY-MM-DD HH:mm"
+							value-format="YYYY-MM-DD HH:mm"
 							:disabled-date="disabledDate"
 							:disabled-time="disabledRangeTime"
 							showTime
