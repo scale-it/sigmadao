@@ -47,6 +47,8 @@ export const daoAppMessage = {
 	ALREADY_OPT_IN: "You have already Opted-in DAO App",
 	SUCCESSFUL: (daoID: number) => `Your DAO App of ID ${daoID} is selected.`,
 	UNSUCCESFUL: "Unsuccessful while getting DAO App Opt-in Details",
+	OPT_IN_SUCCESFUL: (daoID: number) =>
+		`You have successfully opted-in DAO App of ID ${daoID}.`,
 };
 
 export const voteMessage = {
