@@ -5,15 +5,15 @@ __metadata:
   version: 6
   cacheKey: 8
 
-"@algo-builder/algob@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "@algo-builder/algob@npm:4.0.0"
+"@algo-builder/algob@npm:^5.0.1":
+  version: 5.0.1
+  resolution: "@algo-builder/algob@npm:5.0.1"
   dependencies:
-    "@algo-builder/runtime": 4.0.0
-    "@algo-builder/web": 4.0.0
-    algosdk: ^1.16.0
+    "@algo-builder/runtime": 5.0.1
+    "@algo-builder/web": 5.0.1
+    algosdk: ^1.18.1
     chalk: ^4.1.2
-    debug: ^4.3.3
+    debug: ^4.3.4
     deep-equal: ^2.0.5
     deepmerge: ^4.2.2
     download-git-repo: ^3.0.2
@@ -31,17 +31,19 @@ __metadata:
     zod: ^3.13.4
   bin:
     algob: build/internal/cli/cli.js
-  checksum: b7bd9c39c9c34d921d860bd0de72a2b7596742caf10d4772915e50c40645439a1da5f8b44807335ecaa896585d1b8cecc61e6ec1ce54430e625605cb1d607d56
+  checksum: d70f8db778785b35906923b1c1cdc2f52c5788481182b49a72d61d00797223646526853c8ff416c253d0911cd24b3f2727bbc88a5a9c08225f925d4563738f4b
   languageName: node
   linkType: hard
 
-"@algo-builder/runtime@npm:4.0.0":
-  version: 4.0.0
-  resolution: "@algo-builder/runtime@npm:4.0.0"
+"@algo-builder/runtime@npm:5.0.1":
+  version: 5.0.1
+  resolution: "@algo-builder/runtime@npm:5.0.1"
   dependencies:
-    "@algo-builder/web": 4.0.0
+    "@algo-builder/web": 5.0.1
     "@nodelib/fs.walk": ^1.2.8
-    algosdk: ^1.16.0
+    algosdk: ^1.18.1
+    chalk: ^4.1.2
+    debug: ^4.3.4
     elliptic: ^6.5.4
     hi-base32: ^0.5.1
     js-sha256: ^0.9.0
@@ -53,22 +55,23 @@ __metadata:
     tweetnacl-ts: ^1.0.3
     yaml: ^1.10.2
     zod: ^3.13.4
-  checksum: 6238eea873954475f12db3a174c7eb08b4c2beb4b35cf7e586d6a6fff263ad03bf73f9dc8c701077b787400eeb795b6913798ee1c0cf8a1d979ae3bc4ed95eb6
+  checksum: 05554e1ff6c59e6e10366837029f62ac2683c7ad5865090e583948446384a5705b288103570dbf9b30aa28f1d68891e97cd51b7c6d83d3fa39043731d86ff823
   languageName: node
   linkType: hard
 
-"@algo-builder/web@npm:4.0.0, @algo-builder/web@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "@algo-builder/web@npm:4.0.0"
+"@algo-builder/web@npm:5.0.1, @algo-builder/web@npm:^5.0.1":
+  version: 5.0.1
+  resolution: "@algo-builder/web@npm:5.0.1"
   dependencies:
     "@json-rpc-tools/utils": ^1.7.6
     "@randlabs/myalgo-connect": ^1.1.2
     "@walletconnect/client": ^1.6.6
     "@walletconnect/types": ^1.7.1
     algorand-walletconnect-qrcode-modal: ^1.7.4
-    algosdk: ^1.16.0
+    algosdk: ^1.18.1
+    debug: ^4.3.4
     zod: ^3.13.4
-  checksum: d1d77a879c742647144ea78abddd652631d1b94312978f1510e687eecee89dde478b6d6ebb56c6d055e2c8666119d420d3851fc112ac96c84018cb2e4b5ed9b4
+  checksum: feb78bf346782fbea020e814678cbde09a25cdb180692b94448d3b4d076e31e810da6b4bf9aceda65eb852f7eef9487fd3fa8330f595a458be8bb1f14cc8cdfb
   languageName: node
   linkType: hard
 
@@ -3715,9 +3718,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"algosdk@npm:^1.16.0":
-  version: 1.16.0
-  resolution: "algosdk@npm:1.16.0"
+"algosdk@npm:^1.18.1":
+  version: 1.18.1
+  resolution: "algosdk@npm:1.18.1"
   dependencies:
     algo-msgpack-with-bigint: ^2.1.1
     buffer: ^6.0.2
@@ -3728,8 +3731,29 @@ __metadata:
     json-bigint: ^1.0.0
     superagent: ^6.1.0
     tweetnacl: ^1.0.3
-    url-parse: ^1.5.1
-  checksum: 5a1f17fce00b448fd037dfbd8bf3b9bc7974f78c92dccd0ac962478f16b954b691c22af35291e04a72ef79a01663fa38c7a2142873bdbefd1c8bf7fac7caf97c
+  checksum: 6a9940e5e08801a4fcd24c9b6ecdf21fc676a1cb59b2f5ec8706fa2fc870527338a5551c5a2ff888bf74a7be1acfa8932f1cfdf201371737896bf3074e0dddbf
+  languageName: node
+  linkType: hard
+
+"algosdk@npm:^1.19.0":
+  version: 1.19.0
+  resolution: "algosdk@npm:1.19.0"
+  dependencies:
+    algo-msgpack-with-bigint: ^2.1.1
+    buffer: ^6.0.2
+    fsevents: 2.1.2
+    hi-base32: ^0.5.1
+    js-sha256: ^0.9.0
+    js-sha3: ^0.8.0
+    js-sha512: ^0.8.0
+    json-bigint: ^1.0.0
+    superagent: ^6.1.0
+    tweetnacl: ^1.0.3
+    vlq: ^2.0.4
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  checksum: e7503171a587cab6816459cb68b37e2e8a8b9fd253d02843026bc14120f883be593cdfd55ba490ca57cb2399ffaaf68a4704d3e9a7a19dbf97fb094514a5abfe
   languageName: node
   linkType: hard
 
@@ -5632,7 +5656,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:>=3 <5":
+"debug@npm:>=3 <5, debug@npm:^4.3.4":
   version: 4.3.4
   resolution: "debug@npm:4.3.4"
   dependencies:
@@ -7316,12 +7340,31 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fsevents@npm:2.1.2":
+  version: 2.1.2
+  resolution: "fsevents@npm:2.1.2"
+  dependencies:
+    node-gyp: latest
+  checksum: 63fe1ba77b63d5da5dde6112c5f0eb161b9d18a61427a8a49d661eeed080189d99e8f9da11bb6b75ecd5129a69edc5757d60a4eb0bbada6de68d5156c382c5e1
+  conditions: os=darwin
+  languageName: node
+  linkType: hard
+
 "fsevents@npm:^2.3.2, fsevents@npm:~2.3.2":
   version: 2.3.2
   resolution: "fsevents@npm:2.3.2"
   dependencies:
     node-gyp: latest
   checksum: 97ade64e75091afee5265e6956cb72ba34db7819b4c3e94c431d4be2b19b8bb7a2d4116da417950c3425f17c8fe693d25e20212cac583ac1521ad066b77ae31f
+  conditions: os=darwin
+  languageName: node
+  linkType: hard
+
+"fsevents@patch:fsevents@2.1.2#~builtin<compat/fsevents>":
+  version: 2.1.2
+  resolution: "fsevents@patch:fsevents@npm%3A2.1.2#~builtin<compat/fsevents>::version=2.1.2&hash=18f3a7"
+  dependencies:
+    node-gyp: latest
   conditions: os=darwin
   languageName: node
   linkType: hard
@@ -12184,13 +12227,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"querystringify@npm:^2.1.1":
-  version: 2.2.0
-  resolution: "querystringify@npm:2.2.0"
-  checksum: 5641ea231bad7ef6d64d9998faca95611ed4b11c2591a8cae741e178a974f6a8e0ebde008475259abe1621cb15e692404e6b6626e927f7b849d5c09392604b15
-  languageName: node
-  linkType: hard
-
 "queue-microtask@npm:^1.2.2":
   version: 1.2.3
   resolution: "queue-microtask@npm:1.2.3"
@@ -13004,8 +13040,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "sigmadao-ui@workspace:."
   dependencies:
-    "@algo-builder/algob": ^4.0.0
-    "@algo-builder/web": ^4.0.0
+    "@algo-builder/algob": ^5.0.1
+    "@algo-builder/web": ^5.0.1
     "@ant-design/icons-vue": ^6.1.0
     "@babel/core": ^7.17.7
     "@babel/eslint-parser": ^7.17.0
@@ -13017,7 +13053,7 @@ __metadata:
     "@vue/cli-service": ^5.0.1
     "@vue/compiler-sfc": ^3.2.31
     "@vue/eslint-config-typescript": ^10.0.0
-    algosdk: ^1.16.0
+    algosdk: ^1.19.0
     ant-design-vue: ^3.2.5
     core-js: ^3.21.1
     crypto-browserify: ^3.12.0
@@ -14337,16 +14373,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"url-parse@npm:^1.5.1":
-  version: 1.5.10
-  resolution: "url-parse@npm:1.5.10"
-  dependencies:
-    querystringify: ^2.1.1
-    requires-port: ^1.0.0
-  checksum: fbdba6b1d83336aca2216bbdc38ba658d9cfb8fc7f665eb8b17852de638ff7d1a162c198a8e4ed66001ddbf6c9888d41e4798912c62b4fd777a31657989f7bdf
-  languageName: node
-  linkType: hard
-
 "url-to-options@npm:^1.0.1":
   version: 1.0.1
   resolution: "url-to-options@npm:1.0.1"
@@ -14423,6 +14449,13 @@ __metadata:
   version: 1.1.2
   resolution: "vary@npm:1.1.2"
   checksum: ae0123222c6df65b437669d63dfa8c36cee20a504101b2fcd97b8bf76f91259c17f9f2b4d70a1e3c6bbcee7f51b28392833adb6b2770b23b01abec84e369660b
+  languageName: node
+  linkType: hard
+
+"vlq@npm:^2.0.4":
+  version: 2.0.4
+  resolution: "vlq@npm:2.0.4"
+  checksum: b2ed0d3a5423f34bba98a18250f8b13a96eebff9c8f9427fa9cd78065d31f35641f6fd659c5642253b79532000a37aec0582abac95d1ef4af2cd0c96a716f1b6
   languageName: node
   linkType: hard
 
