@@ -338,6 +338,10 @@ export default defineComponent({
 					if (!isApplicationAlreadyOpted) {
 						await this.optInLsigToApp(lsig);
 					}
+					const globalStateMinAmount =
+						this.daoStore.global_app_state?.get(GLOBAL_STATE_MAP_KEY.Deposit) ??
+						15; //  minimun deposit amount taken from dao app global state
+
 					const addProposalTx: types.ExecParams[] = [
 						{
 							type: types.TransactionType.CallApp,
@@ -356,10 +360,7 @@ export default defineComponent({
 								sk: new Uint8Array(0),
 							},
 							toAccountAddr: getApplicationAddress(this.daoStore.dao_id),
-							amount:
-								(this.daoStore.global_app_state?.get(
-									GLOBAL_STATE_MAP_KEY.Deposit
-								) as number) ?? 15, //  minimun deposit amount taken from dao app global state
+							amount: globalStateMinAmount as number,
 							assetID: this.daoStore.govt_id as number,
 							payFlags: {},
 						},
