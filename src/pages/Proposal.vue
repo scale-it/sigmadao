@@ -386,7 +386,6 @@ export default defineComponent({
 		},
 		onFinishFailed(errorinfo: Event) {
 			console.warn("Failed:", errorinfo);
-			this.toggleModalVisible();
 		},
 		disabledDate(current: number | Date) {
 			// Can not select day before today

@@ -1,7 +1,7 @@
 <template>
 	<a-row>
 		<a-col :span="12" :offset="6">
-			<p class="text_center">
+			<p>
 				You can deposit gov tokens to vote for multiple proposals by delegating
 				your tokens.
 			</p>

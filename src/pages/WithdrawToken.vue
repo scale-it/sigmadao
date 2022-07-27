@@ -1,7 +1,7 @@
 <template>
 	<a-row>
 		<a-col :span="12" :offset="6">
-			<p class="text_center">
+			<p>
 				You can unlock the deposited gov tokens and withdraw them back for
 				further different uses. You can only withdraw the deposit after the
 				latest voting in which you participated has ended.
