@@ -247,11 +247,11 @@ export default defineComponent({
 		async optInDaoApp() {
 			try {
 				if (this.daoStore.dao_id) {
-					const isOptIn = await isApplicationOpted(
+					const isOptedIn = await isApplicationOpted(
 						this.walletStore.address,
 						this.daoStore.dao_id
 					);
-					if (!isOptIn) {
+					if (!isOptedIn) {
 						await optInToAppUsingSecretKey(
 							this.walletStore.address,
 							this.daoStore.dao_id,
