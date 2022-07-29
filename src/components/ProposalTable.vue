@@ -284,7 +284,7 @@ export default defineComponent({
 					daoAppMessage.PROPOSAL_SUCCESSFUL(record.name)
 				);
 			} else {
-				openSuccessNotificationWithIcon(
+				openErrorNotificationWithIcon(
 					UNSUCCESSFUL,
 					daoAppMessage.PROPOSAL_UNSUCCESSFUL
 				);
