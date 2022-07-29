@@ -74,6 +74,9 @@ import {
 	ROWS_PER_PAGE,
 	ProposalType,
 	PROPOSAL_LOCAL_STATE_MAP_KEY,
+	SUCCESSFUL,
+	openSuccessNotificationWithIcon,
+	daoAppMessage,
 } from "@/constants";
 import {
 	ProposalTableData,
@@ -274,8 +277,18 @@ export default defineComponent({
 			}
 		},
 		async handleSelectProposal(record: ProposalTableData) {
-			if (record.proposal_addr)
+			if (record.proposal_addr) {
 				this.daoStore.setProposalAddress(record.proposal_addr);
+				openSuccessNotificationWithIcon(
+					SUCCESSFUL,
+					daoAppMessage.PROPOSAL_SUCCESSFUL(record.name)
+				);
+			} else {
+				openSuccessNotificationWithIcon(
+					UNSUCCESSFUL,
+					daoAppMessage.PROPOSAL_UNSUCCESSFUL
+				);
+			}
 		},
 		async handleCloseProposal(record: ProposalTableData) {
 			console.log("closed", record);
