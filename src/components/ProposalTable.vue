@@ -81,10 +81,10 @@ import {
 	ProposalFilterType,
 	DateTimeFormat,
 } from "@/types";
-import { defineComponent, reactive, ref } from "vue";
+import { defineComponent, reactive } from "vue";
 import DaoID from "../store/DaoID";
 import ProposalTableStore from "../store/ProposalTableStore";
-import { secToFormat } from "../utility";
+import { secToFormat, convertHexToAlgorandAddr } from "../utility";
 import { decodeProposalParams } from "@/indexer";
 import TablePagination from "../UIKit/TablePagination.vue";
 import {
@@ -220,10 +220,11 @@ export default defineComponent({
 					}
 					res.sigmaDaosProposalFilter.nodes.map(
 						async (item: any, index: number) => {
+							const proposal_addr = convertHexToAlgorandAddr(item.addr);
 							let parsedData = await decodeProposalParams(item.localstate);
 							parsedData["key"] = index; // for antd table
+							parsedData["proposal_addr"] = proposal_addr;
 							this.dataSource.push(parsedData);
-							console.log(parsedData);
 							// pushing data to store only if it doesn't exists
 							let isCached = false;
 							isCached = this.proposalStore.psqlData.has(+item.appId);
