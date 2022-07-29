@@ -273,10 +273,11 @@ export default defineComponent({
 				this.currentPageCursor.startCursor = pageInfo.startCursor;
 			}
 		},
-		async handleSelectProposal() {
-			console.log("Proposal Selected");
+		async handleSelectProposal(record: ProposalTableData) {
+			if (record.proposal_addr)
+				this.daoStore.setProposalAddress(record.proposal_addr);
 		},
-		async handleCloseProposal(record: any) {
+		async handleCloseProposal(record: ProposalTableData) {
 			console.log("closed", record);
 		},
 		async loadTable() {

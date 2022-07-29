@@ -137,7 +137,9 @@ export const escapedHexAddress = (address: string) => {
 export const convertHexToAlgorandAddr = (hex: string) => {
 	try {
 		const escapedHexAddr = escapedHexAddress(hex);
-		return algosdk.encodeAddress(convertToBuffer(escapedHexAddr, EncodingType.HEX));
+		return algosdk.encodeAddress(
+			convertToBuffer(escapedHexAddr, EncodingType.HEX)
+		);
 	} catch (error) {
 		console.log(error);
 	}

@@ -20,6 +20,7 @@ export interface DAO {
 	govt_id?: number;
 	available?: number;
 	locked?: number;
+	proposal_addr?: string;
 	global_app_state?: Map<Key, StateValue>;
 	show_opt_in: boolean;
 	searchDaoId?: number;
