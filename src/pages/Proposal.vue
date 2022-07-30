@@ -196,8 +196,7 @@ import { types } from "@algo-builder/web";
 import type { LogicSigAccount } from "algosdk";
 import { getProposalLsig, getDaoFundLSig } from "../contract/dao";
 import { fundAmount, convertToSeconds, optInToApp } from "../utility";
-import { APP_NOT_FOUND, TOKEN_NOT_FOUND } from "@/constants";
-import { isApplicationOpted } from "@/indexer";
+import { getAccountInfoByAddress, isApplicationOpted } from "@/indexer";
 import ProposalTable from "@/components/ProposalTable.vue";
 import type { FormInstance } from "ant-design-vue";
 import DaoStore from "../store/DaoID";
@@ -298,15 +297,8 @@ export default defineComponent({
 							break;
 						}
 					}
-					// check if app is already opted
-					const isApplicationAlreadyOpted = await isApplicationOpted(
-						lsig.address(),
-						this.daoStore.dao_id as number
-					);
-					// optin
-					if (!isApplicationAlreadyOpted) {
-						await this.optInLsigToApp(lsig);
-					}
+					await this.checkOptInLsigToApp(lsig);
+					await this.checkLsigFund(lsig);
 					const addProposalTx: types.ExecParams[] = [
 						{
 							type: types.TransactionType.CallApp,
@@ -379,16 +371,15 @@ export default defineComponent({
 				};
 			}
 		},
-		async optInLsigToApp(lsig: LogicSigAccount) {
+		// funding lsig if the account has no algos
+		async checkLsigFund(lsig: LogicSigAccount) {
 			try {
-				if (typeof this.daoStore.dao_id === "undefined") {
-					this.error = APP_NOT_FOUND;
-					return;
+				const response = await getAccountInfoByAddress(lsig.address());
+				let amount = null;
+				if (response) {
+					amount = response?.amount;
 				}
-				if (typeof this.daoStore.govt_id === "undefined") {
-					this.error = TOKEN_NOT_FOUND;
-					return;
-				}
+				if (amount) return;
 				// fund lsig
 				await fundAmount(
 					this.walletStore.address,
@@ -396,13 +387,28 @@ export default defineComponent({
 					2e6,
 					this.walletStore.webMode
 				);
+			} catch (error) {
+				this.error = error.message;
+				errorMessage(this.key);
+				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message);
+			}
+		},
+		async checkOptInLsigToApp(lsig: LogicSigAccount) {
+			try {
+				// check if app is already opted
+				const isApplicationAlreadyOpted = await isApplicationOpted(
+					lsig.address(),
+					this.daoStore.dao_id as number
+				);
+				if (isApplicationAlreadyOpted) return;
+
 				// optin to app
 				const execParam: types.ExecParams = {
 					type: types.TransactionType.OptInToApp,
 					sign: types.SignType.LogicSignature,
 					fromAccountAddr: lsig.address(),
 					lsig: lsig,
-					appID: this.daoStore.dao_id,
+					appID: this.daoStore.dao_id as number,
 					payFlags: {},
 				};
 				let response = await optInToApp(lsig, execParam);

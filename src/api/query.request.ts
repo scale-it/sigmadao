@@ -268,3 +268,19 @@ export const getProposalCursorReq = (
   }
   `;
 };
+
+/** LookupAccountByID
+ * @param address Account address
+ */
+export const lookupAccountByID = (address: string) => {
+	return `query LookupAccountByID {
+    allAccounts(
+      condition: { addr: "${"\\\\x" + address}" }
+    ) {
+      nodes {
+        accountData,
+        microalgos
+      }
+    }
+  }`;
+};
