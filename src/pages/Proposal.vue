@@ -258,7 +258,7 @@ export default defineComponent({
 				if (
 					this.formState.execute_before !== undefined &&
 					this.formState.vote_date !== undefined &&
-					this.formState.vote_date[1].length
+					this.formState.vote_date?.[1]?.length
 				) {
 					const execute_before = convertToSeconds(
 						this.formState.execute_before
