@@ -269,7 +269,7 @@ export default defineComponent({
 					successMessage(this.key);
 					openSuccessNotificationWithIcon(
 						SUCCESSFUL,
-						daoAppMessage.SUCCESSFUL(data.dao_id)
+						daoAppMessage.DAO_SUCCESSFUL(data.dao_id)
 					);
 					redirectTo(this.$router, EndPoint.ADD_PROPOSAL);
 					DaoStore().searchDaoId = data.dao_id;
@@ -283,7 +283,7 @@ export default defineComponent({
 							})
 							.catch((error) =>
 								openErrorNotificationWithIcon(
-									daoAppMessage.UNSUCCESFUL,
+									daoAppMessage.DAO_UNSUCCESFUL,
 									error.message
 								)
 							);

@@ -181,7 +181,7 @@ export default defineComponent({
 							successMessage(this.key);
 							openSuccessNotificationWithIcon(
 								"Successful",
-								daoAppMessage.SUCCESSFUL(this.daoID as number)
+								daoAppMessage.DAO_SUCCESSFUL(this.daoID as number)
 							);
 							if (this.walletStore.address) {
 								isApplicationOpted(
@@ -198,7 +198,7 @@ export default defineComponent({
 									})
 									.catch((error) =>
 										openErrorNotificationWithIcon(
-											daoAppMessage.UNSUCCESFUL,
+											daoAppMessage.DAO_UNSUCCESFUL,
 											error.message
 										)
 									);
@@ -228,7 +228,7 @@ export default defineComponent({
 					this.showOptIn = false;
 					openSuccessNotificationWithIcon(
 						"Successful",
-						daoAppMessage.SUCCESSFUL(this.daoID)
+						daoAppMessage.DAO_SUCCESSFUL(this.daoID)
 					);
 				}
 			} catch (error) {

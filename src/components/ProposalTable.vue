@@ -74,6 +74,9 @@ import {
 	ROWS_PER_PAGE,
 	ProposalType,
 	PROPOSAL_LOCAL_STATE_MAP_KEY,
+	SUCCESSFUL,
+	openSuccessNotificationWithIcon,
+	daoAppMessage,
 } from "@/constants";
 import {
 	ProposalTableData,
@@ -81,10 +84,10 @@ import {
 	ProposalFilterType,
 	DateTimeFormat,
 } from "@/types";
-import { defineComponent, reactive, ref } from "vue";
+import { defineComponent, reactive } from "vue";
 import DaoID from "../store/DaoID";
 import ProposalTableStore from "../store/ProposalTableStore";
-import { secToFormat } from "../utility";
+import { secToFormat, convertHexToAlgorandAddr } from "../utility";
 import { decodeProposalParams } from "@/indexer";
 import TablePagination from "../UIKit/TablePagination.vue";
 import {
@@ -220,10 +223,11 @@ export default defineComponent({
 					}
 					res.sigmaDaosProposalFilter.nodes.map(
 						async (item: any, index: number) => {
+							const proposal_addr = convertHexToAlgorandAddr(item.addr);
 							let parsedData = await decodeProposalParams(item.localstate);
 							parsedData["key"] = index; // for antd table
+							parsedData["proposal_addr"] = proposal_addr;
 							this.dataSource.push(parsedData);
-							console.log(parsedData);
 							// pushing data to store only if it doesn't exists
 							let isCached = false;
 							isCached = this.proposalStore.psqlData.has(+item.appId);
@@ -272,10 +276,21 @@ export default defineComponent({
 				this.currentPageCursor.startCursor = pageInfo.startCursor;
 			}
 		},
-		async handleSelectProposal() {
-			console.log("Proposal Selected");
+		async handleSelectProposal(record: ProposalTableData) {
+			if (record.proposal_addr) {
+				this.daoStore.setProposalAddress(record.proposal_addr);
+				openSuccessNotificationWithIcon(
+					SUCCESSFUL,
+					daoAppMessage.PROPOSAL_SUCCESSFUL(record.name)
+				);
+			} else {
+				openErrorNotificationWithIcon(
+					UNSUCCESSFUL,
+					daoAppMessage.PROPOSAL_UNSUCCESSFUL
+				);
+			}
 		},
-		async handleCloseProposal(record: any) {
+		async handleCloseProposal(record: ProposalTableData) {
 			console.log("closed", record);
 		},
 		async loadTable() {
