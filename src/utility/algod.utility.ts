@@ -30,7 +30,7 @@ export const fundAmount = async (
 	console.log("Funded: ", response);
 };
 
-export const optInToApp = async (
+export const optInToAppUsingLogicSig = async (
 	lsig: LogicSigAccount,
 	execParam: types.ExecParams
 ) => {
@@ -76,7 +76,7 @@ export const compileToUnit8Array = async (appProgram: string) => {
 	return new Uint8Array(Buffer.from(response["result"], "base64"));
 };
 
-export const optInDaoApp = async (
+export const optInToAppUsingSecretKey = async (
 	from: string,
 	appID: number,
 	webMode: any // eslint-disable-line
@@ -92,7 +92,8 @@ export const optInDaoApp = async (
 		payFlags: {},
 	};
 	try {
-		webMode.executeTx([execParam]);
+		const response = await webMode.executeTx([execParam]);
+		console.log(response);
 	} catch (error) {
 		console.error("Transaction Failed", error);
 		throw error;
@@ -130,9 +131,16 @@ export const convertToHex = (address: string) => {
 	return Buffer.from(pk.publicKey).toString("hex");
 };
 
+export const escapedHexAddress = (address: string) => {
+	return escape(address).substring(4);
+};
+
 export const convertHexToAlgorandAddr = (hex: string) => {
 	try {
-		return algosdk.encodeAddress(convertToBuffer(hex, EncodingType.HEX));
+		const escapedHexAddr = escapedHexAddress(hex);
+		return algosdk.encodeAddress(
+			convertToBuffer(escapedHexAddr, EncodingType.HEX)
+		);
 	} catch (error) {
 		console.log(error);
 	}

@@ -15,7 +15,7 @@
 				<a-col class="menu" :span="24">
 					<a-button
 						class="margin_bottom_sm"
-						:disabled="!DaoStore().isDaoSelected"
+						:disabled="!DaoStore().isDaoSelected || !walletStore.address"
 						type="primary"
 						@click="toggleModalVisible"
 					>
@@ -87,12 +87,24 @@
 						:rules="[{ required: true }]"
 					>
 						<a-range-picker
-							format="YYYY-MM-DD HH:mm:ss"
-							value-format="YYYY-MM-DD HH:mm:ss"
+							format="YYYY-MM-DD HH:mm"
+							value-format="YYYY-MM-DD HH:mm"
 							:disabled-date="disabledDate"
 							:disabled-time="disabledRangeTime"
 							showTime
 							v-model:value="formState.vote_date"
+						/>
+					</a-form-item>
+					<a-form-item
+						label="Execute Before"
+						name="execute_before"
+						:rules="[{ required: true, validator: validateExecuteBefore }]"
+					>
+						<a-time-picker
+							v-model:value="formState.execute_before"
+							showTime
+							format="YYYY-MM-DD HH:mm"
+							value-format="YYYY-MM-DD HH:mm"
 						/>
 					</a-form-item>
 					<a-form-item
@@ -186,6 +198,8 @@ import {
 	SUCCESSFUL,
 	openErrorNotificationWithIcon,
 	UNSUCCESSFUL,
+	daoAppMessage,
+	GLOBAL_STATE_MAP_KEY,
 } from "@/constants";
 import { DateRange, DAOActions } from "@/types";
 import { defineComponent, reactive, ref } from "vue";
@@ -195,12 +209,18 @@ import DaoID from "../store/DaoID";
 import { types } from "@algo-builder/web";
 import type { LogicSigAccount } from "algosdk";
 import { getProposalLsig, getDaoFundLSig } from "../contract/dao";
-import { fundAmount, convertToSeconds, optInToApp } from "../utility";
 import { getAccountInfoByAddress, isApplicationOpted } from "@/indexer";
+import {
+	fundAmount,
+	convertToSeconds,
+	optInToAppUsingLogicSig,
+	optInToAppUsingSecretKey,
+} from "../utility";
 import ProposalTable from "@/components/ProposalTable.vue";
 import type { FormInstance } from "ant-design-vue";
 import DaoStore from "../store/DaoID";
 import ProposalTableStore from "../store/ProposalTableStore";
+import { Rule } from "ant-design-vue/lib/form";
 const { getApplicationAddress } = require("algosdk");
 
 export default defineComponent({
@@ -236,6 +256,52 @@ export default defineComponent({
 		toggleModalVisible() {
 			this.isModalVisible = !this.isModalVisible;
 		},
+		async optInDaoApp() {
+			try {
+				if (this.daoStore.dao_id) {
+					const isOptedIn = await isApplicationOpted(
+						this.walletStore.address,
+						this.daoStore.dao_id
+					);
+					if (!isOptedIn) {
+						await optInToAppUsingSecretKey(
+							this.walletStore.address,
+							this.daoStore.dao_id,
+							this.walletStore.webMode
+						);
+						openSuccessNotificationWithIcon(
+							"Successful",
+							daoAppMessage.OPT_IN_SUCCESSFUL(this.daoStore.dao_id)
+						);
+					}
+				}
+			} catch (error) {
+				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message);
+			}
+		},
+		//  execute_before must be after voting_end
+		async validateExecuteBefore(_rule: Rule, value: string) {
+			if (value === null) {
+				return Promise.reject("Please input execute before time.");
+			} else {
+				if (
+					this.formState.execute_before !== undefined &&
+					this.formState.vote_date !== undefined &&
+					this.formState.vote_date?.[1]?.length
+				) {
+					const execute_before = convertToSeconds(
+						this.formState.execute_before
+					);
+					const voting_end = convertToSeconds(this.formState.vote_date[1]);
+					if (execute_before <= voting_end) {
+						return Promise.reject(
+							"Execute before must be after voting end time."
+						);
+					} else return Promise.resolve();
+				}
+				return Promise.resolve();
+			}
+		},
 		async onFinish(values: any) {
 			try {
 				let {
@@ -248,10 +314,12 @@ export default defineComponent({
 					vote_date,
 					message,
 					asaId,
+					execute_before,
 				} = values;
 				this.error = overallErrorCheck();
 				if (!this.error) {
 					loadingMessage(this.key);
+					await this.optInDaoApp();
 					let lsig: LogicSigAccount = await getProposalLsig(
 						this.daoStore.dao_id as number,
 						this.walletStore.address
@@ -261,7 +329,7 @@ export default defineComponent({
 					);
 					const startTime = convertToSeconds(vote_date[0]);
 					const endTime = convertToSeconds(vote_date[1]);
-					const executeBefore = endTime + 7 * 60; // end time + 7 minutes in seconds
+					const executeBefore = convertToSeconds(execute_before);
 					// Default proposal params. Other params are added based on proposal type in below switch case.
 					const proposalParams = [
 						DAOActions.ADD_PROPOSAL,
@@ -299,6 +367,18 @@ export default defineComponent({
 					}
 					await this.checkOptInLsigToApp(lsig);
 					await this.checkLsigFund(lsig);
+
+					const globalStateMinAmount =
+						this.daoStore.global_app_state?.get(GLOBAL_STATE_MAP_KEY.Deposit) ??
+						15; //  minimun deposit amount taken from dao app global state
+
+					// check if min gov tokens required for tranfer are available with proposal creator
+					if ((this.daoStore.available as number) < globalStateMinAmount) {
+						this.error = `You have insufficient balance of available gov tokens, minimum tokens required for proposal is ${globalStateMinAmount}`;
+						errorMessage(this.key);
+						openErrorNotificationWithIcon(UNSUCCESSFUL, this.error);
+						return;
+					}
 					const addProposalTx: types.ExecParams[] = [
 						{
 							type: types.TransactionType.CallApp,
@@ -317,7 +397,7 @@ export default defineComponent({
 								sk: new Uint8Array(0),
 							},
 							toAccountAddr: getApplicationAddress(this.daoStore.dao_id),
-							amount: 15,
+							amount: globalStateMinAmount as number,
 							assetID: this.daoStore.govt_id as number,
 							payFlags: {},
 						},
@@ -343,7 +423,6 @@ export default defineComponent({
 		},
 		onFinishFailed(errorinfo: Event) {
 			console.warn("Failed:", errorinfo);
-			this.toggleModalVisible();
 		},
 		disabledDate(current: number | Date) {
 			// Can not select day before today
@@ -411,7 +490,7 @@ export default defineComponent({
 					appID: this.daoStore.dao_id as number,
 					payFlags: {},
 				};
-				let response = await optInToApp(lsig, execParam);
+				let response = await optInToAppUsingLogicSig(lsig, execParam);
 				console.log(response);
 			} catch (error) {
 				this.error = error.message;

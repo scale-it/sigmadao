@@ -49,7 +49,7 @@ export default defineStore("WalletStore", {
 					})
 					.catch((error) =>
 						openErrorNotificationWithIcon(
-							daoAppMessage.UNSUCCESFUL,
+							daoAppMessage.DAO_UNSUCCESFUL,
 							error.message
 						)
 					);
