@@ -46,10 +46,11 @@ export const MILLI_SECOND = 1000;
 
 export const daoAppMessage = {
 	ALREADY_OPT_IN: "You have already Opted-in DAO App",
-	SUCCESSFUL: (daoID: number) => `Your DAO App of ID ${daoID} is selected.`,
-	UNSUCCESFUL: "Unsuccessful while getting DAO App Opt-in Details",
-	OPT_IN_SUCCESFUL: (daoID: number) =>
-		`You have successfully opted-in DAO App of ID ${daoID}.`,
+	DAO_SUCCESSFUL: (daoID: number) => `Your DAO App of ID ${daoID} is selected.`,
+	DAO_UNSUCCESFUL: "Unsuccessful while getting DAO App Opt-in Details",
+	PROPOSAL_SUCCESSFUL: (proposalName: string) =>
+		`You are now using the proposal: ${proposalName}.`,
+	PROPOSAL_UNSUCCESSFUL: `Couldn't select the proposal`,
 };
 
 export const voteMessage = {

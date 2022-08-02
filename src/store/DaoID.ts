@@ -6,6 +6,7 @@ export default defineStore("DaoStore", {
 		return {
 			dao_id: undefined,
 			govt_id: undefined,
+			proposal_addr: undefined,
 			name: "",
 			available: undefined,
 			locked: undefined,
@@ -22,6 +23,9 @@ export default defineStore("DaoStore", {
 		setGovtId(value: number) {
 			this.govt_id = +value;
 		},
+		setProposalAddress(addr: string) {
+			this.proposal_addr = addr;
+		},
 		handleLogOut() {
 			// removes token from UI if user log out of wallet
 			this.available = undefined;
@@ -31,6 +35,7 @@ export default defineStore("DaoStore", {
 			// clearing user data when dao id is removed or deselected from dao table
 			this.dao_id = undefined;
 			this.govt_id = undefined;
+			this.proposal_addr = undefined;
 			this.name = "";
 			this.available = undefined;
 			this.locked = undefined;

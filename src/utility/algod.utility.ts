@@ -131,9 +131,16 @@ export const convertToHex = (address: string) => {
 	return Buffer.from(pk.publicKey).toString("hex");
 };
 
+export const escapedHexAddress = (address: string) => {
+	return escape(address).substring(4);
+};
+
 export const convertHexToAlgorandAddr = (hex: string) => {
 	try {
-		return algosdk.encodeAddress(convertToBuffer(hex, EncodingType.HEX));
+		const escapedHexAddr = escapedHexAddress(hex);
+		return algosdk.encodeAddress(
+			convertToBuffer(escapedHexAddr, EncodingType.HEX)
+		);
 	} catch (error) {
 		console.log(error);
 	}
