@@ -15,6 +15,7 @@ export const LOCAL_STATE_MAP_KEY = {
 export const GLOBAL_STATE_MAP_KEY = {
 	DaoName: "dao_name",
 	Url: "url",
+	Deposit: "deposit",
 };
 export const MINUTE_TO_SECONDS = 60;
 export const HOUR_TO_SECONDS = 60 * MINUTE_TO_SECONDS;
@@ -50,6 +51,8 @@ export const daoAppMessage = {
 	PROPOSAL_SUCCESSFUL: (proposalName: string) =>
 		`You are now using the proposal: ${proposalName}.`,
 	PROPOSAL_UNSUCCESSFUL: `Couldn't select the proposal`,
+	OPT_IN_SUCCESSFUL: (daoID: number) =>
+		`You have successfully opted in DAO of ID ${daoID}`,
 };
 
 export const voteMessage = {
