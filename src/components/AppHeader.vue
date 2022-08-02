@@ -228,7 +228,7 @@ export default defineComponent({
 					this.showOptIn = false;
 					openSuccessNotificationWithIcon(
 						"Successful",
-						daoAppMessage.DAO_SUCCESSFUL(this.daoID)
+						daoAppMessage.OPT_IN_SUCCESSFUL(this.daoID)
 					);
 				}
 			} catch (error) {

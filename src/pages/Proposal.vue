@@ -272,7 +272,7 @@ export default defineComponent({
 						);
 						openSuccessNotificationWithIcon(
 							"Successful",
-							daoAppMessage.OPT_IN_SUCCESFUL(this.daoStore.dao_id)
+							daoAppMessage.OPT_IN_SUCCESSFUL(this.daoStore.dao_id)
 						);
 					}
 				}

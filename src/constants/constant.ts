@@ -51,6 +51,8 @@ export const daoAppMessage = {
 	PROPOSAL_SUCCESSFUL: (proposalName: string) =>
 		`You are now using the proposal: ${proposalName}.`,
 	PROPOSAL_UNSUCCESSFUL: `Couldn't select the proposal`,
+	OPT_IN_SUCCESSFUL: (daoID: number) =>
+		`You have successfully opted in DAO of ID ${daoID}`,
 };
 
 export const voteMessage = {
