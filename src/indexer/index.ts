@@ -25,6 +25,7 @@ import {
 	lookupAccountAppLocalStates,
 	getDaoInfoByAppIdReq,
 	getDaoInfoByAppNameReq,
+	lookupAccountByID,
 } from "@/api";
 
 /**
@@ -364,5 +365,28 @@ export async function handleDaoSearch(
 		}
 		default:
 			return false;
+	}
+}
+
+/**
+ * Get account details
+ * @param address account address
+ */
+export async function getAccountInfoByAddress(
+	address: string
+): Promise<null | { accountData: any; amount: number }> {
+	try {
+		const hexAddr = convertToHex(address);
+		const accountInfo = await executeReq(lookupAccountByID(hexAddr));
+		if (accountInfo?.allAccounts?.nodes[0]) {
+			const response = accountInfo.allAccounts.nodes[0];
+			const accountData = JSON.parse(response?.accountData);
+			const amount = parseInt(response.microalgos);
+			return { accountData, amount };
+		}
+		return null;
+	} catch (e) {
+		console.log(e);
+		throw e;
 	}
 }
