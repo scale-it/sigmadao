@@ -40,11 +40,11 @@ export const getApplicationGlobalState = async (
 		const globalStateRes = await executeReq(lookupApplications(appId));
 		if (
 			globalStateRes?.allSigmaDaos?.nodes.length &&
-			JSON.parse(globalStateRes.allSigmaDaos.nodes[0].appParams).dt.gd
+			JSON.parse(globalStateRes.allSigmaDaos.nodes[0].appParams).gs
 		) {
 			const parsedGlobalState = JSON.parse(
 				globalStateRes.allSigmaDaos.nodes[0].appParams
-			).dt.gd;
+			).gs;
 			globalState = decodeAppParamsState(parsedGlobalState);
 		}
 		return globalState;
@@ -77,7 +77,7 @@ export const getAccountAppLocalState = async (
 			const parsedLocalState = JSON.parse(
 				localState?.allAccountApps?.nodes[0]?.localstate
 			)?.tkv;
-			localStateMap = decodeAppLocalState(parsedLocalState);
+			localStateMap = decodeAppParamsState(parsedLocalState);
 		}
 		return localStateMap;
 	} catch (e) {
@@ -215,7 +215,7 @@ export const getGovASATokenAmount = async (
  * Decode app local state
  * @param state State to be decoded
  */
-export function decodeAppLocalState(state: any): Map<Key, StateValue> {
+export function decodeAppParamsState(state: any): Map<Key, StateValue> {
 	const stateMap = new Map<Key, StateValue>();
 	if (state) {
 		for (const key in state) {
@@ -223,30 +223,6 @@ export function decodeAppLocalState(state: any): Map<Key, StateValue> {
 				stateMap.set(
 					Buffer.from(key, "base64").toString("ascii"),
 					Buffer.from(state[key].tb, "base64").toString("ascii")
-				);
-			} else {
-				stateMap.set(
-					Buffer.from(key, "base64").toString("ascii"),
-					state[key].ui
-				);
-			}
-		}
-	}
-	return stateMap;
-}
-
-/**
- * Decode app params state
- * @param state State to be decoded
- */
-export function decodeAppParamsState(state: any): Map<Key, StateValue> {
-	const stateMap = new Map<Key, StateValue>();
-	if (state) {
-		for (const key in state) {
-			if (state[key].at === SchemaType.BYTES) {
-				stateMap.set(
-					Buffer.from(key, "base64").toString("ascii"),
-					Buffer.from(state[key].bs, "base64").toString("ascii")
 				);
 			} else {
 				stateMap.set(
@@ -281,7 +257,7 @@ export async function getAssetInformation(
  */
 export async function decodeDaoAppParams(params: any): Promise<DaoTableData> {
 	const appParams = JSON.parse(params.appParams);
-	const globalState = decodeAppParamsState(appParams.dt.gd);
+	const globalState = decodeAppParamsState(appParams.gs);
 	const tokenData = await getAssetInformation(params.assetId);
 	return {
 		dao_id: +params.appId,
@@ -300,7 +276,7 @@ export async function decodeProposalParams(
 	params: any
 ): Promise<ProposalTableData> {
 	const appParams = JSON.parse(params);
-	const globalState = decodeAppLocalState(appParams.tkv);
+	const globalState = decodeAppParamsState(appParams.tkv);
 	return {
 		name: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Name) as string,
 		msg: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Message) as string,
