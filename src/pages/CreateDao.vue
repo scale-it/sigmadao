@@ -155,7 +155,7 @@ import {
 import { getAssetInformation } from "@/indexer";
 import InfoToolTip from "../components/InfoToolTip.vue";
 import { LogicSigAccount } from "algosdk";
-import DaoID from "@/store/DaoID";
+import { ConfirmedTxInfo } from "@algo-builder/algob/build/types";
 
 export default defineComponent({
 	name: "CreateDaoPage",
@@ -294,12 +294,14 @@ export default defineComponent({
 			];
 
 			try {
-				const response = await this.walletStore.webMode.executeTx(deployApp);
+				const response = (await this.walletStore.webMode.executeTx(
+					deployApp
+				)) as unknown as ConfirmedTxInfo;
 				openSuccessNotificationWithIcon(
 					SUCCESSFUL,
 					createDaoMessage.SUCCESSFUL
 				);
-				const daoId = response?.applicationIndex;
+				const daoId = response?.["application-index"];
 				let daoLsig: LogicSigAccount = await getDaoFundLSig(daoId as number);
 
 				await this.fundDaoLsig(daoLsig);
