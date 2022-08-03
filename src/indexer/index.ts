@@ -42,7 +42,7 @@ export const getApplicationGlobalState = async (
 			globalStateRes?.allSigmaDaos?.nodes.length &&
 			JSON.parse(globalStateRes.allSigmaDaos.nodes[0].appParams).gs
 		) {
-			// parse global state from response
+			// parse global state(gs) from response
 			const parsedGlobalState = JSON.parse(
 				globalStateRes.allSigmaDaos.nodes[0].appParams
 			).gs;
@@ -258,7 +258,7 @@ export async function getAssetInformation(
  */
 export async function decodeDaoAppParams(params: any): Promise<DaoTableData> {
 	const appParams = JSON.parse(params.appParams);
-	// parse global state from response. gs is a json node in response
+	// parse global state(gs) from response. gs is a json node in response
 	const globalState = decodeAppParamsState(appParams.gs);
 	const tokenData = await getAssetInformation(params.assetId);
 	return {
