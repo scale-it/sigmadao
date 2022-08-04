@@ -213,7 +213,7 @@ import { getAccountInfoByAddress, isApplicationOpted } from "@/indexer";
 import {
 	fundAmount,
 	convertToSeconds,
-	optInToAppUsingLogicSig,
+	optInUsingLsig,
 	optInToAppUsingSecretKey,
 	getDifferenceInSeconds,
 	toDaysMinutesSeconds,
@@ -529,7 +529,7 @@ export default defineComponent({
 					appID: this.daoStore.dao_id as number,
 					payFlags: {},
 				};
-				let response = await optInToAppUsingLogicSig(lsig, execParam);
+				let response = await optInUsingLsig(lsig, execParam);
 				console.log(response);
 			} catch (error) {
 				this.error = error.message;
