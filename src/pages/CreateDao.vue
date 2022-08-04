@@ -140,11 +140,22 @@ import { defineComponent, reactive } from "vue";
 import CreateDAOStore from "../store/CreateDaoStore";
 import { DurationType, CreateDaoFormState, EndPoint } from "@/types";
 import { MetaType } from "@algo-builder/web/build/types";
-import { getCompiledDaoApproval, getCompiledDaoClear } from "@/contract/dao";
+import {
+	getCompiledDaoApproval,
+	getCompiledDaoClear,
+	getDaoFundLSig,
+} from "@/contract/dao";
 import { Rule } from "ant-design-vue/lib/form";
-import { convertDurationTypeToSeconds, redirectTo } from "@/utility";
+import {
+	convertDurationTypeToSeconds,
+	fundAmount,
+	optInUsingLsig,
+	redirectTo,
+} from "@/utility";
 import { getAssetInformation } from "@/indexer";
 import InfoToolTip from "../components/InfoToolTip.vue";
+import { LogicSigAccount } from "algosdk";
+import { ConfirmedTxInfo } from "@algo-builder/algob/build/types";
 
 export default defineComponent({
 	name: "CreateDaoPage",
@@ -196,6 +207,33 @@ export default defineComponent({
 				}
 				return Promise.resolve();
 			}
+		},
+		async fundDaoLsig(lsig: LogicSigAccount) {
+			try {
+				await fundAmount(
+					this.walletStore.address,
+					lsig.address(),
+					2e6,
+					this.walletStore.webMode
+				);
+			} catch (error) {
+				this.error = error.message;
+				errorMessage(this.key);
+				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message);
+			}
+		},
+		// opt in dao lsig to gov asa
+		async optInLsigToASA(lsig: LogicSigAccount) {
+			const execParam: types.ExecParams = {
+				type: types.TransactionType.OptInASA,
+				sign: types.SignType.LogicSignature,
+				fromAccountAddr: lsig.address(),
+				lsig: lsig,
+				assetID: this.formState.token_id as number,
+				payFlags: {},
+			};
+			let response = await optInUsingLsig(lsig, execParam);
+			console.log(response);
 		},
 		async onFinish(value: CreateDaoFormState) {
 			let {
@@ -256,11 +294,18 @@ export default defineComponent({
 			];
 
 			try {
-				await this.walletStore.webMode.executeTx(deployApp);
+				const response = (await this.walletStore.webMode.executeTx(
+					deployApp
+				)) as unknown as ConfirmedTxInfo;
 				openSuccessNotificationWithIcon(
 					SUCCESSFUL,
 					createDaoMessage.SUCCESSFUL
 				);
+				const daoId = response?.["application-index"];
+				let daoLsig: LogicSigAccount = await getDaoFundLSig(daoId as number);
+
+				await this.fundDaoLsig(daoLsig);
+				await this.optInLsigToASA(daoLsig);
 				successMessage(this.key);
 				redirectTo(this.$router, EndPoint.ADD_PROPOSAL);
 			} catch (error) {
