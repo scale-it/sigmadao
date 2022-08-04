@@ -328,7 +328,7 @@ export default defineComponent({
 						return Promise.reject(
 							`Voting date must have a duration of atleast ${toDaysMinutesSeconds(
 								minDuration
-							)} and at most ${toDaysMinutesSeconds(maxDuration)}.`
+							)} and atmost ${toDaysMinutesSeconds(maxDuration)}.`
 						);
 					}
 					// voting_end must be > voting_start
