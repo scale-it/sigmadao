@@ -149,7 +149,7 @@ import { Rule } from "ant-design-vue/lib/form";
 import {
 	convertDurationTypeToSeconds,
 	fundAmount,
-	optInUsingLogicSig,
+	optInUsingLsig,
 	redirectTo,
 } from "@/utility";
 import { getAssetInformation } from "@/indexer";
@@ -232,7 +232,7 @@ export default defineComponent({
 				assetID: this.formState.token_id as number,
 				payFlags: {},
 			};
-			let response = await optInUsingLogicSig(lsig, execParam);
+			let response = await optInUsingLsig(lsig, execParam);
 			console.log(response);
 		},
 		async onFinish(value: CreateDaoFormState) {

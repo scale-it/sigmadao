@@ -30,7 +30,7 @@ export const fundAmount = async (
 	console.log("Funded: ", response);
 };
 
-export const optInUsingLogicSig = async (
+export const optInUsingLsig = async (
 	lsig: LogicSigAccount,
 	execParam: types.ExecParams
 ) => {
