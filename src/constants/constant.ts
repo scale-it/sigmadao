@@ -16,6 +16,8 @@ export const GLOBAL_STATE_MAP_KEY = {
 	DaoName: "dao_name",
 	Url: "url",
 	Deposit: "deposit",
+	MinDuration: "min_duration",
+	MaxDuration: "max_duration",
 };
 export const MINUTE_TO_SECONDS = 60;
 export const HOUR_TO_SECONDS = 60 * MINUTE_TO_SECONDS;

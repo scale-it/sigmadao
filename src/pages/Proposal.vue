@@ -84,7 +84,7 @@
 					<a-form-item
 						label="Voting Date"
 						name="vote_date"
-						:rules="[{ required: true }]"
+						:rules="[{ required: true, validator: validateVotingDates }]"
 					>
 						<a-range-picker
 							format="YYYY-MM-DD HH:mm"
@@ -215,6 +215,8 @@ import {
 	convertToSeconds,
 	optInUsingLsig,
 	optInToAppUsingSecretKey,
+	getDifferenceInSeconds,
+	toDaysMinutesSeconds,
 } from "../utility";
 import ProposalTable from "@/components/ProposalTable.vue";
 import type { FormInstance } from "ant-design-vue";
@@ -298,6 +300,43 @@ export default defineComponent({
 							"Execute before must be after voting end time."
 						);
 					} else return Promise.resolve();
+				}
+				return Promise.resolve();
+			}
+		},
+		//	proposal vote time >= min duration and <= max duration
+		async validateVotingDates(_rule: Rule, value: string) {
+			if (value === null) {
+				return Promise.reject("Please input voting dates.");
+			} else {
+				if (
+					this.formState.vote_date !== undefined &&
+					this.formState.vote_date?.[0]?.length &&
+					this.formState.vote_date?.[1]?.length
+				) {
+					const maxDuration = this.daoStore.global_app_state?.get(
+						GLOBAL_STATE_MAP_KEY.MaxDuration
+					) as number;
+
+					const minDuration = this.daoStore.global_app_state?.get(
+						GLOBAL_STATE_MAP_KEY.MinDuration
+					) as number;
+					const votingStart = convertToSeconds(this.formState.vote_date[0]);
+					const votingEnd = convertToSeconds(this.formState.vote_date[1]);
+					const diffInSeconds = getDifferenceInSeconds(votingStart, votingEnd);
+					if (minDuration > diffInSeconds || diffInSeconds > maxDuration) {
+						return Promise.reject(
+							`Voting duration must be at least ${toDaysMinutesSeconds(
+								minDuration
+							)} and atmost ${toDaysMinutesSeconds(maxDuration)}.`
+						);
+					}
+					// voting_end must be > voting_start
+					if (votingEnd < votingStart) {
+						return Promise.reject(
+							"Voting end date must be after the start date."
+						);
+					}
 				}
 				return Promise.resolve();
 			}

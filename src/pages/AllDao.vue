@@ -232,7 +232,7 @@ export default defineComponent({
 					this.handlePageJump(pageNumber as string);
 					break;
 				case PaginationCallType.FIRST_PAGE:
-					dynamicCallback(ROWS_PER_PAGE, null, null, null, 1);
+					dynamicCallback(ROWS_PER_PAGE, null, null, null);
 					break;
 			}
 		},
@@ -341,8 +341,7 @@ export default defineComponent({
 			first: number | null,
 			endCursor: string | null,
 			last: number | null,
-			startCursor: string | null,
-			currentPage?: number
+			startCursor: string | null
 		) {
 			const res = await executeReq(
 				getAllDaoReq(first, endCursor, last, startCursor)
