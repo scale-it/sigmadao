@@ -1,5 +1,5 @@
 import { DateTimeFormat, DurationType } from "@/types";
-import { DAY_TO_SECONDS, HOUR_TO_SECONDS, MILLI_SECOND } from "@/constants";
+import { DAY_TO_SECONDS, HOUR_TO_SECONDS } from "@/constants";
 import moment from "moment";
 
 export const convertToSeconds = (value: number | string | Date) => {

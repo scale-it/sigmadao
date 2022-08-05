@@ -190,7 +190,7 @@ export default defineComponent({
 					this.handlePageJump(pageNumber as string);
 					break;
 				case PaginationCallType.FIRST_PAGE:
-					this.fetchProposalData(ROWS_PER_PAGE, null, null, null, 1);
+					this.fetchProposalData(ROWS_PER_PAGE, null, null, null);
 					break;
 			}
 		},
@@ -198,8 +198,7 @@ export default defineComponent({
 			first: number | null,
 			endCursor: string | null,
 			last: number | null,
-			startCursor: string | null,
-			currentPage?: number
+			startCursor: string | null
 		) {
 			const appId = this.daoStore.dao_id as number;
 			const res = await executeReq(
