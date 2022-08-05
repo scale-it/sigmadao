@@ -326,7 +326,7 @@ export default defineComponent({
 					const diffInSeconds = getDifferenceInSeconds(votingStart, votingEnd);
 					if (minDuration >= diffInSeconds || diffInSeconds >= maxDuration) {
 						return Promise.reject(
-							`Voting date must have a duration of atleast ${toDaysMinutesSeconds(
+							`Voting duration must be at least ${toDaysMinutesSeconds(
 								minDuration
 							)} and atmost ${toDaysMinutesSeconds(maxDuration)}.`
 						);
