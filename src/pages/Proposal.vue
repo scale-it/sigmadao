@@ -324,7 +324,7 @@ export default defineComponent({
 					const votingStart = convertToSeconds(this.formState.vote_date[0]);
 					const votingEnd = convertToSeconds(this.formState.vote_date[1]);
 					const diffInSeconds = getDifferenceInSeconds(votingStart, votingEnd);
-					if (minDuration >= diffInSeconds || diffInSeconds >= maxDuration) {
+					if (minDuration > diffInSeconds || diffInSeconds > maxDuration) {
 						return Promise.reject(
 							`Voting duration must be at least ${toDaysMinutesSeconds(
 								minDuration
