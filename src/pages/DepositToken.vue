@@ -2,8 +2,11 @@
 	<a-row>
 		<a-col :span="12" :offset="6">
 			<p>
-				You can deposit gov tokens to vote for multiple proposals by delegating
-				your tokens.
+				In order to vote for proposals you have to deposit your tokens. This protects agains
+				double voting. Your token will be locked until then end of the furthest proposal you
+				voted (being more specific, they will be end until
+				<code>max({p \in proposal_you_voted; p.end_voting_end})</code>.
+				After that time you can withdraw your tokens, or keep them locked to vote for other proposasl.
 			</p>
 		</a-col>
 	</a-row>
