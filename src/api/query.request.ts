@@ -20,16 +20,16 @@ export const getAllDaoReq = (
 	before = quotesWrapper(before);
 	return `
   query Daos {
-    allSigmaDaos(
+    allApps(
       first: ${first}
       after: ${after}
       before: ${before}
       last: ${last}
     ) {
       nodes {
-        appId
+        index
         assetId
-        appParams
+        params
       }
       pageInfo {
         startCursor
@@ -48,7 +48,7 @@ export const getAllDaoReq = (
 export const getCursorReq = (pageNumber: number, pageSize: number) => {
 	return `
   query Cursor {
-    allSigmaDaos(first: ${(pageNumber - 1) * pageSize}) {
+    allApps(first: ${(pageNumber - 1) * pageSize}) {
       pageInfo {
         endCursor
         startCursor
@@ -63,9 +63,9 @@ export const getCursorReq = (pageNumber: number, pageSize: number) => {
  */
 export const lookupApplications = (appId: number) => {
 	return `query LookupApplications {
-    allSigmaDaos(condition: {appId: "${appId}"}) {
+    allApps(condition: {index: "${appId}"}) {
       nodes {
-        appParams
+        params
       }
     }
   }`;
@@ -125,10 +125,10 @@ export const lookupAccountAppLocalStates = (addr: string, appId: number) => {
  */
 export const getDaoInfoByAppIdReq = (appId: number) => {
 	return `query SearchByAppId {
-    allSigmaDaos(condition: {appId: "${appId}"}) {
+    allApps(condition: {index: "${appId}"}) {
       nodes {
-        appId
-        appParams
+        index
+        params
         assetId
       }
     }
@@ -161,8 +161,8 @@ export const getDaoInfoByAppNameReq = (
       last: ${last}
     ) {
       nodes {
-        appId
-        appParams
+        index
+        params
         assetId
         daoName
       }
