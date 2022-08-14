@@ -100,3 +100,8 @@ export const DAO_CONTRACT_STATE_CONFIG = {
 	globalInts: 5,
 	globalBytes: 2,
 };
+
+export const TOKEN_DESCRIPTION = `In order to vote for proposals you have to deposit your tokens. This protects against double voting. Your token will be locked until end of the furthest proposal you voted (to be more specific, the token will be locked until
+<code>max({p in proposal_you_voted; p.end_voting_end})</code>). After
+that time you can withdraw your tokens, or keep them locked to vote for
+other proposals.`;

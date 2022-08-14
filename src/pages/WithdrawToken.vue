@@ -1,5 +1,5 @@
 <template>
-	<token-description></token-description>
+	<description :content="TOKEN_DESCRIPTION"></description>
 	<a-row>
 		<a-col :span="12" :offset="6">
 			<div v-if="error" class="margin_bottom_sm">
@@ -48,6 +48,7 @@ import {
 	successMessage,
 	VALIDATE_MESSAGES,
 	withdrawTokenMessage,
+	TOKEN_DESCRIPTION,
 } from "@/constants";
 import DaoID from "@/store/DaoID";
 import WalletStore from "@/store/WalletStore";
@@ -56,17 +57,18 @@ import { defineComponent, reactive } from "vue";
 import VoteStore from "../store/VoteStore";
 import { DAOActions } from "../types/enum.types";
 import { searchApplicationAndAccount } from "@/indexer";
-import TokenDescription from "@/components/TokenDescription.vue";
+import Description from "@/UIKit/Description.vue";
 
 export default defineComponent({
 	name: "WithdrawToken",
 	components: {
-		TokenDescription,
+		Description,
 	},
 	data() {
 		return {
 			error: "",
 			key: "WithdrawKey",
+			TOKEN_DESCRIPTION,
 		};
 	},
 	setup() {
