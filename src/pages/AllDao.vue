@@ -1,5 +1,23 @@
 <template>
 	<div class="table_container">
+		<div v-if="dataSource.length > 0">
+			<div :v-for="item in dataSource">
+				<a-card :title="item" style="width: 300px">
+					<template #extra><a href="#">Select</a></template>
+					<p>DAO App ID:</p>
+					<p>Token Name:</p>
+					<p>Token ID:</p>
+					<p>Link to DAO:</p>
+				</a-card>
+			</div>
+		</div>
+		<div v-else>
+			<a-empty description="No Sigma DAOs Exists">
+				<a-button type="primary" @click="handleCreateDAO">Create</a-button>
+			</a-empty>
+		</div>
+	</div>
+	<div class="table_container">
 		<a-table
 			:dataSource="dataSource"
 			:columns="columns"
@@ -294,6 +312,9 @@ export default defineComponent({
 					openErrorNotificationWithIcon(UNSUCCESSFUL, error.message);
 				});
 		},
+		handleCreateDAO() {
+			redirectTo(this.$router, EndPoint.CREATE_DAO);
+		},
 		handleDeSelectDao() {
 			this.formState.resetDaoStore();
 		},
@@ -350,6 +371,7 @@ export default defineComponent({
 			);
 			if (res && res.allApps) {
 				if (res.allApps.nodes.length) {
+					console.log(res);
 					// clean existing data in temp array with change of page
 					if (this.dataSource.length) {
 						this.dataSource = [];

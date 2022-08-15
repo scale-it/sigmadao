@@ -5,7 +5,9 @@
 				<img src="../assets/logo.png" class="logo" />
 			</template>
 			<template #extra>
-				<WalletConnect />
+				<div style="width: min-content">
+					<WalletConnect />
+				</div>
 			</template>
 			<div class="content">
 				<a-row align="middle" justify="center">
@@ -54,9 +56,14 @@
 						</div>
 					</a-col>
 				</a-row>
-				<a-row class="dao-table">
-					<a-col :span="24">
-						<a-descriptions :column="5" size="small" bordered layout="vertical">
+				<a-row class="dao-table" type="flex">
+					<a-col flex="auto">
+						<a-descriptions
+							:column="{ xs: 3, sm: 5 }"
+							size="small"
+							bordered
+							layout="vertical"
+						>
 							<a-descriptions-item label="DAO App ID">
 								<a-input-search
 									v-model:value="daoID"

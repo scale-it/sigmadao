@@ -1,6 +1,6 @@
 <template>
 	<a-row>
-		<a-col :span="12" :offset="6">
+		<a-col :xs="{ span: 20, offset: 2 }" :sm="{ span: 14, offset: 6 }">
 			<div v-if="error" class="margin_bottom_sm">
 				<a-alert
 					message="Error"

@@ -1,6 +1,6 @@
 <template>
 	<a-row>
-		<a-col :span="12" :offset="6">
+		<a-col :xs="{ span: 20, offset: 2 }" :sm="{ span: 14, offset: 6 }">
 			<p>
 				In order to vote for proposals you have to deposit your tokens. This
 				protects against double voting. Your token will be locked until then end
@@ -13,7 +13,7 @@
 		</a-col>
 	</a-row>
 	<a-row>
-		<a-col :span="12" :offset="6">
+		<a-col :xs="{ span: 20, offset: 2 }" :sm="{ span: 14, offset: 6 }">
 			<div v-if="error" class="margin_bottom_sm">
 				<a-alert
 					message="Error"
