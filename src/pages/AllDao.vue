@@ -1,126 +1,75 @@
 <template>
-	<div class="table_container">
-		<div v-if="dataSource.length > 0">
-			<div :v-for="item in dataSource">
-				<a-card :title="item" style="width: 300px">
-					<template #extra><a href="#">Select</a></template>
-					<p>DAO App ID:</p>
-					<p>Token Name:</p>
-					<p>Token ID:</p>
-					<p>Link to DAO:</p>
-				</a-card>
-			</div>
+	<a-row class="dao-table" type="flex" justify="center">
+		<div v-if="dataSource.length > 0" class="padding_med">
+			<a-list
+				:grid="{ gutter: 25, xs: 1, sm: 2, column: 3, size: 'middle' }"
+				:data-source="dataSource"
+			>
+				<template #header>
+					<h3 style="text-align: center">Sigma DAOs</h3>
+					<a-input-search
+						enter-button
+						style="width: 100% !important"
+						placeholder="Search Daos"
+						v-model:value="searchText"
+						@search="handleFilterData()"
+					/>
+				</template>
+				<template #renderItem="{ item }">
+					<a-list-item class="margin_top_sm">
+						<a-card
+							hoverable
+							:title="item.name"
+							@click="
+								formState.dao_id !== item.dao_id
+									? handleSelectDAO(item)
+									: handleDeSelectDao(item)
+							"
+						>
+							<template #extra>
+								<div
+									v-if="formState.dao_id === item.dao_id"
+									style="color: #1890ff"
+								>
+									Selected
+								</div></template
+							>
+							<a-descriptions :column="1">
+								<a-descriptions-item label="App ID">{{
+									item.dao_id
+								}}</a-descriptions-item>
+								<a-descriptions-item label="Token Name">{{
+									item.token_name
+								}}</a-descriptions-item>
+								<a-descriptions-item label="Token ID">{{
+									item.token_id
+								}}</a-descriptions-item>
+								<a-descriptions-item label="Link">
+									<a :href="'//' + item.link" target="_blank">
+										{{ item.link }}
+									</a>
+								</a-descriptions-item>
+							</a-descriptions>
+						</a-card>
+					</a-list-item>
+				</template>
+			</a-list>
+		</div>
+		<div v-else-if="dataLoading">
+			<a-spin size="large" />
 		</div>
 		<div v-else>
 			<a-empty description="No Sigma DAOs Exists">
 				<a-button type="primary" @click="handleCreateDAO">Create</a-button>
 			</a-empty>
 		</div>
-	</div>
-	<div class="table_container">
-		<a-table
-			:dataSource="dataSource"
-			:columns="columns"
-			bordered
-			:pagination="false"
-		>
-			<template #title>
-				<a-col> <h3 style="text-align: center">Sigma DAOs</h3> </a-col>
-			</template>
-			<template #headerCell="{ column }">
-				<template v-if="column.key === 'name'">
-					<span class="clickable_text">Name</span>
-				</template>
-			</template>
-			<template
-				#customFilterDropdown="{
-					setSelectedKeys,
-					selectedKeys,
-					confirm,
-					clearFilters,
-					column,
-				}"
-			>
-				<div class="padding_sm">
-					<a-input
-						ref="searchInput"
-						:placeholder="`Search ${column.dataIndex}`"
-						:value="selectedKeys[0]"
-						class="search_input"
-						@change="(e) => handleInputChange(e, setSelectedKeys)"
-						@pressEnter="handleSearch(selectedKeys, confirm, column.dataIndex)"
-					/>
-					<a-button
-						type="primary"
-						size="small"
-						class="search_btn"
-						@click="handleSearch(selectedKeys, confirm, column.dataIndex)"
-					>
-						<template #icon><SearchOutlined /></template>
-						Search
-					</a-button>
-					<a-button
-						size="small"
-						class="reset_btn"
-						@click="handleReset(clearFilters)"
-						danger
-					>
-						Reset
-					</a-button>
-				</div>
-			</template>
-			<template #customFilterIcon="{ filtered }">
-				<search-outlined :style="{ color: filtered ? '#108ee9' : undefined }" />
-			</template>
-
-			<template #bodyCell="{ text, record, column }">
-				<span v-if="searchText && searchedColumn === column.dataIndex">
-					<template
-						v-for="(fragment, i) in text
-							.toString()
-							.split(new RegExp(`(?<=${searchText})|(?=${searchText})`, 'i'))"
-					>
-						<mark
-							v-if="fragment.toLowerCase() === searchText.toLowerCase()"
-							:key="i"
-							class="highlight"
-						>
-							{{ fragment }}
-						</mark>
-						<template v-else>{{ fragment }}</template>
-					</template>
-				</span>
-				<template v-if="column.key === 'link'">
-					<a :href="'//' + record.link" target="_blank">
-						{{ record.link }}
-					</a>
-				</template>
-				<template v-if="column.key === 'action'">
-					<a-button
-						type="link"
-						v-if="formState.dao_id !== record.dao_id"
-						@click="() => handleSelectDAO(record)"
-					>
-						Select
-					</a-button>
-					<a-button
-						type="link"
-						danger
-						v-else
-						@click="() => handleDeSelectDao(record)"
-					>
-						De-Select
-					</a-button>
-				</template>
-			</template>
-		</a-table>
-	</div>
-	<a-col :offset="15">
+	</a-row>
+	<div class="flex_end">
 		<TablePagination
 			v-bind:totalDataRowsCount="totalDataRowsCount"
 			:paginationHandler="handlePaginationCall"
 		/>
-	</a-col>
+	</div>
 </template>
 
 <script lang="ts">
@@ -142,7 +91,7 @@ import {
 	isApplicationOpted,
 	searchApplicationAndAccount,
 } from "@/indexer";
-import { defineComponent, reactive, ref, toRefs } from "vue";
+import { defineComponent, reactive } from "vue";
 import DaoStore from "../store/DaoID";
 import {
 	executeReq,
@@ -157,58 +106,19 @@ import {
 	SearchDaoType,
 } from "@/types";
 import WalletStore from "@/store/WalletStore";
-import { SearchOutlined } from "@ant-design/icons-vue";
 import TablePagination from "../UIKit/TablePagination.vue";
 import { redirectTo } from "@/utility";
 
 export default defineComponent({
 	name: "AllDao",
 	components: {
-		SearchOutlined,
 		TablePagination,
 	},
 	data() {
 		return {
 			key: "DaoKey",
-			columns: [
-				{
-					title: "DAO App ID",
-					key: "dao_id",
-					dataIndex: "dao_id",
-				},
-				{
-					title: "Name",
-					key: "name",
-					dataIndex: "name",
-					customFilterDropdown: true,
-					onFilterDropdownVisibleChange: (visible: boolean) => {
-						if (visible && this.$refs.searchInput) {
-							setTimeout(() => {
-								(this.$refs.searchInput as any).focus();
-							}, 100);
-						}
-					},
-				},
-				{
-					title: "Token Name",
-					key: "token_name",
-					dataIndex: "token_name",
-				},
-				{
-					title: "Token ID",
-					key: "token_id",
-					dataIndex: "token_id",
-				},
-				{
-					title: "Link to DAO",
-					key: "link",
-					dataIndex: "link",
-				},
-				{
-					title: "Action",
-					key: "action",
-				},
-			],
+			dataLoading: false,
+			searchText: "",
 			walletStore: WalletStore(),
 			totalDataRowsCount: ROWS_PER_PAGE,
 			ROWS_PER_PAGE,
@@ -318,28 +228,6 @@ export default defineComponent({
 		handleDeSelectDao() {
 			this.formState.resetDaoStore();
 		},
-		handleSearch(
-			selectedKeys: string[],
-			confirm: (param?: any) => void,
-			dataIndex: string
-		) {
-			confirm();
-			this.searchText = selectedKeys[0];
-			this.searchedColumn = dataIndex;
-			this.handleFilterData();
-		},
-		handleReset(clearFilters: (param: any) => void) {
-			this.isFilterActive = false;
-			this.searchText = "";
-			clearFilters({ confirm: true });
-			this.handlePaginationCall(PaginationCallType.FIRST_PAGE);
-		},
-		handleInputChange(
-			e: any,
-			setSelectedKeys: (selectedKeys: string[]) => void
-		) {
-			setSelectedKeys(e.target.value ? [e.target.value] : []);
-		},
 		handleFilterData() {
 			this.isFilterActive = true;
 			this.dataSource = [];
@@ -352,8 +240,8 @@ export default defineComponent({
 				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message)
 			);
 
-			if (cursorRes?.allApps?.pageInfo) {
-				const pageInfo = cursorRes.allApps.pageInfo;
+			if (cursorRes?.allSigmaDaos?.pageInfo) {
+				const pageInfo = cursorRes.allSigmaDaos.pageInfo;
 				this.currentPageCursor.endCursor = pageInfo.endCursor;
 				this.currentPageCursor.startCursor = pageInfo.startCursor;
 			}
@@ -364,39 +252,41 @@ export default defineComponent({
 			last: number | null,
 			startCursor: string | null
 		) {
+			this.dataLoading = true;
 			const res = await executeReq(
 				getAllDaoReq(first, endCursor, last, startCursor)
-			).catch((error) =>
-				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message)
-			);
-			if (res && res.allApps) {
-				if (res.allApps.nodes.length) {
-					console.log(res);
+			).catch((error) => {
+				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message);
+				this.dataLoading = false;
+			});
+			if (res && res.allSigmaDaos) {
+				if (res.allSigmaDaos.nodes.length) {
 					// clean existing data in temp array with change of page
 					if (this.dataSource.length) {
 						this.dataSource = [];
 					}
-					res.allApps.nodes.map(async (item: any, index: number) => {
+					res.allSigmaDaos.nodes.map(async (item: any, index: number) => {
 						let parsedData = await decodeDaoAppParams(item);
 						parsedData["key"] = index; // for antd table
 						this.dataSource.push(parsedData);
 
 						// pushing data to store only if it doesn't exists
 						let isCached = false;
-						isCached = this.formState.psqlData.has(+item.index);
+						isCached = this.formState.psqlData.has(+item.appId);
 						if (!isCached) {
-							this.formState.psqlData.set(+item.index, parsedData);
+							this.formState.psqlData.set(+item.appId, parsedData);
 						}
 					});
 				}
 
-				if (res.allApps.pageInfo) {
-					const pageInfo = res.allApps.pageInfo;
+				if (res.allSigmaDaos.pageInfo) {
+					const pageInfo = res.allSigmaDaos.pageInfo;
 					this.currentPageCursor.startCursor = pageInfo.startCursor;
 					this.currentPageCursor.endCursor = pageInfo.endCursor;
 				}
-				this.totalDataRowsCount = res.allApps.totalCount;
+				this.totalDataRowsCount = res.allSigmaDaos.totalCount;
 			}
+			this.dataLoading = false;
 		},
 		async handleDaoNameSearch(
 			first: number | null,
@@ -404,6 +294,7 @@ export default defineComponent({
 			last: number | null,
 			startCursor: string | null
 		) {
+			this.dataLoading = true;
 			const response = await handleDaoSearch(
 				SearchDaoType.SEARCH_BY_DAO_NAME,
 				this.searchText,
@@ -411,9 +302,10 @@ export default defineComponent({
 				endCursor,
 				last,
 				startCursor
-			).catch((error) =>
-				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message)
-			);
+			).catch((error) => {
+				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message);
+				this.dataLoading = false;
+			});
 			if (response) {
 				if (response.pageInfo) {
 					const pageInfo = response.pageInfo;
@@ -426,21 +318,14 @@ export default defineComponent({
 					this.totalDataRowsCount = response.totalCount;
 				}
 			}
+			this.dataLoading = false;
 		},
 	},
 	setup() {
 		const formState = reactive(DaoStore());
-		const state = reactive({
-			searchText: "",
-			searchedColumn: "",
-		});
-		const searchInput = ref();
-
 		return {
 			formState,
 			validateMessages: VALIDATE_MESSAGES,
-			searchInput,
-			...toRefs(state),
 		};
 	},
 	mounted() {

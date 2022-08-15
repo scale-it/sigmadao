@@ -7,7 +7,7 @@
 .ant-page-header-heading-left {
 	flex-shrink: 0;
 }
-.dao-table {
+.dao_table {
 	max-width: 1000px;
 	margin: auto;
 }
@@ -34,4 +34,8 @@
 
 .algo_builder_img {
 	max-height: 5rem;
+}
+
+.ant-list-split .ant-list-header {
+	border-bottom: none !important;
 }

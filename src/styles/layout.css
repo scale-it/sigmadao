@@ -13,6 +13,11 @@
 	justify-content: space-between;
 }
 
+.flex_end {
+	display: flex;
+	justify-content: flex-end;
+}
+
 @media only screen and (max-width: 575px) {
 	.ant-form .ant-form-item .ant-form-item-label,
 	.ant-form .ant-form-item .ant-form-item-control {

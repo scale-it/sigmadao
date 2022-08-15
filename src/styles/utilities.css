@@ -10,6 +10,10 @@
 	padding: 1rem !important;
 }
 
+.padding_med {
+	padding: 2rem !important;
+}
+
 .margin_top_large {
 	margin-top: 3rem;
 }

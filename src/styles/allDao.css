@@ -3,28 +3,3 @@
 	justify-content: center;
 	margin-bottom: 2rem;
 }
-
-.highlight {
-	background-color: rgb(255, 192, 105);
-	padding: 0px;
-}
-
-.clickable_text {
-	color: #1890ff;
-	cursor: pointer;
-}
-
-.search_btn {
-	width: 9rem;
-	margin-right: 0.8rem;
-}
-
-.reset_btn {
-	width: 9rem;
-}
-
-.search_input {
-	width: 20rem !important;
-	margin-bottom: 1rem !important;
-	display: block !important;
-}
