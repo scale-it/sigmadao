@@ -50,6 +50,9 @@
 										{{ item.link }}
 									</a>
 								</a-descriptions-item>
+								<a-descriptions-item label="Proposals">
+									{{ item.proposal_count }}
+								</a-descriptions-item>
 							</a-descriptions>
 						</a-card>
 					</a-list-item>
@@ -100,12 +103,14 @@ import {
 	getAllDaoReq,
 	getCursorReq,
 	getDaoInfoByAppNameCursorReq,
+	searchProposalsByAppIdReq,
 } from "@/api";
 import {
 	DaoTableData,
 	PaginationCallType,
 	EndPoint,
 	SearchDaoType,
+	ProposalFilterType,
 } from "@/types";
 import WalletStore from "@/store/WalletStore";
 import TablePagination from "../UIKit/TablePagination.vue";
@@ -248,6 +253,25 @@ export default defineComponent({
 				this.currentPageCursor.startCursor = pageInfo.startCursor;
 			}
 		},
+		async getProposalCount(parsedData: DaoTableData) {
+			console.log("hii", parsedData);
+			const proposalRes = await executeReq(
+				searchProposalsByAppIdReq(
+					parsedData.dao_id,
+					ProposalFilterType.All,
+					null,
+					null,
+					null,
+					null
+				)
+			).catch((error) =>
+				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message)
+			);
+			if (proposalRes?.sigmaDaosProposalFilter) {
+				parsedData.proposal_count =
+					proposalRes.sigmaDaosProposalFilter?.nodes?.length ?? 0;
+			}
+		},
 		async fetchDaoData(
 			first: number | null,
 			endCursor: string | null,
@@ -269,6 +293,7 @@ export default defineComponent({
 					}
 					res.allSigmaDaos.nodes.map(async (item: any, index: number) => {
 						let parsedData = await decodeDaoAppParams(item);
+						await this.getProposalCount(parsedData);
 						parsedData["key"] = index; // for antd table
 						this.dataSource.push(parsedData);
 
@@ -309,6 +334,9 @@ export default defineComponent({
 				this.dataLoading = false;
 			});
 			if (response) {
+				for (const item of response.dataSource) {
+					await this.getProposalCount(item);
+				}
 				if (response.pageInfo) {
 					const pageInfo = response.pageInfo;
 					this.currentPageCursor.startCursor = pageInfo.startCursor;
