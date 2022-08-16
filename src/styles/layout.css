@@ -24,3 +24,9 @@
 		flex: 1 !important;
 	}
 }
+
+.spinner_container {
+	min-height: 50vh;
+	display: flex;
+	align-items: center;
+}

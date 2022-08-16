@@ -1,6 +1,6 @@
 <template>
 	<a-row class="dao-table" type="flex" justify="center">
-		<div v-if="dataSource.length > 0" class="padding_med">
+		<div v-if="dataSource.length > 0" class="padding_inline_med">
 			<a-list
 				:grid="{ gutter: 25, xs: 1, sm: 2, column: 3, size: 'middle' }"
 				:data-source="dataSource"
@@ -55,8 +55,9 @@
 				</template>
 			</a-list>
 		</div>
-		<div v-else-if="dataLoading">
+		<div v-else-if="dataLoading" class="spinner_container">
 			<a-spin size="large" />
+			<h4 class="margin_left_sm">Fetching Data</h4>
 		</div>
 		<div v-else>
 			<a-empty description="No Sigma DAOs Exists">
