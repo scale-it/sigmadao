@@ -18,6 +18,7 @@
 				<template #renderItem="{ item }">
 					<a-list-item class="margin_top_sm">
 						<a-card
+							:class="formState.dao_id === item.dao_id && 'selected_dao_card'"
 							hoverable
 							:title="item.name"
 							@click="
