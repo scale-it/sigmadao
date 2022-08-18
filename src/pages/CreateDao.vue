@@ -309,7 +309,7 @@ export default defineComponent({
 				await this.fundDaoLsig(daoLsig);
 				await this.optInLsigToASA(daoLsig);
 				successMessage(this.key);
-				redirectTo(this.$router, EndPoint.ADD_PROPOSAL);
+				redirectTo(this.$router, EndPoint.ALL_DAO);
 			} catch (error) {
 				this.error = error.message;
 				errorMessage(this.key);

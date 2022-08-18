@@ -218,7 +218,7 @@ export default defineComponent({
 						SUCCESSFUL,
 						daoAppMessage.DAO_SUCCESSFUL(data.dao_id)
 					);
-					redirectTo(this.$router, EndPoint.ADD_PROPOSAL);
+					redirectTo(this.$router, EndPoint.PROPOSALS);
 					DaoStore().searchDaoId = data.dao_id;
 					if (this.walletStore.address) {
 						isApplicationOpted(this.walletStore.address, data.dao_id)

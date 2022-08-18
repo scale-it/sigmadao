@@ -51,7 +51,7 @@ export const daoAppMessage = {
 	DAO_SUCCESSFUL: (daoID: number) => `Your DAO App of ID ${daoID} is selected.`,
 	DAO_UNSUCCESFUL: "Unsuccessful while getting DAO App Opt-in Details",
 	PROPOSAL_SUCCESSFUL: (proposalName: string) =>
-		`You are now using the proposal: ${proposalName}.`,
+		`You are now using the ${proposalName} proposal.`,
 	PROPOSAL_UNSUCCESSFUL: `Couldn't select the proposal`,
 	OPT_IN_SUCCESSFUL: (daoID: number) =>
 		`You have successfully opted in DAO of ID ${daoID}`,

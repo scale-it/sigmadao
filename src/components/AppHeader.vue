@@ -21,12 +21,12 @@
 									>All DAOs</a-button
 								>
 							</router-link>
-							<router-link :to="{ path: EndPoint.ADD_PROPOSAL }">
+							<router-link :to="{ path: EndPoint.PROPOSALS }">
 								<a-button
 									class="menu_option"
-									:type="isLinkActive(EndPoint.ADD_PROPOSAL)"
+									:type="isLinkActive(EndPoint.PROPOSALS)"
 									:disabled="!DaoStore().isDaoSelected"
-									>Add Proposal</a-button
+									>Proposals</a-button
 								>
 							</router-link>
 							<router-link :to="{ path: EndPoint.VOTE_TOKEN }">

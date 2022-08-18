@@ -20,7 +20,6 @@ export interface DAO {
 	govt_id?: number;
 	available?: number;
 	locked?: number;
-	proposal_addr?: string;
 	global_app_state?: Map<Key, StateValue>;
 	show_opt_in: boolean;
 	searchDaoId?: number;
@@ -95,4 +94,8 @@ export interface CreateDaoFormState {
 	max_duration?: number; // maximum voting time in number of seconds
 	url?: string;
 	dao_name?: string;
+}
+
+export interface ProposalStore {
+	selected_address: string;
 }
