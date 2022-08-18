@@ -40,12 +40,12 @@ export const getApplicationGlobalState = async (
 		// get global state of application
 		const globalStateRes = await executeReq(lookupApplications(appId));
 		if (
-			globalStateRes?.allApps?.nodes.length &&
-			JSON.parse(globalStateRes.allApps.nodes[0].params).gs
+			globalStateRes?.allSigmaDaos?.nodes.length &&
+			JSON.parse(globalStateRes.allSigmaDaos.nodes[0].appParams).gs
 		) {
 			// parse global state(gs) from response
 			const parsedGlobalState = JSON.parse(
-				globalStateRes.allApps.nodes[0].params
+				globalStateRes.allSigmaDaos.nodes[0].appParams
 			).gs;
 			globalState = decodeAppParamsState(parsedGlobalState);
 		}
@@ -258,12 +258,12 @@ export async function getAssetInformation(
  * @param params object to be decoded
  */
 export async function decodeDaoAppParams(params: any): Promise<DaoTableData> {
-	const appParams = JSON.parse(params.params);
+	const appParams = JSON.parse(params.appParams);
 	// parse global state(gs) from response. gs is a json node in response
 	const globalState = decodeAppParamsState(appParams.gs);
 	const tokenData = await getAssetInformation(params.assetId);
 	return {
-		dao_id: +params.index,
+		dao_id: +params.appId,
 		token_id: +params.assetId,
 		token_name: tokenData.an as string,
 		name: globalState.get(GLOBAL_STATE_MAP_KEY.DaoName) as string,
@@ -315,8 +315,8 @@ export async function handleDaoSearch(
 	switch (searchDaoType) {
 		case SearchDaoType.SEARCH_BY_APPLCATION_ID: {
 			const response = await executeReq(getDaoInfoByAppIdReq(value as number));
-			if (response.allApps.nodes[0]) {
-				return decodeDaoAppParams(response.allApps.nodes[0]);
+			if (response.allSigmaDaos.nodes[0]) {
+				return decodeDaoAppParams(response.allSigmaDaos.nodes[0]);
 			}
 			return false;
 		}
