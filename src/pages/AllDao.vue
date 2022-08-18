@@ -307,9 +307,9 @@ export default defineComponent({
 
 						// pushing data to store only if it doesn't exists
 						let isCached = false;
-						isCached = this.formState.psqlData.has(+item.appId);
+						isCached = this.formState.psqlData.has(+item.index);
 						if (!isCached) {
-							this.formState.psqlData.set(+item.appId, parsedData);
+							this.formState.psqlData.set(+item.index, parsedData);
 						}
 					});
 				}
