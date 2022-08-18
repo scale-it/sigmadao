@@ -103,7 +103,7 @@
 	<div class="flex_end">
 		<TablePagination
 			v-bind:totalDataRowsCount="totalDataRowsCount"
-			:paginationHandler="handlePaginationCall"
+			:paginationHandler="handlePagination"
 		/>
 	</div>
 </template>
@@ -149,6 +149,7 @@ export default defineComponent({
 	data() {
 		return {
 			key: "AllProposalKey",
+			dataLoading: false,
 			radioGroupData: [
 				{
 					id: 1,
@@ -234,6 +235,7 @@ export default defineComponent({
 			last: number | null,
 			startCursor: string | null
 		) {
+			this.dataLoading = true;
 			const appId = this.daoStore.dao_id as number;
 			const res = await executeReq(
 				searchProposalsByAppIdReq(
@@ -244,9 +246,10 @@ export default defineComponent({
 					last,
 					startCursor
 				)
-			).catch((error) =>
-				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message)
-			);
+			).catch((error) => {
+				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message);
+				this.dataLoading = false;
+			});
 
 			if (res?.sigmaDaosProposalFilter) {
 				if (res.sigmaDaosProposalFilter.nodes.length) {
@@ -281,6 +284,7 @@ export default defineComponent({
 
 				this.totalDataRowsCount = res.sigmaDaosProposalFilter.totalCount;
 			}
+			this.dataLoading = false;
 		},
 		async handlePageJump(pageNumber: string) {
 			if (+pageNumber === 1) {
@@ -291,6 +295,7 @@ export default defineComponent({
 			}
 		},
 		async getCursorDetails(pageNumber: number) {
+			this.dataLoading = true;
 			const appId = this.daoStore.dao_id as number;
 			const cursorRes = await executeReq(
 				getProposalCursorReq(
@@ -299,15 +304,17 @@ export default defineComponent({
 					pageNumber,
 					ROWS_PER_PAGE
 				)
-			).catch((error) =>
-				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message)
-			);
+			).catch((error) => {
+				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message);
+				this.dataLoading = false;
+			});
 
 			if (cursorRes.sigmaDaosProposalFilter.pageInfo ?? false) {
 				const pageInfo = cursorRes.sigmaDaosProposalFilter.pageInfo;
 				this.currentPageCursor.endCursor = pageInfo.endCursor;
 				this.currentPageCursor.startCursor = pageInfo.startCursor;
 			}
+			this.dataLoading = false;
 		},
 		async handleSelectProposal(record: ProposalTableData) {
 			if (record.proposal_addr) {
