@@ -4,27 +4,8 @@
 	margin-bottom: 2rem;
 }
 
-.highlight {
-	background-color: rgb(255, 192, 105);
-	padding: 0px;
-}
-
-.clickable_text {
-	color: #1890ff;
-	cursor: pointer;
-}
-
-.search_btn {
-	width: 9rem;
-	margin-right: 0.8rem;
-}
-
-.reset_btn {
-	width: 9rem;
-}
-
-.search_input {
-	width: 20rem !important;
-	margin-bottom: 1rem !important;
-	display: block !important;
+.selected_dao_card {
+	box-shadow: 0 1px 2px -2px rgb(0 0 0 / 16%), 0 3px 6px 0 rgb(0 0 0 / 12%),
+		0 5px 12px 4px rgb(0 0 0 / 9%) !important;
+	border-color: black;
 }

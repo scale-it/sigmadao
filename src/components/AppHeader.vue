@@ -5,7 +5,9 @@
 				<img src="../assets/logo.png" class="logo" />
 			</template>
 			<template #extra>
-				<WalletConnect />
+				<div style="width: min-content">
+					<WalletConnect />
+				</div>
 			</template>
 			<div class="content">
 				<a-row align="middle" justify="center">
@@ -17,14 +19,6 @@
 									class="menu_option"
 									:type="isLinkActive(EndPoint.ALL_DAO)"
 									>All DAOs</a-button
-								>
-							</router-link>
-							<router-link :to="{ path: EndPoint.CREATE_DAO }">
-								<a-button
-									class="menu_option"
-									:type="isLinkActive(EndPoint.CREATE_DAO)"
-									:disabled="!walletStore.address"
-									>Create DAO</a-button
 								>
 							</router-link>
 							<router-link :to="{ path: EndPoint.ADD_PROPOSAL }">
@@ -54,17 +48,25 @@
 						</div>
 					</a-col>
 				</a-row>
-				<a-row class="dao-table">
-					<a-col :span="24">
-						<a-descriptions :column="5" size="small" bordered layout="vertical">
+				<a-row class="dao-table" type="flex">
+					<a-col flex="auto">
+						<a-descriptions
+							:column="{ xs: 3, sm: 5 }"
+							size="small"
+							bordered
+							layout="vertical"
+						>
 							<a-descriptions-item label="DAO App ID">
 								<a-input-search
 									v-model:value="daoID"
 									type="number"
-									enter-button
 									@search="searchID"
-									placeholder="Enter ID"
-								/>
+									placeholder="Select DAO by App ID"
+								>
+									<template #enterButton>
+										<a-button type="primary">Select</a-button>
+									</template>
+								</a-input-search>
 							</a-descriptions-item>
 							<a-descriptions-item label="DAO Name">{{
 								name

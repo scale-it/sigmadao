@@ -1,7 +1,7 @@
 <template>
 	<description :content="TOKEN_DESCRIPTION"></description>
 	<a-row>
-		<a-col :span="12" :offset="6">
+		<a-col :xs="{ span: 20, offset: 2 }" :sm="{ span: 14, offset: 6 }">
 			<div v-if="error" class="margin_bottom_sm">
 				<a-alert
 					message="Error"
@@ -16,6 +16,7 @@
 				:label-col="{ span: 12 }"
 				:wrapper-col="{ span: 12 }"
 				:model="formState"
+				:labelWrap="true"
 				name="DepositToken"
 				autocomplete="off"
 				@finish="onFinish"

@@ -1,6 +1,7 @@
 <template>
+	<h3 class="text_center">Create DAO</h3>
 	<a-row>
-		<a-col :span="14" :offset="6">
+		<a-col :xs="{ span: 20, offset: 2 }" :sm="{ span: 14, offset: 6 }">
 			<div v-if="error" class="margin_bottom_sm">
 				<a-alert
 					message="Error"
@@ -14,9 +15,11 @@
 			<a-form
 				:label-col="{ span: 10 }"
 				:wrapper-col="{ span: 12 }"
+				layout="horizontal"
 				:model="formState"
 				name="Create"
 				autocomplete="off"
+				:labelWrap="true"
 				@finish="onFinish"
 				@finishFailed="onFinishFailed"
 				@validate-messages="validateMessages"

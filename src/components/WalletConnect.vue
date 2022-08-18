@@ -20,7 +20,7 @@
 						<span v-if="selectedWallet === WalletType.NONE">
 							Connect Wallet</span
 						>
-						<span v-else>Selected Wallet : {{ selectedWallet }}</span>
+						<span v-else>Wallet : {{ selectedWallet }}</span>
 
 						<DownOutlined />
 					</a-button>
@@ -40,11 +40,11 @@
 							</a-menu-item>
 						</a-menu>
 					</template>
-					<a-button>
+					<a-button class="margin_top_sm">
 						<span v-if="selectedNetwork === NetworkTypes.NONE">
 							Select Network</span
 						>
-						<span v-else>Selected Network : {{ selectedNetwork }}</span>
+						<span v-else>Network : {{ selectedNetwork }}</span>
 						<DownOutlined />
 					</a-button>
 				</a-dropdown>
@@ -56,43 +56,39 @@
 		<a-row class="wallet">
 			<a-card size="small">
 				<a-row align="middle">
-					<span>
-						<a-typography-text strong>Address: </a-typography-text>
-						<a-typography-link :copyable="{ text: walletAddress }">
-							<a-tooltip>
-								<template #title>{{ walletAddress }}</template>
-								{{ getTruncatedAddress(walletAddress) }}
-							</a-tooltip>
-						</a-typography-link>
+					<a-typography-text strong>Address: </a-typography-text>
+					<a-typography-link :copyable="{ text: walletAddress }">
+						<a-tooltip>
+							<template #title>{{ walletAddress }}</template>
+							{{ getTruncatedAddress(walletAddress) }}
+						</a-tooltip>
+					</a-typography-link>
+				</a-row>
+				<a-row>
+					<span class="margin_right_extra_sm margin_top_extra_sm">
+						<a-typography-text strong>Wallet: </a-typography-text>
+						<a-typography-link>{{ selectedWallet }}</a-typography-link>
 					</span>
-					<a-row type="flex" style="width: 100%">
-						<a-col :flex="1">
-							<span class="margin_right_extra_sm margin_top_extra_sm">
-								<a-typography-text strong>Wallet: </a-typography-text>
-								<a-typography-link>{{ selectedWallet }}</a-typography-link>
-							</span>
-						</a-col>
-						<a-col>
-							<a-dropdown v-if="selectedWallet === WalletType.ALGOSIGNER">
-								<template #overlay>
-									<a-menu @click="handleAddressSwitch">
-										<a-menu-item v-for="addr in walletAddresses" :key="addr">
-											{{ addr }}
-										</a-menu-item>
-									</a-menu>
-								</template>
-								<a-button>
-									<span>{{ getTruncatedAddress(walletAddress) }}</span>
-									<DownOutlined />
-								</a-button>
-							</a-dropdown>
-							<a-button type="primary" @click="handleLogOut">
-								<template #icon>
-									<LogoutOutlined />
-								</template>
-							</a-button>
-						</a-col>
-					</a-row>
+				</a-row>
+				<a-row>
+					<a-dropdown v-if="selectedWallet === WalletType.ALGOSIGNER">
+						<template #overlay>
+							<a-menu @click="handleAddressSwitch">
+								<a-menu-item v-for="addr in walletAddresses" :key="addr">
+									{{ addr }}
+								</a-menu-item>
+							</a-menu>
+						</template>
+						<a-button>
+							<span>{{ getTruncatedAddress(walletAddress) }}</span>
+							<DownOutlined />
+						</a-button>
+					</a-dropdown>
+					<a-button type="primary" @click="handleLogOut">
+						<template #icon>
+							<LogoutOutlined />
+						</template>
+					</a-button>
 				</a-row>
 			</a-card>
 		</a-row>

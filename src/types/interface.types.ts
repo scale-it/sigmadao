@@ -60,6 +60,7 @@ export interface DaoTableData {
 	name: string;
 	link: string;
 	key?: number;
+	proposal_count?: number;
 }
 
 // Proposal Table interfaces
