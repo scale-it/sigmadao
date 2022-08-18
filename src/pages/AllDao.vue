@@ -256,8 +256,8 @@ export default defineComponent({
 				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message)
 			);
 
-			if (cursorRes?.allSigmaDaos?.pageInfo) {
-				const pageInfo = cursorRes.allSigmaDaos.pageInfo;
+			if (cursorRes?.allApps?.pageInfo) {
+				const pageInfo = cursorRes.allApps.pageInfo;
 				this.currentPageCursor.endCursor = pageInfo.endCursor;
 				this.currentPageCursor.startCursor = pageInfo.startCursor;
 			}
@@ -293,13 +293,13 @@ export default defineComponent({
 				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message);
 				this.dataLoading = false;
 			});
-			if (res && res.allSigmaDaos) {
-				if (res.allSigmaDaos.nodes.length) {
+			if (res && res.allApps) {
+				if (res.allApps.nodes.length) {
 					// clean existing data in temp array with change of page
 					if (this.dataSource.length) {
 						this.dataSource = [];
 					}
-					res.allSigmaDaos.nodes.map(async (item: any, index: number) => {
+					res.allApps.nodes.map(async (item: any, index: number) => {
 						let parsedData = await decodeDaoAppParams(item);
 						await this.getProposalCount(parsedData);
 						parsedData["key"] = index; // for antd table
@@ -314,12 +314,12 @@ export default defineComponent({
 					});
 				}
 
-				if (res.allSigmaDaos.pageInfo) {
-					const pageInfo = res.allSigmaDaos.pageInfo;
+				if (res.allApps.pageInfo) {
+					const pageInfo = res.allApps.pageInfo;
 					this.currentPageCursor.startCursor = pageInfo.startCursor;
 					this.currentPageCursor.endCursor = pageInfo.endCursor;
 				}
-				this.totalDataRowsCount = res.allSigmaDaos.totalCount;
+				this.totalDataRowsCount = res.allApps.totalCount;
 			}
 			this.dataLoading = false;
 		},
