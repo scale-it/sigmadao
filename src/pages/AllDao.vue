@@ -1,47 +1,41 @@
 <template>
+	<div class="margin_bottom_sm padding_inline_med">
+		<h3 class="text_center">Sigma DAOs</h3>
+		<div class="flexbox_justify_space">
+			<a-input-search
+				style="width: 40%; margin: auto"
+				enter-button
+				placeholder="Search DAO by Name"
+				v-model:value="searchText"
+				@search="handleFilterData()"
+				:disabled="!dataSource.length > 0"
+			/>
+			<a-button
+				type="primary"
+				:disabled="!walletStore.address"
+				@click="handleCreateDAO"
+			>
+				Create a DAO
+				<template #icon><PlusOutlined /></template>
+			</a-button>
+		</div>
+	</div>
 	<a-row class="dao-table" type="flex" justify="center">
 		<div v-if="dataSource.length > 0" class="padding_inline_med">
 			<a-list
 				:grid="{ gutter: 25, xs: 1, sm: 2, column: 3, size: 'middle' }"
 				:data-source="dataSource"
 			>
-				<template #header>
-					<h3 style="text-align: center">Sigma DAOs</h3>
-					<div class="flexbox_justify_space">
-						<a-input-search
-							style="width: 40%; margin: auto"
-							enter-button
-							placeholder="Search DAO by Name"
-							v-model:value="searchText"
-							@search="handleFilterData()"
-						/>
-						<a-button
-							type="primary"
-							:disabled="!walletStore.address"
-							@click="handleCreateDAO"
-						>
-							Create a DAO
-							<template #icon><PlusOutlined /></template>
-						</a-button>
-					</div>
-				</template>
 				<template #renderItem="{ item }">
 					<a-list-item class="margin_top_sm">
 						<a-card
-							:class="formState.dao_id === item.dao_id && 'selected_dao_card'"
+							:class="isDaoSelected(item) && 'selected_dao_card'"
 							hoverable
 							:title="item.name"
-							@click="
-								formState.dao_id !== item.dao_id
-									? handleSelectDAO(item)
-									: handleDeSelectDao(item)
-							"
+							@click="handleSelectDAO(item)"
 						>
 							<template #extra>
-								<div
-									v-if="formState.dao_id === item.dao_id"
-									style="color: #1890ff"
-								>
+								<div v-if="isDaoSelected(item)" style="color: #1890ff">
 									Selected
 								</div></template
 							>
@@ -74,9 +68,7 @@
 			<h4 class="margin_left_sm">Fetching Data</h4>
 		</div>
 		<div v-else>
-			<a-empty description="No Sigma DAOs Exists">
-				<a-button type="primary" @click="handleCreateDAO">Create</a-button>
-			</a-empty>
+			<a-empty description="No Sigma DAOs Exists" />
 		</div>
 	</a-row>
 	<div class="flex_end">
@@ -152,6 +144,9 @@ export default defineComponent({
 		};
 	},
 	methods: {
+		isDaoSelected(item: DaoTableData) {
+			return this.formState.dao_id === item.dao_id;
+		},
 		handlePaginationCall(type: PaginationCallType, pageNumber?: string) {
 			// calls handleDaoNameSearch if user is using filter else fetchDaoData
 			const dynamicCallback =
@@ -296,8 +291,8 @@ export default defineComponent({
 				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message);
 				this.dataLoading = false;
 			});
-			if (res && res.allSigmaDaos) {
-				if (res.allSigmaDaos.nodes.length) {
+			if (res && res.allApps) {
+				if (res.allApps.nodes.length) {
 					// clean existing data in temp array with change of page
 					if (this.dataSource.length) {
 						this.dataSource = [];

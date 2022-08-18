@@ -1,17 +1,5 @@
 <template>
-	<a-row>
-		<a-col :xs="{ span: 20, offset: 2 }" :sm="{ span: 14, offset: 6 }">
-			<p>
-				In order to vote for proposals you have to deposit your tokens. This
-				protects against double voting. Your token will be locked until then end
-				of the furthest proposal you voted (to be more specific, the token will
-				be locked until
-				<code>max({p \in proposal_you_voted; p.end_voting_end})</code>). After
-				that time you can withdraw your tokens, or keep them locked to vote for
-				other proposasl.
-			</p>
-		</a-col>
-	</a-row>
+	<description :content="TOKEN_DESCRIPTION"></description>
 	<a-row>
 		<a-col :xs="{ span: 20, offset: 2 }" :sm="{ span: 14, offset: 6 }">
 			<div v-if="error" class="margin_bottom_sm">
@@ -60,6 +48,7 @@ import {
 	successMessage,
 	VALIDATE_MESSAGES,
 	withdrawTokenMessage,
+	TOKEN_DESCRIPTION,
 } from "@/constants";
 import DaoID from "@/store/DaoID";
 import WalletStore from "@/store/WalletStore";
@@ -68,13 +57,18 @@ import { defineComponent, reactive } from "vue";
 import VoteStore from "../store/VoteStore";
 import { DAOActions } from "../types/enum.types";
 import { searchApplicationAndAccount } from "@/indexer";
+import Description from "@/UIKit/Description.vue";
 
 export default defineComponent({
 	name: "WithdrawToken",
+	components: {
+		Description,
+	},
 	data() {
 		return {
 			error: "",
 			key: "WithdrawKey",
+			TOKEN_DESCRIPTION,
 		};
 	},
 	setup() {

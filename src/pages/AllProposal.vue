@@ -96,7 +96,7 @@
 				/>
 			</div>
 			<div v-else>
-				<a-empty description="No Proposals Exists"> </a-empty>
+				<a-empty description="No Proposals Exists" />
 			</div>
 		</div>
 	</a-row>

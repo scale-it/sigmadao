@@ -6,7 +6,9 @@
 			</template>
 			<template #extra>
 				<div style="width: min-content">
-					<WalletConnect />
+					<div style="width: min-content">
+						<WalletConnect />
+					</div>
 				</div>
 			</template>
 			<div class="content">
