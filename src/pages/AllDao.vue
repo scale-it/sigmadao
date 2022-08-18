@@ -7,13 +7,23 @@
 			>
 				<template #header>
 					<h3 style="text-align: center">Sigma DAOs</h3>
-					<a-input-search
-						enter-button
-						style="width: 100% !important"
-						placeholder="Search Daos"
-						v-model:value="searchText"
-						@search="handleFilterData()"
-					/>
+					<div class="flexbox_justify_space">
+						<a-input-search
+							style="width: 40%; margin: auto"
+							enter-button
+							placeholder="Search DAO by Name"
+							v-model:value="searchText"
+							@search="handleFilterData()"
+						/>
+						<a-button
+							type="primary"
+							:disabled="!walletStore.address"
+							@click="handleCreateDAO"
+						>
+							Create a DAO
+							<template #icon><PlusOutlined /></template>
+						</a-button>
+					</div>
 				</template>
 				<template #renderItem="{ item }">
 					<a-list-item class="margin_top_sm">
@@ -115,11 +125,13 @@ import {
 import WalletStore from "@/store/WalletStore";
 import TablePagination from "../UIKit/TablePagination.vue";
 import { redirectTo } from "@/utility";
+import { PlusOutlined } from "@ant-design/icons-vue";
 
 export default defineComponent({
 	name: "AllDao",
 	components: {
 		TablePagination,
+		PlusOutlined,
 	},
 	data() {
 		return {
@@ -254,7 +266,6 @@ export default defineComponent({
 			}
 		},
 		async getProposalCount(parsedData: DaoTableData) {
-			console.log("hii", parsedData);
 			const proposalRes = await executeReq(
 				searchProposalsByAppIdReq(
 					parsedData.dao_id,

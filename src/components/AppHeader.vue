@@ -21,14 +21,6 @@
 									>All DAOs</a-button
 								>
 							</router-link>
-							<router-link :to="{ path: EndPoint.CREATE_DAO }">
-								<a-button
-									class="menu_option"
-									:type="isLinkActive(EndPoint.CREATE_DAO)"
-									:disabled="!walletStore.address"
-									>Create DAO</a-button
-								>
-							</router-link>
 							<router-link :to="{ path: EndPoint.ADD_PROPOSAL }">
 								<a-button
 									class="menu_option"
@@ -68,10 +60,13 @@
 								<a-input-search
 									v-model:value="daoID"
 									type="number"
-									enter-button
 									@search="searchID"
-									placeholder="Enter ID"
-								/>
+									placeholder="Select DAO by App ID"
+								>
+									<template #enterButton>
+										<a-button type="primary">Select</a-button>
+									</template>
+								</a-input-search>
 							</a-descriptions-item>
 							<a-descriptions-item label="DAO Name">{{
 								name
