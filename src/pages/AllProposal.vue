@@ -105,7 +105,7 @@
 	<div class="flex_end">
 		<TablePagination
 			v-bind:totalDataRowsCount="totalDataRowsCount"
-			:paginationHandler="handlePaginationCall"
+			:paginationHandler="handlePagination"
 		/>
 	</div>
 </template>
