@@ -229,9 +229,9 @@ export default defineComponent({
 							this.dataSource.push(parsedData);
 							// pushing data to store only if it doesn't exists
 							let isCached = false;
-							isCached = this.proposalStore.psqlData.has(+item.appId);
+							isCached = this.proposalStore.psqlData.has(+item.app);
 							if (!isCached) {
-								this.proposalStore.psqlData.set(+item.appId, parsedData);
+								this.proposalStore.psqlData.set(+item.app, parsedData);
 							}
 						}
 					);
