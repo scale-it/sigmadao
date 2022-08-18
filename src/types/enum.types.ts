@@ -47,7 +47,7 @@ export enum NetworkTypes {
 	MAIN_NET = "MainNet",
 	TEST_NET = "TestNet",
 	BETA_NET = "BetaNet",
-	PRIVATE_NET = "privateNet", // only for testing, to be removed, Wallet connect and MyAlgo wallet doesn't support it
+	PRIVATE_NET = "PrivateNet", // only for testing, to be removed, Wallet connect and MyAlgo wallet doesn't support it
 }
 
 export enum SchemaType {
