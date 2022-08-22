@@ -1,6 +1,8 @@
 <template>
 	<div class="padding_inline_med margin_bottom_sm">
-		<h3 style="text-align: center">Proposals</h3>
+		<h3 style="text-align: center">
+			{{ ProposalFilterType[this.proposalDataStore.filterType] }} Proposals
+		</h3>
 		<div class="flexbox_justify_space">
 			<a-radio-group
 				v-model:value="this.proposalDataStore.filterType"
@@ -51,7 +53,7 @@
 							>
 							<template #actions>
 								<a-button type="link" @click="() => handleSelectProposal(item)">
-									Use
+									Select
 								</a-button>
 								<a-button
 									type="link"
