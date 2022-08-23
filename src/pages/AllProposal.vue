@@ -133,7 +133,12 @@ import { defineComponent, reactive } from "vue";
 import DaoID from "../store/DaoID";
 import ProposalTableStore from "../store/ProposalTableStore";
 import ProposalStore from "../store/ProposalStore";
-import { secToFormat, convertHexToAlgorandAddr, redirectTo } from "../utility";
+import {
+	secToFormat,
+	convertHexToAlgorandAddr,
+	redirectTo,
+	closeProposal,
+} from "../utility";
 import { decodeProposalParams } from "@/indexer";
 import TablePagination from "../UIKit/TablePagination.vue";
 import {
@@ -142,6 +147,8 @@ import {
 	getProposalCursorReq,
 } from "@/api";
 import WalletStore from "@/store/WalletStore";
+import { LogicSigAccount } from "algosdk";
+import { getProposalLsig } from "@/contract/dao";
 
 export default defineComponent({
 	name: "AllProposals",
@@ -334,7 +341,25 @@ export default defineComponent({
 			}
 		},
 		async handleCloseProposal(record: ProposalTableData) {
-			console.log("closed", record);
+			const lsig: LogicSigAccount = await getProposalLsig(
+				this.daoStore.dao_id as number,
+				this.walletStore.address
+			);
+			// checking if the requestor is proposal creator
+			if (lsig.address() === record.proposal_addr) {
+				closeProposal(
+					this.walletStore.address,
+					lsig,
+					this.daoStore.govt_id as number,
+					this.daoStore.dao_id as number,
+					this.walletStore.webMode
+				);
+			} else {
+				openErrorNotificationWithIcon(
+					UNSUCCESSFUL,
+					"Only creator of the proposal can close the proposal."
+				);
+			}
 		},
 		async loadTable() {
 			this.handlePagination(PaginationCallType.FIRST_PAGE);
