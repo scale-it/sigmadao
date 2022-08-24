@@ -41,11 +41,11 @@ export const getApplicationGlobalState = async (
 		const globalStateRes = await executeReq(lookupApplications(appId));
 		if (
 			globalStateRes?.allApps?.nodes.length &&
-			JSON.parse(globalStateRes.allApps.nodes[0].appParams).gs
+			JSON.parse(globalStateRes.allApps.nodes[0].params).gs
 		) {
 			// parse global state(gs) from response
 			const parsedGlobalState = JSON.parse(
-				globalStateRes.allApps.nodes[0].appParams
+				globalStateRes.allApps.nodes[0].params
 			).gs;
 			globalState = decodeAppParamsState(parsedGlobalState);
 		}
