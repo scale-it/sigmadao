@@ -68,7 +68,7 @@
 			<h4 class="margin_left_sm">Fetching Data</h4>
 		</div>
 		<div v-else>
-			<a-empty description="No Sigma DAOs Exists" />
+			<a-empty :description="EmptyDataDescription.DAO" />
 		</div>
 	</a-row>
 	<div class="flex_end">
@@ -91,6 +91,7 @@ import {
 	successMessage,
 	UNSUCCESSFUL,
 	VALIDATE_MESSAGES,
+	EmptyDataDescription,
 } from "@/constants";
 import {
 	decodeDaoAppParams,
@@ -141,6 +142,7 @@ export default defineComponent({
 			PaginationCallType,
 			EndPoint,
 			isFilterActive: false,
+			EmptyDataDescription,
 		};
 	},
 	methods: {

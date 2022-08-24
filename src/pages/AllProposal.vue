@@ -98,7 +98,7 @@
 				/>
 			</div>
 			<div v-else>
-				<a-empty description="No Proposals Exists" />
+				<a-empty :description="EmptyDataDescription.PROPOSAL" />
 			</div>
 		</div>
 	</a-row>
@@ -117,10 +117,10 @@ import {
 	UNSUCCESSFUL,
 	ROWS_PER_PAGE,
 	ProposalType,
-	PROPOSAL_LOCAL_STATE_MAP_KEY,
 	SUCCESSFUL,
 	openSuccessNotificationWithIcon,
 	daoAppMessage,
+	EmptyDataDescription,
 } from "@/constants";
 import {
 	ProposalTableData,
@@ -150,6 +150,7 @@ export default defineComponent({
 	},
 	data() {
 		return {
+			EmptyDataDescription,
 			key: "AllProposalKey",
 			dataLoading: false,
 			radioGroupData: [

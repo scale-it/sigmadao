@@ -105,3 +105,8 @@ export const TOKEN_DESCRIPTION = `In order to vote for proposals you have to dep
 <code>max({p in proposal_you_voted; p.end_voting_end})</code>). After
 that time you can withdraw your tokens, or keep them locked to vote for
 other proposals.`;
+
+export const EmptyDataDescription = {
+	DAO: "No Sigma DAOs Exists",
+	PROPOSAL: "No Proposals Exists",
+};
