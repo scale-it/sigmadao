@@ -26,6 +26,7 @@ export enum VoteOptions {
 export enum EndPoint {
 	VOTE = "/vote",
 	ADD_PROPOSAL = "/addProposal",
+	PROPOSALS = "/proposals",
 	ALL_DAO = "/",
 	VOTE_TOKEN = "/voteTokens",
 	CREATE_DAO = "/createDao",

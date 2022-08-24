@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
-import AddProposal from "../pages/Proposal.vue";
+import CreateProposal from "../pages/CreateProposal.vue";
+import AllProposal from "../pages/AllProposal.vue";
 import VotePage from "../pages/Vote.vue";
 import AllDao from "../pages/AllDao.vue";
 import VoteToken from "../pages/Token.vue";
@@ -16,7 +17,13 @@ const routes = [
 	{
 		path: EndPoint.ADD_PROPOSAL,
 		name: "AddProposal",
-		component: AddProposal,
+		component: CreateProposal,
+		props: true,
+	},
+	{
+		path: EndPoint.PROPOSALS,
+		name: "AllProposals",
+		component: AllProposal,
 		props: true,
 	},
 	{

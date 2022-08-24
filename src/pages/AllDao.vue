@@ -68,9 +68,7 @@
 			<h4 class="margin_left_sm">Fetching Data</h4>
 		</div>
 		<div v-else>
-			<a-empty description="No Sigma DAOs Exists">
-				<a-button type="primary" @click="handleCreateDAO">Create</a-button>
-			</a-empty>
+			<a-empty :description="EmptyDataDescription.DAO" />
 		</div>
 	</a-row>
 	<div class="flex_end">
@@ -93,6 +91,7 @@ import {
 	successMessage,
 	UNSUCCESSFUL,
 	VALIDATE_MESSAGES,
+	EmptyDataDescription,
 } from "@/constants";
 import {
 	decodeDaoAppParams,
@@ -143,6 +142,7 @@ export default defineComponent({
 			PaginationCallType,
 			EndPoint,
 			isFilterActive: false,
+			EmptyDataDescription,
 		};
 	},
 	methods: {
@@ -215,7 +215,7 @@ export default defineComponent({
 						SUCCESSFUL,
 						daoAppMessage.DAO_SUCCESSFUL(data.dao_id)
 					);
-					redirectTo(this.$router, EndPoint.ADD_PROPOSAL);
+					redirectTo(this.$router, EndPoint.PROPOSALS);
 					DaoStore().searchDaoId = data.dao_id;
 					if (this.walletStore.address) {
 						isApplicationOpted(this.walletStore.address, data.dao_id)

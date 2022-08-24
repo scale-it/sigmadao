@@ -1,8 +1,11 @@
 <template>
-	<a-row>
-		<a-col :xs="{ offset: 1 }" :lg="{ offset: 15 }">
+	<div class="padding_inline_med margin_bottom_sm">
+		<h3 style="text-align: center">
+			{{ ProposalFilterType[this.proposalDataStore.filterType] }} Proposals
+		</h3>
+		<div class="flexbox_justify_space">
 			<a-radio-group
-				v-model:value="this.proposalStore.filterType"
+				v-model:value="this.proposalDataStore.filterType"
 				name="radioGroup"
 				@change="handlePagination(PaginationCallType.FIRST_PAGE)"
 			>
@@ -13,57 +16,98 @@
 					>{{ ProposalFilterType[item.value] }}</a-radio
 				>
 			</a-radio-group>
-		</a-col>
-	</a-row>
-	<div class="table_container">
-		<a-table
-			:dataSource="dataSource"
-			:columns="columns"
-			bordered
-			:pagination="false"
-		>
-			<template #title>
-				<a-col>
-					<h3 style="text-align: center">Available Proposals</h3>
-				</a-col>
-			</template>
-			<template #bodyCell="{ record, column }">
-				<template v-if="column.key === 'name'">
-					<a :href="'//' + record.url" target="_blank">
-						{{ record.name }}
-					</a>
-				</template>
-				<template v-if="column.key === 'voting_start'">
-					{{
-						secToFormat(record.voting_start, DateTimeFormat.DAY_TIME_WITH_DAY) +
-						" - " +
-						secToFormat(record.voting_end, DateTimeFormat.DAY_TIME_WITH_DAY)
-					}}
-				</template>
-				<template v-if="column.key === 'type'">
-					{{ ProposalType[record.type] }}
-				</template>
-				<template v-if="column.key === 'action'">
-					<a-button type="link" @click="() => handleSelectProposal(record)">
-						Use
-					</a-button>
-					<a-button
-						type="link"
-						danger
-						@click="() => handleCloseProposal(record)"
-					>
-						Close
-					</a-button>
-				</template>
-			</template>
-		</a-table>
+			<a-button
+				type="primary"
+				:disabled="!daoStore.isDaoSelected || !walletStore.address"
+				@click="handleCreateProposal"
+			>
+				Add Proposal
+				<template #icon><PlusOutlined /></template>
+			</a-button>
+		</div>
 	</div>
-	<a-col :offset="15">
+	<a-row class="dao-table" type="flex" justify="center">
+		<div v-if="dataSource.length > 0" class="padding_inline_med">
+			<a-list
+				:grid="{ gutter: 25, xs: 1, sm: 2, column: 3, size: 'middle' }"
+				:data-source="dataSource"
+			>
+				<template #renderItem="{ item }">
+					<a-list-item class="margin_top_sm">
+						<a-card
+							:class="isCurrentProposalSelected(item) && 'selected_dao_card'"
+							hoverable
+						>
+							<template #title>
+								<a :href="'//' + item.url" target="_blank">
+									{{ item.name }}
+								</a>
+							</template>
+							<template #extra>
+								<div
+									v-if="isCurrentProposalSelected(item)"
+									style="color: #1890ff"
+								>
+									Selected
+								</div></template
+							>
+							<template #actions>
+								<a-button type="link" @click="() => handleSelectProposal(item)">
+									Select
+								</a-button>
+								<a-button
+									type="link"
+									danger
+									@click="() => handleCloseProposal(item)"
+								>
+									Close
+								</a-button></template
+							>
+							<a-descriptions :column="1">
+								<a-descriptions-item label="Type">{{
+									ProposalType[item.type]
+								}}</a-descriptions-item>
+								<a-descriptions-item label="Voting Start">{{
+									secToFormat(
+										item.voting_start,
+										DateTimeFormat.DAY_TIME_WITH_DAY
+									)
+								}}</a-descriptions-item>
+								<a-descriptions-item label="Voting End">{{
+									secToFormat(
+										item.voting_start,
+										DateTimeFormat.DAY_TIME_WITH_DAY
+									)
+								}}</a-descriptions-item>
+							</a-descriptions>
+						</a-card>
+					</a-list-item>
+				</template>
+			</a-list>
+		</div>
+		<div v-else-if="dataLoading" class="spinner_container">
+			<a-spin size="large" />
+			<h4 class="margin_left_sm">Fetching Data</h4>
+		</div>
+		<div v-else>
+			<div v-if="!daoStore.dao_id">
+				<a-alert
+					message="Please select a DAO to get its proposals."
+					type="info"
+					show-icon
+				/>
+			</div>
+			<div v-else>
+				<a-empty :description="EmptyDataDescription.PROPOSAL" />
+			</div>
+		</div>
+	</a-row>
+	<div class="flex_end">
 		<TablePagination
 			v-bind:totalDataRowsCount="totalDataRowsCount"
 			:paginationHandler="handlePagination"
 		/>
-	</a-col>
+	</div>
 </template>
 
 <script lang="ts">
@@ -73,21 +117,23 @@ import {
 	UNSUCCESSFUL,
 	ROWS_PER_PAGE,
 	ProposalType,
-	PROPOSAL_LOCAL_STATE_MAP_KEY,
 	SUCCESSFUL,
 	openSuccessNotificationWithIcon,
 	daoAppMessage,
+	EmptyDataDescription,
 } from "@/constants";
 import {
 	ProposalTableData,
 	PaginationCallType,
 	ProposalFilterType,
 	DateTimeFormat,
+	EndPoint,
 } from "@/types";
 import { defineComponent, reactive } from "vue";
 import DaoID from "../store/DaoID";
 import ProposalTableStore from "../store/ProposalTableStore";
-import { secToFormat, convertHexToAlgorandAddr } from "../utility";
+import ProposalStore from "../store/ProposalStore";
+import { secToFormat, convertHexToAlgorandAddr, redirectTo } from "../utility";
 import { decodeProposalParams } from "@/indexer";
 import TablePagination from "../UIKit/TablePagination.vue";
 import {
@@ -95,36 +141,18 @@ import {
 	searchProposalsByAppIdReq,
 	getProposalCursorReq,
 } from "@/api";
+import WalletStore from "@/store/WalletStore";
 
 export default defineComponent({
-	name: "ProposalTable",
+	name: "AllProposals",
 	components: {
 		TablePagination,
 	},
 	data() {
 		return {
-			key: "ProposalKey",
-			columns: [
-				{
-					title: "Proposal Name",
-					key: PROPOSAL_LOCAL_STATE_MAP_KEY.Name,
-					dataIndex: PROPOSAL_LOCAL_STATE_MAP_KEY.Name,
-				},
-				{
-					title: "Proposal Type",
-					key: PROPOSAL_LOCAL_STATE_MAP_KEY.Type,
-					dataIndex: PROPOSAL_LOCAL_STATE_MAP_KEY.Type,
-				},
-				{
-					title: "Voting Start - Voting End",
-					key: PROPOSAL_LOCAL_STATE_MAP_KEY.Voting_Start,
-					dataIndex: PROPOSAL_LOCAL_STATE_MAP_KEY.Voting_Start,
-				},
-				{
-					title: "Action",
-					key: "action",
-				},
-			],
+			EmptyDataDescription,
+			key: "AllProposalKey",
+			dataLoading: false,
 			radioGroupData: [
 				{
 					id: 1,
@@ -157,17 +185,27 @@ export default defineComponent({
 		};
 	},
 	setup() {
-		const proposalStore = reactive(ProposalTableStore());
+		const proposalDataStore = reactive(ProposalTableStore());
 		const daoStore = reactive(DaoID());
+		const proposalStore = reactive(ProposalStore());
+		const walletStore = reactive(WalletStore());
 
 		return {
-			proposalStore,
+			proposalDataStore,
 			daoStore,
 			validateMessages: VALIDATE_MESSAGES,
 			ProposalFilterType,
+			proposalStore,
+			walletStore,
 		};
 	},
 	methods: {
+		isCurrentProposalSelected(item: ProposalTableData) {
+			return this.proposalStore.selected_address === item.proposal_addr;
+		},
+		handleCreateProposal() {
+			redirectTo(this.$router, EndPoint.ADD_PROPOSAL);
+		},
 		handlePagination(type: PaginationCallType, pageNumber?: string) {
 			switch (type) {
 				case PaginationCallType.NAV_PREV:
@@ -200,19 +238,21 @@ export default defineComponent({
 			last: number | null,
 			startCursor: string | null
 		) {
+			this.dataLoading = true;
 			const appId = this.daoStore.dao_id as number;
 			const res = await executeReq(
 				searchProposalsByAppIdReq(
 					appId,
-					this.proposalStore.filterType,
+					this.proposalDataStore.filterType,
 					first,
 					endCursor,
 					last,
 					startCursor
 				)
-			).catch((error) =>
-				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message)
-			);
+			).catch((error) => {
+				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message);
+				this.dataLoading = false;
+			});
 
 			if (res?.sigmaDaosProposalFilter) {
 				if (res.sigmaDaosProposalFilter.nodes.length) {
@@ -229,9 +269,9 @@ export default defineComponent({
 							this.dataSource.push(parsedData);
 							// pushing data to store only if it doesn't exists
 							let isCached = false;
-							isCached = this.proposalStore.psqlData.has(+item.app);
+							isCached = this.proposalDataStore.psqlData.has(+item.app);
 							if (!isCached) {
-								this.proposalStore.psqlData.set(+item.app, parsedData);
+								this.proposalDataStore.psqlData.set(+item.app, parsedData);
 							}
 						}
 					);
@@ -247,6 +287,7 @@ export default defineComponent({
 
 				this.totalDataRowsCount = res.sigmaDaosProposalFilter.totalCount;
 			}
+			this.dataLoading = false;
 		},
 		async handlePageJump(pageNumber: string) {
 			if (+pageNumber === 1) {
@@ -257,27 +298,30 @@ export default defineComponent({
 			}
 		},
 		async getCursorDetails(pageNumber: number) {
+			this.dataLoading = true;
 			const appId = this.daoStore.dao_id as number;
 			const cursorRes = await executeReq(
 				getProposalCursorReq(
 					appId,
-					this.proposalStore.filterType,
+					this.proposalDataStore.filterType,
 					pageNumber,
 					ROWS_PER_PAGE
 				)
-			).catch((error) =>
-				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message)
-			);
+			).catch((error) => {
+				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message);
+				this.dataLoading = false;
+			});
 
 			if (cursorRes.sigmaDaosProposalFilter.pageInfo ?? false) {
 				const pageInfo = cursorRes.sigmaDaosProposalFilter.pageInfo;
 				this.currentPageCursor.endCursor = pageInfo.endCursor;
 				this.currentPageCursor.startCursor = pageInfo.startCursor;
 			}
+			this.dataLoading = false;
 		},
 		async handleSelectProposal(record: ProposalTableData) {
 			if (record.proposal_addr) {
-				this.daoStore.setProposalAddress(record.proposal_addr);
+				this.proposalStore.selected_address = record.proposal_addr;
 				openSuccessNotificationWithIcon(
 					SUCCESSFUL,
 					daoAppMessage.PROPOSAL_SUCCESSFUL(record.name)
@@ -297,7 +341,7 @@ export default defineComponent({
 		},
 	},
 	mounted() {
-		this.proposalStore.loadTable = this.loadTable;
+		this.proposalDataStore.loadTable = this.loadTable;
 		this.loadTable();
 	},
 });

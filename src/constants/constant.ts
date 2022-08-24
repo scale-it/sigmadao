@@ -51,7 +51,7 @@ export const daoAppMessage = {
 	DAO_SUCCESSFUL: (daoID: number) => `Your DAO App of ID ${daoID} is selected.`,
 	DAO_UNSUCCESFUL: "Unsuccessful while getting DAO App Opt-in Details",
 	PROPOSAL_SUCCESSFUL: (proposalName: string) =>
-		`You are now using the proposal: ${proposalName}.`,
+		`You are now using the ${proposalName} proposal.`,
 	PROPOSAL_UNSUCCESSFUL: `Couldn't select the proposal`,
 	OPT_IN_SUCCESSFUL: (daoID: number) =>
 		`You have successfully opted in DAO of ID ${daoID}`,
@@ -105,3 +105,8 @@ export const TOKEN_DESCRIPTION = `In order to vote for proposals you have to dep
 <code>max({p in proposal_you_voted; p.end_voting_end})</code>). After
 that time you can withdraw your tokens, or keep them locked to vote for
 other proposals.`;
+
+export const EmptyDataDescription = {
+	DAO: "No Sigma DAOs Exists",
+	PROPOSAL: "No Proposals Exists",
+};

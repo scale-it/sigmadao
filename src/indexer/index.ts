@@ -5,7 +5,7 @@ import {
 } from "@/constants";
 import DaoID from "@/store/DaoID";
 import WalletStore from "@/store/WalletStore";
-import ProposalStore from "@/store/ProposalStore";
+import ProposalFormStore from "@/store/AddProposalStore";
 import { Key, StateValue } from "@algo-builder/algob/build/types";
 import type { LogicSigAccount } from "algosdk";
 import { getProposalLsig } from "../contract/dao";
@@ -94,7 +94,7 @@ export const getAccountAppLocalState = async (
 export const searchApplicationAndAccount = async () => {
 	const daoIdStore = DaoID();
 	const walletStore = WalletStore();
-	const proposalStore = ProposalStore();
+	const proposalFormStore = ProposalFormStore();
 
 	// check if dao id is present or not
 	if (typeof daoIdStore.dao_id === "undefined") {
@@ -126,7 +126,7 @@ export const searchApplicationAndAccount = async () => {
 			dao_id,
 			walletStore.address
 		);
-		proposalStore.setProposalAddr(lsig.address());
+		proposalFormStore.setProposalAddr(lsig.address());
 		if (daoIdStore.govt_id) {
 			const availableTokens = await getGovASATokenAmount(
 				walletStore.address,
