@@ -1,5 +1,5 @@
 <template>
-	<div class="margin_bottom_sm padding_inline_med">
+	<div class="margin_bottom_sm">
 		<h3 class="text_center">Sigma DAOs</h3>
 		<div class="flexbox_justify_space">
 			<a-input-search
@@ -8,7 +8,6 @@
 				placeholder="Search DAO by Name"
 				v-model:value="searchText"
 				@search="handleFilterData()"
-				:disabled="!dataSource.length > 0"
 			/>
 			<a-button
 				type="primary"
@@ -21,7 +20,7 @@
 		</div>
 	</div>
 	<a-row class="dao-table" type="flex" justify="center">
-		<div v-if="dataSource.length > 0" class="padding_inline_med">
+		<div v-if="dataSource.length > 0">
 			<a-list
 				:grid="{ gutter: 25, xs: 1, sm: 2, column: 3, size: 'middle' }"
 				:data-source="dataSource"

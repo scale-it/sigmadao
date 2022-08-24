@@ -1,4 +1,10 @@
 <template>
+	<a-breadcrumb>
+		<a-breadcrumb-item
+			><a @click="redirectToAllProposal">All Proposals</a></a-breadcrumb-item
+		>
+		<a-breadcrumb-item>Create Dao</a-breadcrumb-item>
+	</a-breadcrumb>
 	<h3 class="text_center">Create Proposal</h3>
 	<a-row>
 		<a-col :xs="{ span: 20, offset: 2 }" :sm="{ span: 14, offset: 6 }">
@@ -171,7 +177,7 @@ import {
 	daoAppMessage,
 	GLOBAL_STATE_MAP_KEY,
 } from "@/constants";
-import { DateRange, DAOActions } from "@/types";
+import { DateRange, DAOActions, EndPoint } from "@/types";
 import { defineComponent, reactive } from "vue";
 import ProposalFormStore from "../store/AddProposalStore";
 import WalletStore from "../store/WalletStore";
@@ -187,6 +193,7 @@ import {
 	optInToAppUsingSecretKey,
 	getDifferenceInSeconds,
 	toDaysMinutesSeconds,
+	redirectTo,
 } from "../utility";
 import DaoStore from "../store/DaoID";
 import ProposalTableStore from "../store/ProposalTableStore";
@@ -218,6 +225,9 @@ export default defineComponent({
 		};
 	},
 	methods: {
+		redirectToAllProposal() {
+			redirectTo(this.$router, EndPoint.PROPOSALS);
+		},
 		async optInDaoApp() {
 			try {
 				if (this.daoStore.dao_id) {
@@ -401,6 +411,7 @@ export default defineComponent({
 							payFlags: {},
 						},
 					];
+
 					let response = await this.walletStore.webMode.executeTx(
 						addProposalTx
 					);

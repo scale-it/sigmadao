@@ -29,7 +29,11 @@ html {
 :root {
 	max-width: 120rem;
 	margin: auto;
-	padding: 0;
+	padding: 2rem;
 	--font-size-small: 1.5rem;
 	--font-size-medium: 2rem;
+}
+
+.ant-page-header {
+	padding-inline: 0 !important;
 }

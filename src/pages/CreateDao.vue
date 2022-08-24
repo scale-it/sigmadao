@@ -1,4 +1,11 @@
 <template>
+	<a-breadcrumb>
+		<a-breadcrumb-item
+			><a @click="redirectToAllDao">All Dao</a></a-breadcrumb-item
+		>
+		<a-breadcrumb-item>Create Dao</a-breadcrumb-item>
+	</a-breadcrumb>
+
 	<h3 class="text_center">Create DAO</h3>
 	<a-row>
 		<a-col :xs="{ span: 20, offset: 2 }" :sm="{ span: 14, offset: 6 }">
@@ -310,13 +317,16 @@ export default defineComponent({
 				await this.fundDaoLsig(daoLsig);
 				await this.optInLsigToASA(daoLsig);
 				successMessage(this.key);
-				redirectTo(this.$router, EndPoint.ALL_DAO);
+				this.redirectToAllDao();
 			} catch (error) {
 				this.error = error.message;
 				errorMessage(this.key);
 				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message);
 				console.error("Transaction Failed", error);
 			}
+		},
+		redirectToAllDao() {
+			redirectTo(this.$router, EndPoint.ALL_DAO);
 		},
 		onFinishFailed(errorinfo: Event) {
 			console.warn("Failed:", errorinfo);

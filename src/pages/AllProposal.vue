@@ -1,5 +1,5 @@
 <template>
-	<div class="padding_inline_med margin_bottom_sm">
+	<div class="margin_bottom_sm">
 		<h3 style="text-align: center">
 			{{ ProposalFilterType[this.proposalDataStore.filterType] }} Proposals
 		</h3>
@@ -27,7 +27,7 @@
 		</div>
 	</div>
 	<a-row class="dao-table" type="flex" justify="center">
-		<div v-if="dataSource.length > 0" class="padding_inline_med">
+		<div v-if="dataSource.length > 0">
 			<a-list
 				:grid="{ gutter: 25, xs: 1, sm: 2, column: 3, size: 'middle' }"
 				:data-source="dataSource"
