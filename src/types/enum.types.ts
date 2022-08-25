@@ -40,6 +40,7 @@ export enum DAOActions {
 	WITHDRAW_VOTE_DEPOSIT = "str:withdraw_vote_deposit",
 	CLEAR_VOTE_RECORD = "str:clear_vote_record",
 	CLOSE_PROPOSAL = "str:close_proposal",
+	OPT_IN_GOV_TOKEN = "str:optin_gov_token",
 }
 
 export enum NetworkTypes {
