@@ -223,20 +223,6 @@ export default defineComponent({
 				return Promise.resolve();
 			}
 		},
-		async fundDaoLsig(lsig: LogicSigAccount) {
-			try {
-				await fundAmount(
-					this.walletStore.address,
-					lsig.address(),
-					2e6,
-					this.walletStore.webMode
-				);
-			} catch (error) {
-				this.error = error.message;
-				errorMessage(this.key);
-				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message);
-			}
-		},
 		// opt in dao lsig to gov asa
 		async optInLsigToASA(lsig: LogicSigAccount) {
 			const execParam: types.ExecParams = {
@@ -312,10 +298,7 @@ export default defineComponent({
 				const response = (await this.walletStore.webMode.executeTx(
 					deployApp
 				)) as unknown as ConfirmedTxInfo;
-				openSuccessNotificationWithIcon(
-					SUCCESSFUL,
-					createDaoMessage.SUCCESSFUL
-				);
+
 				const daoId = response?.["application-index"];
 				let daoLsig: LogicSigAccount = await getDaoFundLSig(daoId as number);
 
@@ -331,9 +314,6 @@ export default defineComponent({
 					amountMicroAlgos: 15e6,
 					payFlags: { totalFee: 1000 },
 				};
-				await this.walletStore.webMode.executeTx([fundAppParameters]);
-				await this.fundDaoLsig(daoLsig);
-				await this.optInLsigToASA(daoLsig);
 
 				// opt in deposit account (dao app account) to gov_token asa
 				const optInToGovASAParam: ExecParams = {
@@ -348,9 +328,31 @@ export default defineComponent({
 					foreignAssets: [token_id as number],
 					appArgs: [DAOActions.OPT_IN_GOV_TOKEN],
 				};
-				await this.walletStore.webMode.executeTx([optInToGovASAParam]);
+
+				const fundLsigParam: ExecParams = {
+					type: types.TransactionType.TransferAlgo,
+					sign: types.SignType.SecretKey,
+					fromAccount: {
+						addr: this.walletStore.address,
+						sk: new Uint8Array(0),
+					},
+					toAccountAddr: daoLsig.address(),
+					amountMicroAlgos: 5e6,
+					payFlags: {},
+				};
+
+				await this.walletStore.webMode.executeTx([
+					fundAppParameters,
+					optInToGovASAParam,
+					fundLsigParam,
+				]);
+				await this.optInLsigToASA(daoLsig);
 
 				successMessage(this.key);
+				openSuccessNotificationWithIcon(
+					SUCCESSFUL,
+					createDaoMessage.SUCCESSFUL
+				);
 				this.redirectToAllDao();
 			} catch (error) {
 				this.error = error.message;

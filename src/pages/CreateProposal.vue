@@ -378,8 +378,8 @@ export default defineComponent({
 							break;
 						}
 					}
-					await this.checkOptInLsigToApp(lsig);
 					await this.checkLsigFund(lsig);
+					await this.checkOptInLsigToApp(lsig);
 
 					const globalStateMinAmount =
 						this.daoStore.global_app_state?.get(GLOBAL_STATE_MAP_KEY.Deposit) ??
@@ -392,6 +392,18 @@ export default defineComponent({
 						openErrorNotificationWithIcon(UNSUCCESSFUL, this.error);
 						return;
 					}
+					const callAppTx: types.ExecParams = {
+						type: types.TransactionType.CallApp,
+						sign: types.SignType.LogicSignature,
+						fromAccountAddr: lsig.address(),
+						appID: this.daoStore.dao_id as number,
+						lsig: lsig,
+						payFlags: {},
+						appArgs: proposalParams,
+					};
+
+					const callAppTxResponse = await signTxUsingLsig(lsig, callAppTx);
+					console.log("add proposal response", callAppTxResponse);
 					const transferAssetTx: types.ExecParams = {
 						type: types.TransactionType.TransferAsset,
 						sign: types.SignType.SecretKey,
@@ -408,19 +420,6 @@ export default defineComponent({
 						await this.walletStore.webMode.executeTx([transferAssetTx]);
 					console.log("transfer tx response", transferAssetTxResponse);
 					await searchApplicationAndAccount(); // to update locked and available token on UI
-					const callAppTx: types.ExecParams = {
-						type: types.TransactionType.CallApp,
-						sign: types.SignType.LogicSignature,
-						fromAccountAddr: lsig.address(),
-						appID: this.daoStore.dao_id as number,
-						lsig: lsig,
-						payFlags: { totalFee: 1000 },
-						appArgs: proposalParams,
-					};
-
-					const callAppTxResponse = await signTxUsingLsig(lsig, callAppTx);
-					console.log("add proposal response", callAppTxResponse);
-
 					successMessage(this.key);
 					openSuccessNotificationWithIcon(
 						SUCCESSFUL,
@@ -476,7 +475,7 @@ export default defineComponent({
 				await fundAmount(
 					this.walletStore.address,
 					lsig.address(),
-					2e6,
+					5e6,
 					this.walletStore.webMode
 				);
 			} catch (error) {
