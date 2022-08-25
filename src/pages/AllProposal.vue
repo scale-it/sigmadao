@@ -347,13 +347,17 @@ export default defineComponent({
 			);
 			// checking if the requestor is proposal creator
 			if (lsig.address() === record.proposal_addr) {
-				closeProposal(
-					this.walletStore.address,
-					lsig,
-					this.daoStore.govt_id as number,
-					this.daoStore.dao_id as number,
-					this.walletStore.webMode
-				);
+				try {
+					const response = await closeProposal(
+						this.walletStore.address,
+						lsig,
+						this.daoStore.govt_id as number,
+						this.daoStore.dao_id as number,
+						this.walletStore.webMode
+					);
+				} catch (error) {
+					openErrorNotificationWithIcon(UNSUCCESSFUL, error);
+				}
 			} else {
 				openErrorNotificationWithIcon(
 					UNSUCCESSFUL,

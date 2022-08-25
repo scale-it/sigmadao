@@ -148,8 +148,13 @@ import WalletStore from "@/store/WalletStore";
 import { types } from "@algo-builder/web";
 import { defineComponent, reactive } from "vue";
 import CreateDAOStore from "../store/CreateDaoStore";
-import { DurationType, CreateDaoFormState, EndPoint } from "@/types";
-import { MetaType } from "@algo-builder/web/build/types";
+import {
+	DurationType,
+	CreateDaoFormState,
+	EndPoint,
+	DAOActions,
+} from "@/types";
+import { ExecParams, MetaType } from "@algo-builder/web/build/types";
 import {
 	getCompiledDaoApproval,
 	getCompiledDaoClear,
@@ -159,12 +164,12 @@ import { Rule } from "ant-design-vue/lib/form";
 import {
 	convertDurationTypeToSeconds,
 	fundAmount,
-	optInUsingLsig,
+	signTxUsingLsig,
 	redirectTo,
 } from "@/utility";
 import { getAssetInformation } from "@/indexer";
 import InfoToolTip from "../components/InfoToolTip.vue";
-import { LogicSigAccount } from "algosdk";
+import { getApplicationAddress, LogicSigAccount } from "algosdk";
 import { ConfirmedTxInfo } from "@algo-builder/algob/build/types";
 
 export default defineComponent({
@@ -242,7 +247,7 @@ export default defineComponent({
 				assetID: this.formState.token_id as number,
 				payFlags: {},
 			};
-			let response = await optInUsingLsig(lsig, execParam);
+			let response = await signTxUsingLsig(lsig, execParam);
 			console.log(response);
 		},
 		async onFinish(value: CreateDaoFormState) {
@@ -314,8 +319,37 @@ export default defineComponent({
 				const daoId = response?.["application-index"];
 				let daoLsig: LogicSigAccount = await getDaoFundLSig(daoId as number);
 
+				// Fund application account with some ALGO(5)
+				const fundAppParameters: ExecParams = {
+					type: types.TransactionType.TransferAlgo,
+					sign: types.SignType.SecretKey,
+					fromAccount: {
+						addr: this.walletStore.address,
+						sk: new Uint8Array(0),
+					},
+					toAccountAddr: getApplicationAddress(daoId),
+					amountMicroAlgos: 15e6,
+					payFlags: { totalFee: 1000 },
+				};
+				await this.walletStore.webMode.executeTx([fundAppParameters]);
 				await this.fundDaoLsig(daoLsig);
 				await this.optInLsigToASA(daoLsig);
+
+				// opt in deposit account (dao app account) to gov_token asa
+				const optInToGovASAParam: ExecParams = {
+					type: types.TransactionType.CallApp,
+					sign: types.SignType.SecretKey,
+					fromAccount: {
+						addr: this.walletStore.address,
+						sk: new Uint8Array(0),
+					},
+					appID: daoId,
+					payFlags: { totalFee: 2000 },
+					foreignAssets: [token_id as number],
+					appArgs: [DAOActions.OPT_IN_GOV_TOKEN],
+				};
+				await this.walletStore.webMode.executeTx([optInToGovASAParam]);
+
 				successMessage(this.key);
 				this.redirectToAllDao();
 			} catch (error) {

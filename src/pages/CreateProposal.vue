@@ -79,7 +79,7 @@
 					name="execute_before"
 					:rules="[{ required: true, validator: validateExecuteBefore }]"
 				>
-					<a-time-picker
+					<a-date-picker
 						v-model:value="formState.execute_before"
 						showTime
 						format="YYYY-MM-DD HH:mm"
@@ -189,7 +189,7 @@ import { getAccountInfoByAddress, isApplicationOpted } from "@/indexer";
 import {
 	fundAmount,
 	convertToSeconds,
-	optInUsingLsig,
+	signTxUsingLsig,
 	optInToAppUsingSecretKey,
 	getDifferenceInSeconds,
 	toDaysMinutesSeconds,
@@ -388,39 +388,40 @@ export default defineComponent({
 						openErrorNotificationWithIcon(UNSUCCESSFUL, this.error);
 						return;
 					}
-					const addProposalTx: types.ExecParams[] = [
-						{
-							type: types.TransactionType.CallApp,
-							sign: types.SignType.LogicSignature,
-							fromAccountAddr: lsig.address(),
-							appID: this.daoStore.dao_id as number,
-							lsig: lsig,
-							payFlags: {},
-							appArgs: proposalParams,
+					const transferAssetTx: types.ExecParams = {
+						type: types.TransactionType.TransferAsset,
+						sign: types.SignType.SecretKey,
+						fromAccount: {
+							addr: this.walletStore.address,
+							sk: new Uint8Array(0),
 						},
-						{
-							type: types.TransactionType.TransferAsset,
-							sign: types.SignType.SecretKey,
-							fromAccount: {
-								addr: this.walletStore.address,
-								sk: new Uint8Array(0),
-							},
-							toAccountAddr: getApplicationAddress(this.daoStore.dao_id),
-							amount: globalStateMinAmount as number,
-							assetID: this.daoStore.govt_id as number,
-							payFlags: {},
-						},
-					];
+						toAccountAddr: getApplicationAddress(this.daoStore.dao_id),
+						amount: globalStateMinAmount as number,
+						assetID: this.daoStore.govt_id as number,
+						payFlags: {},
+					};
+					let transferAssetTxResponse =
+						await this.walletStore.webMode.executeTx([transferAssetTx]);
+					console.log("transfer tx response", transferAssetTxResponse);
 
-					let response = await this.walletStore.webMode.executeTx(
-						addProposalTx
-					);
+					const callAppTx: types.ExecParams = {
+						type: types.TransactionType.CallApp,
+						sign: types.SignType.LogicSignature,
+						fromAccountAddr: lsig.address(),
+						appID: this.daoStore.dao_id as number,
+						lsig: lsig,
+						payFlags: { totalFee: 1000 },
+						appArgs: proposalParams,
+					};
+
+					const callAppTxResponse = await signTxUsingLsig(lsig, callAppTx);
+					console.log("add proposal response", callAppTxResponse);
+
 					successMessage(this.key);
 					openSuccessNotificationWithIcon(
 						SUCCESSFUL,
 						proposalMessage.SUCCESSFUL
 					);
-					console.log(response);
 				}
 			} catch (error) {
 				this.error = error.message;
@@ -498,7 +499,7 @@ export default defineComponent({
 					appID: this.daoStore.dao_id as number,
 					payFlags: {},
 				};
-				let response = await optInUsingLsig(lsig, execParam);
+				let response = await signTxUsingLsig(lsig, execParam);
 				console.log(response);
 			} catch (error) {
 				this.error = error.message;
