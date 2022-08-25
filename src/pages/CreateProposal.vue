@@ -185,7 +185,11 @@ import DaoID from "../store/DaoID";
 import { types } from "@algo-builder/web";
 import type { LogicSigAccount } from "algosdk";
 import { getProposalLsig, getDaoFundLSig } from "../contract/dao";
-import { getAccountInfoByAddress, isApplicationOpted } from "@/indexer";
+import {
+	getAccountInfoByAddress,
+	isApplicationOpted,
+	searchApplicationAndAccount,
+} from "@/indexer";
 import {
 	fundAmount,
 	convertToSeconds,
@@ -403,7 +407,7 @@ export default defineComponent({
 					let transferAssetTxResponse =
 						await this.walletStore.webMode.executeTx([transferAssetTx]);
 					console.log("transfer tx response", transferAssetTxResponse);
-
+					await searchApplicationAndAccount(); // to update locked and available token on UI
 					const callAppTx: types.ExecParams = {
 						type: types.TransactionType.CallApp,
 						sign: types.SignType.LogicSignature,

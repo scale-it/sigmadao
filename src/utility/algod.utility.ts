@@ -46,6 +46,7 @@ export const signTxUsingLsig = async (
 		console.log("confirmed: ", confirmationWait);
 	} catch (error) {
 		console.error(error);
+		throw error;
 	}
 };
 
