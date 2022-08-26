@@ -38,11 +38,15 @@
 					</a-select>
 				</a-form-item>
 				<a-form-item :wrapper-col="{ offset: 12, span: 20 }">
-					<a-button type="primary" html-type="submit">Submit</a-button>
-				</a-form-item>
-				<a-form-item :wrapper-col="{ offset: 12, span: 20 }">
-					<a-button type="primary" @click="clearVote()"
-						>Clear Vote Recoed</a-button
+					<a-button class="margin_extra_sm" type="primary" html-type="submit"
+						>Vote</a-button
+					>
+					<a-button
+						class="margin_extra_sm"
+						type="primary"
+						danger
+						@click="clearVote()"
+						>Clear Vote Record</a-button
 					>
 				</a-form-item>
 			</a-form>

@@ -30,7 +30,7 @@
 				</a-form-item>
 
 				<a-form-item :wrapper-col="{ offset: 12, span: 20 }">
-					<a-button type="primary" html-type="submit">Submit</a-button>
+					<a-button type="primary" html-type="submit">Withdraw</a-button>
 				</a-form-item>
 			</a-form>
 		</a-col>

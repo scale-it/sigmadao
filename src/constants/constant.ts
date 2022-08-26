@@ -115,4 +115,4 @@ export const EmptyDataDescription = {
 	PROPOSAL: "No Proposals Exists",
 };
 
-export const DEFAULT_FUND_AMT = 0.3e6;
+export const DEFAULT_FUND_AMT = 0.3;

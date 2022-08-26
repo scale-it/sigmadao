@@ -156,7 +156,7 @@
 					<a-input-number v-model:value="lsig_fund_amount" />
 				</a-form-item>
 				<a-form-item :wrapper-col="{ offset: 10, span: 20 }">
-					<a-button type="primary" html-type="submit">Submit</a-button>
+					<a-button type="primary" html-type="submit">Create Proposal</a-button>
 				</a-form-item>
 			</a-form>
 		</a-col>
@@ -212,7 +212,7 @@ export default defineComponent({
 			error: "",
 			key: "AddProposalKey",
 			DaoStore,
-			lsig_fund_amount: 0,
+			lsig_fund_amount: DEFAULT_FUND_AMT,
 		};
 	},
 	setup() {
@@ -443,19 +443,10 @@ export default defineComponent({
 		// funding lsig if the account has no algos
 		async checkLsigFund(lsig: LogicSigAccount) {
 			try {
-				const response = await getAccountInfoByAddress(lsig.address());
-				let amount = null;
-				if (response) {
-					amount = response?.amount;
-				}
-				if ((amount as number) < DEFAULT_FUND_AMT) return;
-				// fund lsig
 				await fundAmount(
 					this.walletStore.address,
 					lsig.address(),
-					this.lsig_fund_amount === 0
-						? DEFAULT_FUND_AMT
-						: this.lsig_fund_amount,
+					this.lsig_fund_amount * 1e6,
 					this.walletStore.webMode
 				);
 			} catch (error) {

@@ -136,7 +136,7 @@
 					<a-input-number v-model:value="dao_lsig_fund_amount" />
 				</a-form-item>
 				<a-form-item :wrapper-col="{ offset: 10, span: 20 }">
-					<a-button type="primary" html-type="submit">Submit</a-button>
+					<a-button type="primary" html-type="submit">Create DAO</a-button>
 				</a-form-item>
 			</a-form>
 		</a-col>
@@ -193,8 +193,8 @@ export default defineComponent({
 			maxDurationInputType: DurationType.HOURS,
 			DurationType,
 			EndPoint,
-			dao_lsig_fund_amount: 0,
-			dao_acc_fund_amount: 0,
+			dao_lsig_fund_amount: DEFAULT_FUND_AMT,
+			dao_acc_fund_amount: DEFAULT_FUND_AMT,
 		};
 	},
 	setup() {
@@ -308,10 +308,7 @@ export default defineComponent({
 						sk: new Uint8Array(0),
 					},
 					toAccountAddr: getApplicationAddress(daoId),
-					amountMicroAlgos:
-						this.dao_acc_fund_amount === 0
-							? DEFAULT_FUND_AMT
-							: this.dao_acc_fund_amount,
+					amountMicroAlgos: this.dao_acc_fund_amount * 1e6,
 					payFlags: { totalFee: 1000 },
 				};
 
@@ -337,10 +334,7 @@ export default defineComponent({
 						sk: new Uint8Array(0),
 					},
 					toAccountAddr: daoLsig.address(),
-					amountMicroAlgos:
-						this.dao_lsig_fund_amount === 0
-							? DEFAULT_FUND_AMT
-							: this.dao_lsig_fund_amount,
+					amountMicroAlgos: this.dao_lsig_fund_amount * 1e6,
 					payFlags: {},
 				};
 
