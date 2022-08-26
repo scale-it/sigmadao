@@ -42,6 +42,10 @@ export const PROPOSAL_LOCAL_STATE_MAP_KEY = {
 	Voting_Start: "voting_start",
 	Voting_End: "voting_end",
 	Execute_Before: "Execute_Before",
+	From: "from",
+	Recipient: "recipient",
+	ASA_ID: "asa_id",
+	Amount: "amount",
 };
 
 export const MILLI_SECOND = 1000;

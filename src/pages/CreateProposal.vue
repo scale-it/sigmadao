@@ -402,8 +402,6 @@ export default defineComponent({
 						appArgs: proposalParams,
 					};
 
-					const callAppTxResponse = await signTxUsingLsig(lsig, callAppTx);
-					console.log("add proposal response", callAppTxResponse);
 					const transferAssetTx: types.ExecParams = {
 						type: types.TransactionType.TransferAsset,
 						sign: types.SignType.SecretKey,
@@ -417,7 +415,10 @@ export default defineComponent({
 						payFlags: {},
 					};
 					let transferAssetTxResponse =
-						await this.walletStore.webMode.executeTx([transferAssetTx]);
+						await this.walletStore.webMode.executeTx([
+							callAppTx,
+							transferAssetTx,
+						]);
 					console.log("transfer tx response", transferAssetTxResponse);
 					await searchApplicationAndAccount(); // to update locked and available token on UI
 					successMessage(this.key);

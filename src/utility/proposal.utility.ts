@@ -1,5 +1,5 @@
-import { ProposalType } from "@/constants";
-import { isAssetOpted } from "@/indexer";
+import { ProposalType, PROPOSAL_LOCAL_STATE_MAP_KEY } from "@/constants";
+import { getAccountAppLocalState, isAssetOpted } from "@/indexer";
 import { DAOActions, ProposalTableData } from "@/types";
 import { types } from "@algo-builder/web";
 import { LogicSigAccount } from "algosdk";
@@ -76,6 +76,41 @@ export const closeProposal = async (
 };
 
 /**
+ * Withdraws from proposalLsig to owner account
+ * @param proposerAddr : account addr of the proposer
+ * @param proposalLsig : LsigAccount of the proposal
+ * @param amount : amount to withdraw (ASA amount)
+ * @param govTokenID : gov token ID (ASA which will be transferred)
+ */
+export const withdrawFromProposal = async (
+	proposerAddr: string,
+	proposalLsig: LogicSigAccount,
+	amount: number,
+	govTokenID: number
+) => {
+	try {
+		const withdrawFromProposalTx: types.ExecParams = {
+			type: types.TransactionType.TransferAsset,
+			sign: types.SignType.LogicSignature,
+			fromAccountAddr: proposalLsig.address(),
+			toAccountAddr: proposerAddr,
+			amount: amount,
+			lsig: proposalLsig,
+			assetID: govTokenID,
+			payFlags: { totalFee: 1000 },
+		};
+		const withdrawResponse = await signTxUsingLsig(
+			proposalLsig,
+			withdrawFromProposalTx
+		);
+		console.log(withdrawResponse);
+	} catch (error) {
+		console.error("Clear Vote Record transaction failed", error);
+		throw error;
+	}
+};
+
+/**
  * Clearing vote record of ${voterAddr} from proposal
  * @param proposalLsig : LsigAccount of the proposal
  * @param voterAddr : voter address
@@ -115,7 +150,6 @@ export const clearRecord = async (
  * @param proposalLsig : LsigAccount of the proposal
  * @param daoAppID : DAO app ID
  * @param proposalData : proposal data
- * @param daoFundLsig : Dao Fund Lsig
  * @param webMode : webmode to execute transaction
  */
 export const executeProposal = async (
@@ -123,10 +157,13 @@ export const executeProposal = async (
 	proposalLsig: LogicSigAccount,
 	daoAppID: number,
 	proposalData: ProposalTableData,
-	daoFundLsig: LogicSigAccount,
 	webMode: any // eslint-disable-line
 ) => {
 	try {
+		const localState = await getAccountAppLocalState(
+			proposalLsig.address(),
+			daoAppID
+		);
 		const executeParams: types.ExecParams[] = [
 			{
 				type: types.TransactionType.CallApp,
@@ -140,15 +177,56 @@ export const executeProposal = async (
 				appArgs: [DAOActions.EXECUTE],
 				accounts: [proposalLsig.address()],
 			},
-			// TODO: add the txn which needs to be executed
 		];
 
 		switch (proposalData.type) {
 			case ProposalType.ALGO_TRANSFER:
+				{
+					executeParams.push({
+						type: types.TransactionType.TransferAlgo,
+						sign: types.SignType.SecretKey,
+						fromAccount: {
+							addr: localState?.get(
+								PROPOSAL_LOCAL_STATE_MAP_KEY.From
+							) as string,
+							sk: new Uint8Array(0),
+						},
+						toAccountAddr: localState?.get(
+							PROPOSAL_LOCAL_STATE_MAP_KEY.Recipient
+						) as string,
+						amountMicroAlgos: localState?.get(
+							PROPOSAL_LOCAL_STATE_MAP_KEY.Amount
+						) as number,
+						payFlags: { totalFee: 0 },
+					});
+				}
 				break;
 			case ProposalType.ASA_TRANSFER:
+				{
+					executeParams.push({
+						type: types.TransactionType.TransferAsset,
+						sign: types.SignType.SecretKey,
+						fromAccount: {
+							addr: localState?.get(
+								PROPOSAL_LOCAL_STATE_MAP_KEY.From
+							) as string,
+							sk: new Uint8Array(0),
+						},
+						amount: localState?.get(
+							PROPOSAL_LOCAL_STATE_MAP_KEY.Amount
+						) as number,
+						assetID: localState?.get(
+							PROPOSAL_LOCAL_STATE_MAP_KEY.ASA_ID
+						) as number,
+						toAccountAddr: localState?.get(
+							PROPOSAL_LOCAL_STATE_MAP_KEY.Recipient
+						) as string,
+						payFlags: { totalFee: 0 },
+					});
+				}
 				break;
 			case ProposalType.MESSAGE:
+				// no transaction
 				break;
 		}
 
