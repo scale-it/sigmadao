@@ -152,6 +152,9 @@
 						<a-input v-model:value="formState.message" />
 					</a-form-item>
 				</div>
+				<a-form-item label="Algos Amount to fund Lsig" name="lsig_fund_amount">
+					<a-input-number v-model:value="lsig_fund_amount" />
+				</a-form-item>
 				<a-form-item :wrapper-col="{ offset: 10, span: 20 }">
 					<a-button type="primary" html-type="submit">Submit</a-button>
 				</a-form-item>
@@ -174,8 +177,8 @@ import {
 	SUCCESSFUL,
 	openErrorNotificationWithIcon,
 	UNSUCCESSFUL,
-	daoAppMessage,
 	GLOBAL_STATE_MAP_KEY,
+	DEFAULT_FUND_AMT,
 } from "@/constants";
 import { DateRange, DAOActions, EndPoint } from "@/types";
 import { defineComponent, reactive } from "vue";
@@ -187,14 +190,11 @@ import type { LogicSigAccount } from "algosdk";
 import { getProposalLsig, getDaoFundLSig } from "../contract/dao";
 import {
 	getAccountInfoByAddress,
-	isApplicationOpted,
 	searchApplicationAndAccount,
 } from "@/indexer";
 import {
 	fundAmount,
 	convertToSeconds,
-	signTxUsingLsig,
-	optInToAppUsingSecretKey,
 	getDifferenceInSeconds,
 	toDaysMinutesSeconds,
 	redirectTo,
@@ -212,6 +212,7 @@ export default defineComponent({
 			error: "",
 			key: "AddProposalKey",
 			DaoStore,
+			lsig_fund_amount: 0,
 		};
 	},
 	setup() {
@@ -231,29 +232,6 @@ export default defineComponent({
 	methods: {
 		redirectToAllProposal() {
 			redirectTo(this.$router, EndPoint.PROPOSALS);
-		},
-		async optInDaoApp() {
-			try {
-				if (this.daoStore.dao_id) {
-					const isOptedIn = await isApplicationOpted(
-						this.walletStore.address,
-						this.daoStore.dao_id
-					);
-					if (!isOptedIn) {
-						await optInToAppUsingSecretKey(
-							this.walletStore.address,
-							this.daoStore.dao_id,
-							this.walletStore.webMode
-						);
-						openSuccessNotificationWithIcon(
-							"Successful",
-							daoAppMessage.OPT_IN_SUCCESSFUL(this.daoStore.dao_id)
-						);
-					}
-				}
-			} catch (error) {
-				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message);
-			}
 		},
 		//  execute_before must be after voting_end
 		async validateExecuteBefore(_rule: Rule, value: string) {
@@ -332,7 +310,7 @@ export default defineComponent({
 				this.error = overallErrorCheck();
 				if (!this.error) {
 					loadingMessage(this.key);
-					await this.optInDaoApp();
+
 					let lsig: LogicSigAccount = await getProposalLsig(
 						this.daoStore.dao_id as number,
 						this.walletStore.address
@@ -379,7 +357,6 @@ export default defineComponent({
 						}
 					}
 					await this.checkLsigFund(lsig);
-					await this.checkOptInLsigToApp(lsig);
 
 					const globalStateMinAmount =
 						this.daoStore.global_app_state?.get(GLOBAL_STATE_MAP_KEY.Deposit) ??
@@ -414,18 +391,18 @@ export default defineComponent({
 						assetID: this.daoStore.govt_id as number,
 						payFlags: {},
 					};
-					let transferAssetTxResponse =
-						await this.walletStore.webMode.executeTx([
-							callAppTx,
-							transferAssetTx,
-						]);
-					console.log("transfer tx response", transferAssetTxResponse);
+					let addProposalResponse = await this.walletStore.webMode.executeTx([
+						callAppTx,
+						transferAssetTx,
+					]);
+					console.log("Add Proposal txn response", addProposalResponse);
 					await searchApplicationAndAccount(); // to update locked and available token on UI
 					successMessage(this.key);
 					openSuccessNotificationWithIcon(
 						SUCCESSFUL,
 						proposalMessage.SUCCESSFUL
 					);
+					this.redirectToAllProposal();
 				}
 			} catch (error) {
 				this.error = error.message;
@@ -471,40 +448,16 @@ export default defineComponent({
 				if (response) {
 					amount = response?.amount;
 				}
-				if (amount) return;
+				if ((amount as number) < DEFAULT_FUND_AMT) return;
 				// fund lsig
 				await fundAmount(
 					this.walletStore.address,
 					lsig.address(),
-					5e6,
+					this.lsig_fund_amount === 0
+						? DEFAULT_FUND_AMT
+						: this.lsig_fund_amount,
 					this.walletStore.webMode
 				);
-			} catch (error) {
-				this.error = error.message;
-				errorMessage(this.key);
-				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message);
-			}
-		},
-		async checkOptInLsigToApp(lsig: LogicSigAccount) {
-			try {
-				// check if app is already opted
-				const isApplicationAlreadyOpted = await isApplicationOpted(
-					lsig.address(),
-					this.daoStore.dao_id as number
-				);
-				if (isApplicationAlreadyOpted) return;
-
-				// optin to app
-				const execParam: types.ExecParams = {
-					type: types.TransactionType.OptInToApp,
-					sign: types.SignType.LogicSignature,
-					fromAccountAddr: lsig.address(),
-					lsig: lsig,
-					appID: this.daoStore.dao_id as number,
-					payFlags: {},
-				};
-				let response = await signTxUsingLsig(lsig, execParam);
-				console.log(response);
 			} catch (error) {
 				this.error = error.message;
 				errorMessage(this.key);

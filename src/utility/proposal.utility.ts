@@ -1,9 +1,9 @@
 import { ProposalType, PROPOSAL_LOCAL_STATE_MAP_KEY } from "@/constants";
+import { getDaoFundLSig } from "@/contract/dao";
 import { getAccountAppLocalState, isAssetOpted } from "@/indexer";
 import { DAOActions, ProposalTableData } from "@/types";
 import { types } from "@algo-builder/web";
 import { LogicSigAccount } from "algosdk";
-import { signTxUsingLsig } from "./algod.utility";
 
 /**
  * closes proposal by creator
@@ -59,53 +59,15 @@ export const closeProposal = async (
 		console.log(transferResponse);
 		const isGovTokenOpted = await isAssetOpted(proposalLsig.address(), tokenID);
 		if (!isGovTokenOpted) {
-			const optInResponse = await signTxUsingLsig(proposalLsig, optInTx);
+			const optInResponse = await webMode.executeTx([optInTx]);
 			console.log(optInResponse);
 		}
 
-		const closeProposalResponse = await signTxUsingLsig(
-			proposalLsig,
-			closeProposalTx
-		);
+		const closeProposalResponse = await webMode.executeTx([closeProposalTx]);
 
 		console.log(closeProposalResponse);
 	} catch (error) {
 		console.error("Close Proposal transaction failed", error);
-		throw error;
-	}
-};
-
-/**
- * Withdraws from proposalLsig to owner account
- * @param proposerAddr : account addr of the proposer
- * @param proposalLsig : LsigAccount of the proposal
- * @param amount : amount to withdraw (ASA amount)
- * @param govTokenID : gov token ID (ASA which will be transferred)
- */
-export const withdrawFromProposal = async (
-	proposerAddr: string,
-	proposalLsig: LogicSigAccount,
-	amount: number,
-	govTokenID: number
-) => {
-	try {
-		const withdrawFromProposalTx: types.ExecParams = {
-			type: types.TransactionType.TransferAsset,
-			sign: types.SignType.LogicSignature,
-			fromAccountAddr: proposalLsig.address(),
-			toAccountAddr: proposerAddr,
-			amount: amount,
-			lsig: proposalLsig,
-			assetID: govTokenID,
-			payFlags: { totalFee: 1000 },
-		};
-		const withdrawResponse = await signTxUsingLsig(
-			proposalLsig,
-			withdrawFromProposalTx
-		);
-		console.log(withdrawResponse);
-	} catch (error) {
-		console.error("Clear Vote Record transaction failed", error);
 		throw error;
 	}
 };
@@ -117,7 +79,7 @@ export const withdrawFromProposal = async (
  * @param daoAppID : DAO app ID
  * @param webMode : webmode to execute transaction
  */
-export const clearRecord = async (
+export const clearVoteRecord = async (
 	proposalLsig: LogicSigAccount,
 	voterAddr: string,
 	daoAppID: number,
@@ -160,6 +122,7 @@ export const executeProposal = async (
 	webMode: any // eslint-disable-line
 ) => {
 	try {
+		const daoFundLsig: LogicSigAccount = await getDaoFundLSig(daoAppID);
 		const localState = await getAccountAppLocalState(
 			proposalLsig.address(),
 			daoAppID
@@ -184,19 +147,15 @@ export const executeProposal = async (
 				{
 					executeParams.push({
 						type: types.TransactionType.TransferAlgo,
-						sign: types.SignType.SecretKey,
-						fromAccount: {
-							addr: localState?.get(
-								PROPOSAL_LOCAL_STATE_MAP_KEY.From
-							) as string,
-							sk: new Uint8Array(0),
-						},
+						sign: types.SignType.LogicSignature,
+						fromAccountAddr: daoFundLsig.address(),
 						toAccountAddr: localState?.get(
 							PROPOSAL_LOCAL_STATE_MAP_KEY.Recipient
 						) as string,
 						amountMicroAlgos: localState?.get(
 							PROPOSAL_LOCAL_STATE_MAP_KEY.Amount
 						) as number,
+						lsig: daoFundLsig,
 						payFlags: { totalFee: 0 },
 					});
 				}
@@ -205,13 +164,8 @@ export const executeProposal = async (
 				{
 					executeParams.push({
 						type: types.TransactionType.TransferAsset,
-						sign: types.SignType.SecretKey,
-						fromAccount: {
-							addr: localState?.get(
-								PROPOSAL_LOCAL_STATE_MAP_KEY.From
-							) as string,
-							sk: new Uint8Array(0),
-						},
+						sign: types.SignType.LogicSignature,
+						fromAccountAddr: daoFundLsig.address(),
 						amount: localState?.get(
 							PROPOSAL_LOCAL_STATE_MAP_KEY.Amount
 						) as number,
@@ -221,6 +175,7 @@ export const executeProposal = async (
 						toAccountAddr: localState?.get(
 							PROPOSAL_LOCAL_STATE_MAP_KEY.Recipient
 						) as string,
+						lsig: daoFundLsig,
 						payFlags: { totalFee: 0 },
 					});
 				}

@@ -123,6 +123,18 @@
 				>
 					<a-input maxlength="32" v-model:value="formState.dao_name" />
 				</a-form-item>
+				<a-form-item
+					label="Algos amount to fund DAO Account"
+					name="dao_acc_fund_amount"
+				>
+					<a-input-number v-model:value="dao_acc_fund_amount" />
+				</a-form-item>
+				<a-form-item
+					label="Algos amount fund DAO Lsig"
+					name="dao_lsig_fund_amount"
+				>
+					<a-input-number v-model:value="dao_lsig_fund_amount" />
+				</a-form-item>
 				<a-form-item :wrapper-col="{ offset: 10, span: 20 }">
 					<a-button type="primary" html-type="submit">Submit</a-button>
 				</a-form-item>
@@ -135,6 +147,7 @@
 import {
 	createDaoMessage,
 	DAO_CONTRACT_STATE_CONFIG,
+	DEFAULT_FUND_AMT,
 	errorMessage,
 	loadingMessage,
 	openErrorNotificationWithIcon,
@@ -161,12 +174,7 @@ import {
 	getDaoFundLSig,
 } from "@/contract/dao";
 import { Rule } from "ant-design-vue/lib/form";
-import {
-	convertDurationTypeToSeconds,
-	fundAmount,
-	signTxUsingLsig,
-	redirectTo,
-} from "@/utility";
+import { convertDurationTypeToSeconds, redirectTo } from "@/utility";
 import { getAssetInformation } from "@/indexer";
 import InfoToolTip from "../components/InfoToolTip.vue";
 import { getApplicationAddress, LogicSigAccount } from "algosdk";
@@ -185,6 +193,8 @@ export default defineComponent({
 			maxDurationInputType: DurationType.HOURS,
 			DurationType,
 			EndPoint,
+			dao_lsig_fund_amount: 0,
+			dao_acc_fund_amount: 0,
 		};
 	},
 	setup() {
@@ -222,19 +232,6 @@ export default defineComponent({
 				}
 				return Promise.resolve();
 			}
-		},
-		// opt in dao lsig to gov asa
-		async optInLsigToASA(lsig: LogicSigAccount) {
-			const execParam: types.ExecParams = {
-				type: types.TransactionType.OptInASA,
-				sign: types.SignType.LogicSignature,
-				fromAccountAddr: lsig.address(),
-				lsig: lsig,
-				assetID: this.formState.token_id as number,
-				payFlags: {},
-			};
-			let response = await signTxUsingLsig(lsig, execParam);
-			console.log(response);
 		},
 		async onFinish(value: CreateDaoFormState) {
 			let {
@@ -311,11 +308,14 @@ export default defineComponent({
 						sk: new Uint8Array(0),
 					},
 					toAccountAddr: getApplicationAddress(daoId),
-					amountMicroAlgos: 15e6,
+					amountMicroAlgos:
+						this.dao_acc_fund_amount === 0
+							? DEFAULT_FUND_AMT
+							: this.dao_acc_fund_amount,
 					payFlags: { totalFee: 1000 },
 				};
 
-				// opt in deposit account (dao app account) to gov_token asa
+				// opt in deposit account (dao app account) to gov_token asa so as to recieve gov tokens in future(like add_proposal, vote token, etc)
 				const optInToGovASAParam: ExecParams = {
 					type: types.TransactionType.CallApp,
 					sign: types.SignType.SecretKey,
@@ -337,7 +337,19 @@ export default defineComponent({
 						sk: new Uint8Array(0),
 					},
 					toAccountAddr: daoLsig.address(),
-					amountMicroAlgos: 5e6,
+					amountMicroAlgos:
+						this.dao_lsig_fund_amount === 0
+							? DEFAULT_FUND_AMT
+							: this.dao_lsig_fund_amount,
+					payFlags: {},
+				};
+
+				const optInDaoLsigParam: types.ExecParams = {
+					type: types.TransactionType.OptInASA,
+					sign: types.SignType.LogicSignature,
+					fromAccountAddr: daoLsig.address(),
+					lsig: daoLsig,
+					assetID: this.formState.token_id as number,
 					payFlags: {},
 				};
 
@@ -345,8 +357,8 @@ export default defineComponent({
 					fundAppParameters,
 					optInToGovASAParam,
 					fundLsigParam,
+					optInDaoLsigParam,
 				]);
-				await this.optInLsigToASA(daoLsig);
 
 				successMessage(this.key);
 				openSuccessNotificationWithIcon(

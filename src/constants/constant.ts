@@ -114,3 +114,5 @@ export const EmptyDataDescription = {
 	DAO: "No Sigma DAOs Exists",
 	PROPOSAL: "No Proposals Exists",
 };
+
+export const DEFAULT_FUND_AMT = 0.3e6;

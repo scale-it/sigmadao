@@ -74,10 +74,7 @@
 									)
 								}}</a-descriptions-item>
 								<a-descriptions-item label="Voting End">{{
-									secToFormat(
-										item.voting_start,
-										DateTimeFormat.DAY_TIME_WITH_DAY
-									)
+									secToFormat(item.voting_end, DateTimeFormat.DAY_TIME_WITH_DAY)
 								}}</a-descriptions-item>
 							</a-descriptions>
 						</a-card>

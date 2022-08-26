@@ -40,6 +40,11 @@
 				<a-form-item :wrapper-col="{ offset: 12, span: 20 }">
 					<a-button type="primary" html-type="submit">Submit</a-button>
 				</a-form-item>
+				<a-form-item :wrapper-col="{ offset: 12, span: 20 }">
+					<a-button type="primary" @click="clearVote()"
+						>Clear Vote Recoed</a-button
+					>
+				</a-form-item>
 			</a-form>
 		</a-col>
 	</a-row>
@@ -49,21 +54,25 @@
 import {
 	errorMessage,
 	loadingMessage,
+	openErrorNotificationWithIcon,
 	openSuccessNotificationWithIcon,
 	overallErrorCheck,
 	SUCCESSFUL,
 	successMessage,
+	UNSUCCESSFUL,
 	VALIDATE_MESSAGES,
 	voteMessage,
 } from "@/constants";
 import DaoID from "@/store/DaoID";
 import WalletStore from "@/store/WalletStore";
 import { types } from "@algo-builder/web";
-import { LogicSigAccount } from "algosdk";
 import { defineComponent, reactive } from "vue";
 import VoteStore from "../store/VoteStore";
 import { DAOActions, VoteOptions } from "../types/enum.types";
-import { getProposalLsig } from "../contract/dao";
+import ProposalStore from "@/store/ProposalStore";
+import { clearVoteRecord } from "@/utility";
+import { LogicSigAccount } from "algosdk";
+import { getProposalLsig } from "@/contract/dao";
 
 export default defineComponent({
 	name: "VotePage",
@@ -78,23 +87,42 @@ export default defineComponent({
 		const formState = reactive(VoteStore());
 		const daoIDStore = reactive(DaoID());
 		const walletStore = reactive(WalletStore());
+		const proposalStore = reactive(ProposalStore());
 		return {
 			formState,
 			daoIDStore,
 			walletStore,
 			validateMessages: VALIDATE_MESSAGES,
+			proposalStore,
 		};
 	},
 	methods: {
+		async clearVote() {
+			const lsig: LogicSigAccount = await getProposalLsig(
+				this.daoIDStore.dao_id as number,
+				this.proposalStore.creator_address
+			);
+
+			try {
+				await clearVoteRecord(
+					lsig,
+					this.walletStore.address,
+					this.daoIDStore.dao_id as number,
+					this.walletStore.webMode
+				);
+				openSuccessNotificationWithIcon(
+					SUCCESSFUL,
+					`Your vote record has been cleared from ${this.proposalStore.name} proposal.`
+				);
+			} catch (error) {
+				openErrorNotificationWithIcon(UNSUCCESSFUL, error);
+			}
+		},
 		async onFinish() {
 			this.error = overallErrorCheck();
 			if (!this.error) {
 				loadingMessage(this.key);
-				let lsig: LogicSigAccount = await getProposalLsig(
-					this.daoIDStore.dao_id as number,
-					this.walletStore.address // need to update it as per proposer address
-				);
-
+				const proposalAddress = this.proposalStore.selected_address;
 				console.log(`* Register votes by ${this.walletStore.address} *`);
 				// call to DAO app by voter (to register deposited votes)
 				const registerVoteParam: types.ExecParams = {
@@ -110,7 +138,7 @@ export default defineComponent({
 						DAOActions.REGISTER_VOTE,
 						`str:${this.formState.vote_type}`,
 					],
-					accounts: [lsig.address()],
+					accounts: [proposalAddress],
 				};
 				try {
 					await this.walletStore.webMode.executeTx([registerVoteParam]);
