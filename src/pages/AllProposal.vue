@@ -325,7 +325,8 @@ export default defineComponent({
 		},
 		async handleSelectProposal(record: ProposalTableData) {
 			if (record.proposal_addr) {
-				this.proposalStore.selected_address = record.proposal_addr;
+				this.proposalStore.setInfo(record);
+
 				openSuccessNotificationWithIcon(
 					SUCCESSFUL,
 					daoAppMessage.PROPOSAL_SUCCESSFUL(record.name)

@@ -1,12 +1,10 @@
 <template>
-	<a-breadcrumb>
+	<a-breadcrumb class="margin_bottom_sm">
 		<a-breadcrumb-item
 			><a @click="redirectToAllDao">All Dao</a></a-breadcrumb-item
 		>
 		<a-breadcrumb-item>Create Dao</a-breadcrumb-item>
 	</a-breadcrumb>
-
-	<h3 class="text_center">Create DAO</h3>
 	<a-row>
 		<a-col :xs="{ span: 20, offset: 2 }" :sm="{ span: 14, offset: 6 }">
 			<div v-if="error" class="margin_bottom_sm">
