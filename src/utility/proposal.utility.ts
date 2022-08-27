@@ -74,13 +74,13 @@ export const closeProposal = async (
 
 /**
  * Clearing vote record of ${voterAddr} from proposal
- * @param proposalLsig : LsigAccount of the proposal
+ * @param proposalLsigAddr : LsigAccount of the proposal address
  * @param voterAddr : voter address
  * @param daoAppID : DAO app ID
  * @param webMode : webmode to execute transaction
  */
 export const clearVoteRecord = async (
-	proposalLsig: LogicSigAccount,
+	proposalLsigAddr: string,
 	voterAddr: string,
 	daoAppID: number,
 	webMode: any // eslint-disable-line
@@ -96,7 +96,7 @@ export const clearVoteRecord = async (
 			appID: daoAppID,
 			payFlags: { totalFee: 1000 },
 			appArgs: [DAOActions.CLEAR_VOTE_RECORD],
-			accounts: [proposalLsig.address()],
+			accounts: [proposalLsigAddr],
 		};
 		const clearVoteResponse = await webMode.executeTx([clearVoteRecordTx]);
 		console.log(clearVoteResponse);

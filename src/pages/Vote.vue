@@ -75,8 +75,6 @@ import VoteStore from "../store/VoteStore";
 import { DAOActions, VoteOptions } from "../types/enum.types";
 import ProposalStore from "@/store/ProposalStore";
 import { clearVoteRecord } from "@/utility";
-import { LogicSigAccount } from "algosdk";
-import { getProposalLsig } from "@/contract/dao";
 
 export default defineComponent({
 	name: "VotePage",
@@ -102,14 +100,9 @@ export default defineComponent({
 	},
 	methods: {
 		async clearVote() {
-			const lsig: LogicSigAccount = await getProposalLsig(
-				this.daoIDStore.dao_id as number,
-				this.proposalStore.creator_address
-			);
-
 			try {
 				await clearVoteRecord(
-					lsig,
+					this.proposalStore.selected_address,
 					this.walletStore.address,
 					this.daoIDStore.dao_id as number,
 					this.walletStore.webMode

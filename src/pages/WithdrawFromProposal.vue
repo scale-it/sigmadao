@@ -41,10 +41,12 @@
 import {
 	errorMessage,
 	loadingMessage,
+	openErrorNotificationWithIcon,
 	openSuccessNotificationWithIcon,
 	overallErrorCheck,
 	SUCCESSFUL,
 	successMessage,
+	UNSUCCESSFUL,
 	VALIDATE_MESSAGES,
 	withdrawTokenMessage,
 } from "@/constants";
@@ -52,10 +54,9 @@ import DaoID from "@/store/DaoID";
 import WalletStore from "@/store/WalletStore";
 import { types } from "@algo-builder/web";
 import { defineComponent, reactive } from "vue";
-import { DAOActions } from "../types/enum.types";
 import { searchApplicationAndAccount } from "@/indexer";
 import ProposalStore from "@/store/ProposalStore";
-import { LogicSig, LogicSigAccount } from "algosdk/dist/types/src/logicsig";
+import {  LogicSigAccount } from "algosdk/dist/types/src/logicsig";
 import { getProposalLsig } from "@/contract/dao";
 
 export default defineComponent({
@@ -91,33 +92,44 @@ export default defineComponent({
 				);
 				const lsig: LogicSigAccount = await getProposalLsig(
 					this.daoIDStore.dao_id as number,
-					this.proposalStore.creator_address
+					this.walletStore.address
 				);
 				// can only be withdrawn if the curent user is the proposer
-				const withdrawParam: types.ExecParams = {
-					type: types.TransactionType.TransferAsset,
-					sign: types.SignType.LogicSignature,
-					fromAccountAddr: lsig.address(),
-					toAccountAddr: this.walletStore.address,
-					amount: this.formState.withdraw_amt,
-					lsig: lsig,
-					assetID: this.daoIDStore.govt_id as number,
-					payFlags: { totalFee: 1000 },
-				};
-				try {
-					await this.walletStore.webMode.executeTx([withdrawParam]);
-					searchApplicationAndAccount(); // to update locked and available token on UI
-					successMessage(this.key);
-					openSuccessNotificationWithIcon(
-						SUCCESSFUL,
-						withdrawTokenMessage.SUCCESSFUL(
-							this.formState.withdraw_amt as number
-						)
+				if (lsig.address() === this.proposalStore.selected_address) {
+					try {
+						const withdrawParam: types.ExecParams = {
+							type: types.TransactionType.TransferAsset,
+							sign: types.SignType.LogicSignature,
+							fromAccountAddr: lsig.address(),
+							toAccountAddr: this.walletStore.address,
+							amount: this.formState.withdraw_amt,
+							lsig: lsig,
+							assetID: this.daoIDStore.govt_id as number,
+							payFlags: { totalFee: 1000 },
+						};
+						try {
+							await this.walletStore.webMode.executeTx([withdrawParam]);
+							searchApplicationAndAccount(); // to update locked and available token on UI
+							successMessage(this.key);
+							openSuccessNotificationWithIcon(
+								SUCCESSFUL,
+								withdrawTokenMessage.SUCCESSFUL(
+									this.formState.withdraw_amt as number
+								)
+							);
+						} catch (error) {
+							errorMessage(this.key);
+							this.error = error.message;
+							console.error("Transaction Failed", error);
+						}
+					} catch (error) {
+						openErrorNotificationWithIcon(UNSUCCESSFUL, error);
+					}
+				} else {
+					openErrorNotificationWithIcon(
+						UNSUCCESSFUL,
+						"Only creator of the proposal can close the proposal."
 					);
-				} catch (error) {
-					errorMessage(this.key);
-					this.error = error.message;
-					console.error("Transaction Failed", error);
 				}
 			}
 		},
