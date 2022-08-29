@@ -187,9 +187,7 @@ import DaoID from "../store/DaoID";
 import { types } from "@algo-builder/web";
 import type { LogicSigAccount } from "algosdk";
 import { getProposalLsig, getDaoFundLSig } from "../contract/dao";
-import {
-	searchApplicationAndAccount,
-} from "@/indexer";
+import { searchApplicationAndAccount } from "@/indexer";
 import {
 	fundAmount,
 	convertToSeconds,
