@@ -29,7 +29,7 @@ export const closeProposal = async (
 			fromAccountAddr: proposalLsig.address(),
 			lsig: proposalLsig,
 			assetID: tokenID,
-			payFlags: {},
+			payFlags: { totalFee: 1000 },
 		};
 
 		const transferAlgoTx: types.ExecParams = {
@@ -41,7 +41,7 @@ export const closeProposal = async (
 			},
 			toAccountAddr: proposalLsig.address(),
 			amountMicroAlgos: 0,
-			payFlags: {},
+			payFlags: { totalFee: 1000 },
 		};
 
 		const closeProposalTx: types.ExecParams = {

@@ -333,7 +333,7 @@ export default defineComponent({
 					},
 					toAccountAddr: daoLsig.address(),
 					amountMicroAlgos: this.dao_lsig_fund_amount * 1e6,
-					payFlags: {},
+					payFlags: { totalFee: 1000 },
 				};
 
 				const optInDaoLsigParam: types.ExecParams = {
@@ -342,7 +342,7 @@ export default defineComponent({
 					fromAccountAddr: daoLsig.address(),
 					lsig: daoLsig,
 					assetID: this.formState.token_id as number,
-					payFlags: {},
+					payFlags: { totalFee: 1000 },
 				};
 
 				await this.walletStore.webMode.executeTx([

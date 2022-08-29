@@ -188,7 +188,6 @@ import { types } from "@algo-builder/web";
 import type { LogicSigAccount } from "algosdk";
 import { getProposalLsig, getDaoFundLSig } from "../contract/dao";
 import {
-	getAccountInfoByAddress,
 	searchApplicationAndAccount,
 } from "@/indexer";
 import {
@@ -388,7 +387,7 @@ export default defineComponent({
 						toAccountAddr: getApplicationAddress(this.daoStore.dao_id),
 						amount: globalStateMinAmount as number,
 						assetID: this.daoStore.govt_id as number,
-						payFlags: {},
+						payFlags: { totalFee: 1000 },
 					};
 					let addProposalResponse = await this.walletStore.webMode.executeTx([
 						callAppTx,

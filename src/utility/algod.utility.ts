@@ -90,7 +90,7 @@ export const optInToAppUsingSecretKey = async (
 			sk: new Uint8Array(0),
 		},
 		appID: appID,
-		payFlags: {},
+		payFlags: { totalFee: 1000 },
 	};
 	try {
 		const response = await webMode.executeTx([execParam]);

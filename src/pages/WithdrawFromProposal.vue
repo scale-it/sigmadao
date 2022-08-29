@@ -56,7 +56,7 @@ import { types } from "@algo-builder/web";
 import { defineComponent, reactive } from "vue";
 import { searchApplicationAndAccount } from "@/indexer";
 import ProposalStore from "@/store/ProposalStore";
-import {  LogicSigAccount } from "algosdk/dist/types/src/logicsig";
+import { LogicSigAccount } from "algosdk/dist/types/src/logicsig";
 import { getProposalLsig } from "@/contract/dao";
 
 export default defineComponent({
