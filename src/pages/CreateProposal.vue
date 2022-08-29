@@ -187,13 +187,14 @@ import DaoID from "../store/DaoID";
 import { types } from "@algo-builder/web";
 import type { LogicSigAccount } from "algosdk";
 import { getProposalLsig, getDaoFundLSig } from "../contract/dao";
-import { searchApplicationAndAccount } from "@/indexer";
+import { isApplicationOpted, searchApplicationAndAccount } from "@/indexer";
 import {
 	fundAmount,
 	convertToSeconds,
 	getDifferenceInSeconds,
 	toDaysMinutesSeconds,
 	redirectTo,
+	signTxUsingLsig,
 } from "../utility";
 import DaoStore from "../store/DaoID";
 import ProposalTableStore from "../store/ProposalTableStore";
@@ -289,6 +290,24 @@ export default defineComponent({
 				return Promise.resolve();
 			}
 		},
+		async optInLsigToDao(lsig: LogicSigAccount) {
+			const isAppOpted = await isApplicationOpted(
+				lsig.address(),
+				this.daoStore.dao_id as number
+			);
+
+			if (!isAppOpted) {
+				const execParam: types.ExecParams = {
+					type: types.TransactionType.OptInToApp,
+					sign: types.SignType.LogicSignature,
+					fromAccountAddr: lsig.address(),
+					lsig: lsig,
+					appID: this.daoStore.dao_id as number,
+					payFlags: { totalFee: 1000 },
+				};
+				await signTxUsingLsig(lsig, execParam);
+			}
+		},
 		async onFinish(values: any) {
 			try {
 				let {
@@ -353,6 +372,7 @@ export default defineComponent({
 						}
 					}
 					await this.checkLsigFund(lsig);
+					await this.optInLsigToDao(lsig);
 
 					const globalStateMinAmount =
 						this.daoStore.global_app_state?.get(GLOBAL_STATE_MAP_KEY.Deposit) ??

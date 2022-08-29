@@ -172,7 +172,11 @@ import {
 	getDaoFundLSig,
 } from "@/contract/dao";
 import { Rule } from "ant-design-vue/lib/form";
-import { convertDurationTypeToSeconds, redirectTo } from "@/utility";
+import {
+	convertDurationTypeToSeconds,
+	redirectTo,
+	signTxUsingLsig,
+} from "@/utility";
 import { getAssetInformation } from "@/indexer";
 import InfoToolTip from "../components/InfoToolTip.vue";
 import { getApplicationAddress, LogicSigAccount } from "algosdk";
@@ -345,12 +349,11 @@ export default defineComponent({
 					payFlags: { totalFee: 1000 },
 				};
 
-				await this.walletStore.webMode.executeTx([
-					fundAppParameters,
-					optInToGovASAParam,
-					fundLsigParam,
-					optInDaoLsigParam,
-				]);
+				await this.walletStore.webMode
+					.executeTx([fundAppParameters, optInToGovASAParam, fundLsigParam])
+					.then(async () => {
+						await signTxUsingLsig(daoLsig, optInDaoLsigParam);
+					});
 
 				successMessage(this.key);
 				openSuccessNotificationWithIcon(

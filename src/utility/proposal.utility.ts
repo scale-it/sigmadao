@@ -4,6 +4,7 @@ import { getAccountAppLocalState, isAssetOpted } from "@/indexer";
 import { DAOActions, ProposalTableData } from "@/types";
 import { types } from "@algo-builder/web";
 import { LogicSigAccount } from "algosdk";
+import { signTxUsingLsig } from "./algod.utility";
 
 /**
  * closes proposal by creator
@@ -59,7 +60,7 @@ export const closeProposal = async (
 		console.log(transferResponse);
 		const isGovTokenOpted = await isAssetOpted(proposalLsig.address(), tokenID);
 		if (!isGovTokenOpted) {
-			const optInResponse = await webMode.executeTx([optInTx]);
+			const optInResponse = await signTxUsingLsig(proposalLsig, optInTx);
 			console.log(optInResponse);
 		}
 
@@ -108,15 +109,15 @@ export const clearVoteRecord = async (
 
 /**
  * Execute proposal
- * @param proposerAddr : account addr of the proposer
- * @param proposalLsig : LsigAccount of the proposal
+ * @param senderAddr : account addr of user initiating the action
+ * @param proposalLsigAddr : LsigAccount address of the proposal
  * @param daoAppID : DAO app ID
  * @param proposalData : proposal data
  * @param webMode : webmode to execute transaction
  */
 export const executeProposal = async (
-	proposerAddr: string,
-	proposalLsig: LogicSigAccount,
+	senderAddr: string,
+	proposalLsigAddr: string,
 	daoAppID: number,
 	proposalData: ProposalTableData,
 	webMode: any // eslint-disable-line
@@ -124,7 +125,7 @@ export const executeProposal = async (
 	try {
 		const daoFundLsig: LogicSigAccount = await getDaoFundLSig(daoAppID);
 		const localState = await getAccountAppLocalState(
-			proposalLsig.address(),
+			proposalLsigAddr,
 			daoAppID
 		);
 		const executeParams: types.ExecParams[] = [
@@ -132,13 +133,13 @@ export const executeProposal = async (
 				type: types.TransactionType.CallApp,
 				sign: types.SignType.SecretKey,
 				fromAccount: {
-					addr: proposerAddr,
+					addr: senderAddr,
 					sk: new Uint8Array(0),
 				},
 				appID: daoAppID,
 				payFlags: { totalFee: 2000 },
 				appArgs: [DAOActions.EXECUTE],
-				accounts: [proposalLsig.address()],
+				accounts: [proposalLsigAddr],
 			},
 		];
 
