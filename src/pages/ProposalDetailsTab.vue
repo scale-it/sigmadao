@@ -13,20 +13,20 @@
 			tab="Execute Proposal"
 			force-render
 		>
-			<!-- TODO:: Add execute proposal page -->
-			Needs to be added</a-tab-pane
-		>
+			<ExecuteProposal />
+		</a-tab-pane>
 	</a-tabs>
 </template>
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 import { ProposalDetailType } from "@/types";
 import WithdrawFromProposal from "./WithdrawFromProposal.vue";
+import ExecuteProposal from "./ExecuteProposal.vue";
 import VotePage from "./Vote.vue";
 
 export default defineComponent({
 	name: "ProposalDetailsTab",
-	components: { WithdrawFromProposal, VotePage },
+	components: { WithdrawFromProposal, VotePage, ExecuteProposal },
 	setup() {
 		return {
 			activeKey: ref(ProposalDetailType.PROPOSAL_VOTE),

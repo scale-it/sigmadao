@@ -112,6 +112,9 @@ export const TOKEN_DESCRIPTION = `In order to vote for proposals you have to dep
 that time you can withdraw your tokens, or keep them locked to vote for
 other proposals.`;
 
+export const EXECUTE_PROPOSAL_DESCRIPTION = `Anyone is able to execute a proposal. User can only execute a proposal after voting end. The proposal has to be executed
+before the execute_before.`;
+
 export const EmptyDataDescription = {
 	DAO: "No Sigma DAOs Exists",
 	PROPOSAL: "No Proposals Exists",
