@@ -294,10 +294,16 @@ export async function decodeProposalParams(
 	const globalState = decodeAppParamsState(appParams.tkv);
 	return {
 		name: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Name) as string,
+		amount: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Amount) as number,
+		from: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.From) as string,
+		reciepient: globalState.get(
+			PROPOSAL_LOCAL_STATE_MAP_KEY.Recipient
+		) as string,
 		msg: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Message) as string,
 		url: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Url) as string,
 		type: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Type) as number,
 		url_hash: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Url_Hash) as string,
+		executed: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Executed) as number,
 		voting_start: globalState.get(
 			PROPOSAL_LOCAL_STATE_MAP_KEY.Voting_Start
 		) as number,
