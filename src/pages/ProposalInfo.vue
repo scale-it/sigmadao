@@ -5,19 +5,7 @@
 		>
 		<a-breadcrumb-item>Proposal Info</a-breadcrumb-item>
 	</a-breadcrumb>
-	<a-row type="flex">
-		<a-col
-			><a-button type="primary" @click="handleWithdrawProposalAction">
-				Withdraw Proposal</a-button
-			></a-col
-		>
-
-		<a-col :offset="1"
-			><a-button type="primary" @click="handleExecuteProposalAction">
-				Execute Proposal</a-button
-			></a-col
-		>
-	</a-row>
+	<ProposalDetailsTab />
 	<br />
 	<a-row type="flex" justify="start">
 		<a-card title="Proposal Details" style="width: 400px; margin-right: 10px">
@@ -59,11 +47,6 @@
 		</a-card>
 	</a-row>
 	<br />
-	<a-row type="flex" justify="center">
-		<a-col :xs="{ span: 20, offset: 2 }" :sm="{ span: 14, offset: 6 }">
-			<VotePage />
-		</a-col>
-	</a-row>
 </template>
 
 <script lang="ts">
@@ -71,18 +54,18 @@ import { ProposalType } from "@/constants";
 import { defineComponent, reactive } from "vue";
 import WalletStore from "../store/WalletStore";
 import DaoID from "../store/DaoID";
-import { secToFormat, executeProposal, withdrawProposal } from "../utility";
+import { secToFormat, executeProposal } from "../utility";
 import { getProposalLsig } from "../contract/dao";
 import { DateTimeFormat, ProposalTableData } from "@/types";
-import VotePage from "./Vote.vue";
 import PieChart from "../components/PieChart.vue";
+import ProposalDetailsTab from "./ProposalDetailsTab.vue";
 import type { LogicSigAccount } from "algosdk";
 
 export default defineComponent({
 	name: "ProposalInfo",
 	components: {
-		VotePage,
 		PieChart,
+		ProposalDetailsTab,
 	},
 	data() {
 		let proposalInfo: ProposalTableData | undefined;
@@ -107,28 +90,6 @@ export default defineComponent({
 		};
 	},
 	methods: {
-		async handleWithdrawProposalAction() {
-			// TODO: Add withdraw proposal action
-			console.log("Proposal withdraw");
-			if (
-				this.daoStore.dao_id &&
-				this.walletStore.address &&
-				this.daoStore.govt_id &&
-				this.proposalInfo
-			) {
-				const lsig: LogicSigAccount = await getProposalLsig(
-					this.daoStore.dao_id,
-					this.walletStore.address
-				);
-				withdrawProposal(
-					lsig,
-					this.walletStore.address, // proposer address
-					10,
-					this.daoStore.govt_id,
-					this.walletStore.webMode
-				);
-			}
-		},
 		async handleExecuteProposalAction() {
 			if (
 				this.daoStore.dao_id &&

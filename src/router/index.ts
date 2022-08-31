@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import CreateProposal from "../pages/CreateProposal.vue";
 import AllProposal from "../pages/AllProposal.vue";
-import VotePage from "../pages/Vote.vue";
 import AllDao from "../pages/AllDao.vue";
 import VoteToken from "../pages/Token.vue";
 import CreateDaoPage from "../pages/CreateDao.vue";

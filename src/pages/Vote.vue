@@ -1,46 +1,49 @@
 <template>
-	<div v-if="error" class="margin_bottom_sm">
-		<a-alert
-			message="Error"
-			:description="error"
-			type="error"
-			show-icon
-			closable
-			@close="error = ''"
-		/>
-	</div>
-	<a-form
-		:wrapper-col="{ span: 12 }"
-		:model="formState"
-		name="Vote"
-		autocomplete="off"
-		@finish="onFinish"
-		@finishFailed="onFinishFailed"
-		@validate-messages="validateMessages"
-	>
-		<a-form-item label="Vote" name="vote_type" :rules="[{ required: true }]">
-			<a-select
-				v-model:value="formState.vote_type"
-				placeholder="Please select your option"
-			>
-				<a-select-option :value="VoteOptions.ABSTAIN">Abstain</a-select-option>
-				<a-select-option :value="VoteOptions.YES">Yes</a-select-option>
-				<a-select-option :value="VoteOptions.NO">No</a-select-option>
-			</a-select>
-		</a-form-item>
-		<a-form-item>
-			<a-button class="margin_extra_sm" type="primary" html-type="submit"
-				>Vote</a-button
-			>
-			<a-button
-				class="margin_extra_sm"
-				type="primary"
-				danger
-				@click="clearVote()"
-				>Clear Vote Record</a-button
-			>
-		</a-form-item>
-	</a-form>
+	<a-row type="flex" justify="center">
+		<div v-if="error" class="margin_bottom_sm">
+			<a-alert
+				message="Error"
+				:description="error"
+				type="error"
+				show-icon
+				closable
+				@close="error = ''"
+			/>
+		</div>
+		<a-form
+			:model="formState"
+			name="Vote"
+			autocomplete="off"
+			@finish="onFinish"
+			@finishFailed="onFinishFailed"
+			@validate-messages="validateMessages"
+		>
+			<a-form-item label="Vote" name="vote_type" :rules="[{ required: true }]">
+				<a-select
+					v-model:value="formState.vote_type"
+					placeholder="Please select your option"
+				>
+					<a-select-option :value="VoteOptions.ABSTAIN"
+						>Abstain</a-select-option
+					>
+					<a-select-option :value="VoteOptions.YES">Yes</a-select-option>
+					<a-select-option :value="VoteOptions.NO">No</a-select-option>
+				</a-select>
+			</a-form-item>
+			<a-form-item>
+				<a-button class="margin_extra_sm" type="primary" html-type="submit"
+					>Vote</a-button
+				>
+				<a-button
+					class="margin_extra_sm"
+					type="primary"
+					danger
+					@click="clearVote()"
+					>Clear Vote Record</a-button
+				>
+			</a-form-item>
+		</a-form>
+	</a-row>
 </template>
 
 <script lang="ts">

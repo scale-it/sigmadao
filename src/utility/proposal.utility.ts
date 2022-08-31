@@ -195,34 +195,3 @@ export const executeProposal = async (
 		throw error;
 	}
 };
-
-export const withdrawProposal = async (
-	proposalLsig: LogicSigAccount,
-	proposerAddr: string,
-	amount: number,
-	assetID: number,
-	webMode: any
-) => {
-	try {
-		const execParam: types.ExecParams[] = [
-			{
-				type: types.TransactionType.TransferAsset,
-				sign: types.SignType.LogicSignature,
-				fromAccountAddr: proposalLsig.address(),
-				toAccountAddr: proposerAddr, // proposer address
-				amount: amount,
-				lsig: proposalLsig,
-				assetID: assetID,
-				payFlags: { totalFee: 1000 },
-			},
-		];
-		console.log(
-			`* Withdrawing from proposalLsig ${proposalLsig.address()}  to owner account *`
-		);
-		const executeResponse = await webMode.executeTx(execParam);
-		console.log("Withdraw Proposla response: ", executeResponse);
-	} catch (error) {
-		console.error("Withdraw Proposal transaction failed", error);
-		throw error;
-	}
-};
