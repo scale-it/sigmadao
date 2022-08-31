@@ -5,7 +5,7 @@
 		>
 		<a-breadcrumb-item>Proposal Info</a-breadcrumb-item>
 	</a-breadcrumb>
-	<ProposalDetailsTab />
+	<ProposalDetailsTab :proposalInfo="proposalInfo" />
 	<br />
 	<a-row type="flex" justify="start">
 		<a-card title="Proposal Details" style="width: 400px; margin-right: 10px">
@@ -51,15 +51,11 @@
 
 <script lang="ts">
 import { ProposalType } from "@/constants";
-import { defineComponent, reactive } from "vue";
-import WalletStore from "../store/WalletStore";
-import DaoID from "../store/DaoID";
-import { secToFormat, executeProposal } from "../utility";
-import { getProposalLsig } from "../contract/dao";
+import { defineComponent } from "vue";
+import { secToFormat } from "../utility";
 import { DateTimeFormat, ProposalTableData } from "@/types";
 import PieChart from "../components/PieChart.vue";
 import ProposalDetailsTab from "./ProposalDetailsTab.vue";
-import type { LogicSigAccount } from "algosdk";
 
 export default defineComponent({
 	name: "ProposalInfo",
@@ -79,36 +75,10 @@ export default defineComponent({
 		};
 	},
 	setup() {
-		const daoStore = reactive(DaoID());
-		const walletStore = reactive(WalletStore());
-
 		return {
-			walletStore,
-			daoStore,
 			DateTimeFormat,
 			secToFormat,
 		};
-	},
-	methods: {
-		async handleExecuteProposalAction() {
-			if (
-				this.daoStore.dao_id &&
-				this.walletStore.address &&
-				this.proposalInfo
-			) {
-				const lsig: LogicSigAccount = await getProposalLsig(
-					this.daoStore.dao_id,
-					this.walletStore.address
-				);
-				executeProposal(
-					this.walletStore.address,
-					lsig.address(),
-					this.daoStore.dao_id,
-					this.proposalInfo,
-					this.walletStore.webMode
-				);
-			}
-		},
 	},
 });
 </script>

@@ -46,18 +46,18 @@ import {
 } from "@/constants";
 import DaoID from "@/store/DaoID";
 import WalletStore from "@/store/WalletStore";
-import { types } from "@algo-builder/web";
 import { defineComponent, reactive } from "vue";
 import { searchApplicationAndAccount } from "@/indexer";
 import ProposalStore from "@/store/ProposalStore";
 import { LogicSigAccount } from "algosdk/dist/types/src/logicsig";
-import { getProposalLsig, getDaoFundLSig } from "@/contract/dao";
-import { DAOActions } from "@/types";
+import { getProposalLsig } from "@/contract/dao";
 import Description from "@/UIKit/Description.vue";
+import { executeProposal } from "@/utility";
 
 export default defineComponent({
 	name: "ExecuteProposal",
 	components: { Description },
+	props: ["proposalInfo"],
 	data() {
 		return {
 			error: "",
@@ -90,35 +90,16 @@ export default defineComponent({
 						this.daoIDStore.dao_id as number,
 						this.walletStore.address
 					);
-					const daoFundLsig: LogicSigAccount = await getDaoFundLSig(
-						this.daoIDStore.dao_id as number
+
+					executeProposal(
+						this.walletStore.address,
+						lsig.address(),
+						this.daoIDStore.dao_id as number,
+						this.proposalInfo,
+						this.walletStore.webMode
 					);
 
-					const executeParams: types.ExecParams[] = [
-						{
-							type: types.TransactionType.CallApp,
-							sign: types.SignType.SecretKey,
-							fromAccount: {
-								addr: this.walletStore.address,
-								sk: new Uint8Array(0),
-							},
-							appID: this.daoIDStore.dao_id as number,
-							payFlags: { totalFee: 2000 },
-							appArgs: [DAOActions.EXECUTE],
-							accounts: [lsig.address()],
-						},
-						{
-							type: types.TransactionType.TransferAlgo,
-							sign: types.SignType.LogicSignature,
-							fromAccountAddr: daoFundLsig.address(),
-							toAccountAddr: this.walletStore.address, // proposer address
-							amountMicroAlgos: 2e6,
-							lsig: daoFundLsig,
-							payFlags: { totalFee: 0 }, // fee must be paid by proposer
-						},
-					];
 					try {
-						await this.walletStore.webMode.executeTx(executeParams);
 						searchApplicationAndAccount(); // to update locked and available token on UI
 						successMessage(this.key);
 						openSuccessNotificationWithIcon(SUCCESSFUL, PROPOSAL_EXECUTED);

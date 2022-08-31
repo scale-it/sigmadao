@@ -13,7 +13,7 @@
 			tab="Execute Proposal"
 			force-render
 		>
-			<ExecuteProposal />
+			<ExecuteProposal :proposalInfo="proposalInfo" />
 		</a-tab-pane>
 	</a-tabs>
 </template>
@@ -27,6 +27,7 @@ import VotePage from "./Vote.vue";
 export default defineComponent({
 	name: "ProposalDetailsTab",
 	components: { WithdrawFromProposal, VotePage, ExecuteProposal },
+	props: ["proposalInfo"],
 	setup() {
 		return {
 			activeKey: ref(ProposalDetailType.PROPOSAL_VOTE),
