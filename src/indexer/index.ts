@@ -7,7 +7,7 @@ import DaoID from "@/store/DaoID";
 import WalletStore from "@/store/WalletStore";
 import ProposalFormStore from "@/store/AddProposalStore";
 import { Key, StateValue } from "@algo-builder/algob/build/types";
-import type { LogicSigAccount } from "algosdk";
+import { encodeAddress, LogicSigAccount } from "algosdk";
 import { getProposalLsig } from "../contract/dao";
 import { convertToHex } from "@/utility";
 import {
@@ -222,10 +222,22 @@ export function decodeAppParamsState(state: any): Map<Key, StateValue> {
 	if (state) {
 		for (const key in state) {
 			if (state[key].tt === SchemaType.BYTES) {
-				stateMap.set(
-					Buffer.from(key, "base64").toString("ascii"),
-					Buffer.from(state[key].tb, "base64").toString("ascii")
-				);
+				const parsedKey = Buffer.from(key, "base64").toString("ascii");
+				// decode algorand account address
+				if (
+					parsedKey === PROPOSAL_LOCAL_STATE_MAP_KEY.From ||
+					parsedKey === PROPOSAL_LOCAL_STATE_MAP_KEY.Recipient
+				) {
+					stateMap.set(
+						Buffer.from(key, "base64").toString("ascii"),
+						encodeAddress(Buffer.from(state[key].tb, "base64"))
+					);
+				} else {
+					stateMap.set(
+						Buffer.from(key, "base64").toString("ascii"),
+						Buffer.from(state[key].tb, "base64").toString("ascii")
+					);
+				}
 			} else {
 				stateMap.set(
 					Buffer.from(key, "base64").toString("ascii"),

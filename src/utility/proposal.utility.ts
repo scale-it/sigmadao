@@ -4,7 +4,7 @@ import { getAccountAppLocalState, isAssetOpted } from "@/indexer";
 import { DAOActions, ProposalTableData } from "@/types";
 import { types } from "@algo-builder/web";
 import { LogicSigAccount } from "algosdk";
-import { getAlgorandAddressFromAscii, signTxUsingLsig } from "./algod.utility";
+import { signTxUsingLsig } from "./algod.utility";
 
 /**
  * closes proposal by creator
@@ -25,9 +25,11 @@ export const closeProposal = async (
 		// optIn to ASA(GOV_TOKEN) by proposalLsig
 		// we will receive the deposit back into proposalLsig
 		const optInTx: types.ExecParams = {
-			type: types.TransactionType.OptInASA,
+			type: types.TransactionType.TransferAsset,
 			sign: types.SignType.LogicSignature,
 			fromAccountAddr: proposalLsig.address(),
+			toAccountAddr: proposalLsig.address(),
+			amount: 0,
 			lsig: proposalLsig,
 			assetID: tokenID,
 			payFlags: { totalFee: 1000 },
@@ -56,12 +58,10 @@ export const closeProposal = async (
 			foreignAssets: [tokenID],
 		};
 
-		const transferResponse = await webMode.executeTx([transferAlgoTx]);
-		console.log(transferResponse);
 		const isGovTokenOpted = await isAssetOpted(proposalLsig.address(), tokenID);
 		if (!isGovTokenOpted) {
-			const optInResponse = await signTxUsingLsig(proposalLsig, optInTx);
-			console.log(optInResponse);
+			const optInResponse = await webMode.executeTx([transferAlgoTx, optInTx]);
+			console.log("optin", optInResponse);
 		}
 
 		const closeProposalResponse = await signTxUsingLsig(
@@ -145,9 +145,9 @@ export const executeProposal = async (
 				accounts: [proposalLsigAddr],
 			},
 		];
-		const recipientAddr = getAlgorandAddressFromAscii(
-			localState?.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Recipient) as string
-		);
+		const recipientAddr = localState?.get(
+			PROPOSAL_LOCAL_STATE_MAP_KEY.Recipient
+		) as string;
 
 		const amount = localState?.get(
 			PROPOSAL_LOCAL_STATE_MAP_KEY.Amount

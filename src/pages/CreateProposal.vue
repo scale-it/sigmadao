@@ -305,7 +305,8 @@ export default defineComponent({
 					appID: this.daoStore.dao_id as number,
 					payFlags: { totalFee: 1000 },
 				};
-				await signTxUsingLsig(lsig, execParam);
+				const response = await signTxUsingLsig(lsig, execParam);
+				console.log(response);
 			}
 		},
 		async onFinish(values: any) {

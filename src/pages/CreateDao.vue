@@ -341,20 +341,22 @@ export default defineComponent({
 				};
 
 				const optInDaoLsigParam: types.ExecParams = {
-					type: types.TransactionType.OptInASA,
+					type: types.TransactionType.TransferAsset,
 					sign: types.SignType.LogicSignature,
 					fromAccountAddr: daoLsig.address(),
+					toAccountAddr: daoLsig.address(),
 					lsig: daoLsig,
+					amount: 0,
 					assetID: this.formState.token_id as number,
 					payFlags: { totalFee: 1000 },
 				};
 
 				await this.walletStore.webMode
-					.executeTx([fundAppParameters, fundLsigParam])
+					.executeTx([fundAppParameters])
 					.then(async () => {
 						await this.walletStore.webMode.executeTx([optInToGovASAParam]);
-						const response = await signTxUsingLsig(daoLsig, optInDaoLsigParam);
-						console.log("opt in dao lsig", response);
+						await this.walletStore.webMode.executeTx([fundLsigParam]);
+						await signTxUsingLsig(daoLsig, optInDaoLsigParam);
 					});
 
 				successMessage(this.key);
