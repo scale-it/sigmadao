@@ -146,3 +146,7 @@ export const convertHexToAlgorandAddr = (hex: string) => {
 		console.log(error);
 	}
 };
+
+export const getAlgorandAddressFromAscii = (str: string) => {
+	return algosdk.encodeAddress(Buffer.from(str, "ascii"));
+};

@@ -4,7 +4,7 @@ import { getAccountAppLocalState, isAssetOpted } from "@/indexer";
 import { DAOActions, ProposalTableData } from "@/types";
 import { types } from "@algo-builder/web";
 import { LogicSigAccount } from "algosdk";
-import { signTxUsingLsig } from "./algod.utility";
+import { getAlgorandAddressFromAscii, signTxUsingLsig } from "./algod.utility";
 
 /**
  * closes proposal by creator
@@ -64,7 +64,10 @@ export const closeProposal = async (
 			console.log(optInResponse);
 		}
 
-		const closeProposalResponse = await webMode.executeTx([closeProposalTx]);
+		const closeProposalResponse = await signTxUsingLsig(
+			proposalLsig,
+			closeProposalTx
+		);
 
 		console.log(closeProposalResponse);
 	} catch (error) {
@@ -142,6 +145,13 @@ export const executeProposal = async (
 				accounts: [proposalLsigAddr],
 			},
 		];
+		const recipientAddr = getAlgorandAddressFromAscii(
+			localState?.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Recipient) as string
+		);
+
+		const amount = localState?.get(
+			PROPOSAL_LOCAL_STATE_MAP_KEY.Amount
+		) as number;
 
 		switch (proposalData.type) {
 			case ProposalType.ALGO_TRANSFER:
@@ -150,14 +160,10 @@ export const executeProposal = async (
 						type: types.TransactionType.TransferAlgo,
 						sign: types.SignType.LogicSignature,
 						fromAccountAddr: daoFundLsig.address(),
-						toAccountAddr: localState?.get(
-							PROPOSAL_LOCAL_STATE_MAP_KEY.Recipient
-						) as string,
-						amountMicroAlgos: localState?.get(
-							PROPOSAL_LOCAL_STATE_MAP_KEY.Amount
-						) as number,
+						toAccountAddr: recipientAddr as string,
+						amountMicroAlgos: amount,
 						lsig: daoFundLsig,
-						payFlags: { totalFee: 0 },
+						payFlags: { totalFee: 1000 },
 					});
 				}
 				break;
@@ -167,17 +173,13 @@ export const executeProposal = async (
 						type: types.TransactionType.TransferAsset,
 						sign: types.SignType.LogicSignature,
 						fromAccountAddr: daoFundLsig.address(),
-						amount: localState?.get(
-							PROPOSAL_LOCAL_STATE_MAP_KEY.Amount
-						) as number,
+						amount: amount,
 						assetID: localState?.get(
 							PROPOSAL_LOCAL_STATE_MAP_KEY.ASA_ID
 						) as number,
-						toAccountAddr: localState?.get(
-							PROPOSAL_LOCAL_STATE_MAP_KEY.Recipient
-						) as string,
+						toAccountAddr: recipientAddr as string,
 						lsig: daoFundLsig,
-						payFlags: { totalFee: 0 },
+						payFlags: { totalFee: 1000 },
 					});
 				}
 				break;

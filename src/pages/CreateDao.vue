@@ -350,9 +350,11 @@ export default defineComponent({
 				};
 
 				await this.walletStore.webMode
-					.executeTx([fundAppParameters, optInToGovASAParam, fundLsigParam])
+					.executeTx([fundAppParameters, fundLsigParam])
 					.then(async () => {
-						await signTxUsingLsig(daoLsig, optInDaoLsigParam);
+						await this.walletStore.webMode.executeTx([optInToGovASAParam]);
+						const response = await signTxUsingLsig(daoLsig, optInDaoLsigParam);
+						console.log("opt in dao lsig", response);
 					});
 
 				successMessage(this.key);
