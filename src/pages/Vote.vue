@@ -26,6 +26,13 @@
 						)
 					}}</a-descriptions-item>
 				</a-descriptions>
+				<p v-if="userAlreadyVoted">
+					<a-alert
+						message="You have already submitted your vote."
+						type="success"
+						show-icon
+					/>
+				</p>
 				<p v-if="!checkVoteValidity()">
 					<a-alert
 						message="Warning"
@@ -48,7 +55,7 @@
 				<a-select
 					v-model:value="formState.vote_type"
 					placeholder="Please select your option"
-					:disabled="!checkVoteValidity()"
+					:disabled="!checkVoteValidity() || userAlreadyVoted"
 				>
 					<a-select-option :value="VoteOptions.ABSTAIN"
 						>Abstain</a-select-option
@@ -62,7 +69,7 @@
 					class="margin_extra_sm"
 					type="primary"
 					html-type="submit"
-					:disabled="!checkVoteValidity()"
+					:disabled="!checkVoteValidity() || userAlreadyVoted"
 					>Vote</a-button
 				>
 				<a-button
@@ -104,6 +111,7 @@ import ProposalStore from "@/store/ProposalStore";
 import { clearVoteRecord, secToFormat, isCurrentTimeValid } from "@/utility";
 import InfoToolTip from "../components/InfoToolTip.vue";
 import moment from "moment";
+import { getAccountAppLocalState } from "@/indexer";
 
 export default defineComponent({
 	name: "VotePage",
@@ -113,6 +121,7 @@ export default defineComponent({
 			error: "",
 			key: "VoteKey",
 			DateTimeFormat,
+			userAlreadyVoted: false,
 		};
 	},
 	components: { InfoToolTip },
@@ -144,7 +153,7 @@ export default defineComponent({
 			}
 			return "Voting time period is over.";
 		},
-		async checkClearVoteValidity() {
+		checkClearVoteValidity() {
 			// proposal is executed or failed
 			if (
 				this.proposalStore.executed === 1 ||
@@ -196,6 +205,7 @@ export default defineComponent({
 					await this.walletStore.webMode.executeTx([registerVoteParam]);
 					openSuccessNotificationWithIcon(SUCCESSFUL, voteMessage.SUCCESSFUL);
 					successMessage(this.key);
+					await this.checkCurrentUserVote();
 				} catch (error) {
 					this.error = error.message;
 					errorMessage(this.key);
@@ -203,9 +213,30 @@ export default defineComponent({
 				}
 			}
 		},
+		async checkCurrentUserVote() {
+			const userLocalState = await getAccountAppLocalState(
+				this.walletStore.address,
+				this.daoIDStore.dao_id as number
+			);
+			const proposalLocalState = await getAccountAppLocalState(
+				this.proposalStore.proposal_addr as string,
+				this.daoIDStore.dao_id as number
+			);
+			const proposalId = proposalLocalState?.get("id");
+			// the user local state has p_proposaladdress: proposal_id if voted
+			if (userLocalState) {
+				let userLocalStateKeys = [...userLocalState.entries()]
+					.filter(({ 1: v }) => v === proposalId)
+					.map(([k]) => k);
+				this.userAlreadyVoted = userLocalStateKeys.length > 0;
+			}
+		},
 		onFinishFailed(errorinfo: Event) {
 			console.warn("Failed:", errorinfo);
 		},
+	},
+	async mounted() {
+		await this.checkCurrentUserVote();
 	},
 });
 </script>

@@ -88,7 +88,7 @@ export default defineComponent({
 			}
 			return "Execution period has already ended.";
 		},
-		async checkCloseValidity() {
+		checkCloseValidity() {
 			// proposal is executed or failed
 			if (
 				this.proposalStore.executed === 1 ||
