@@ -18,10 +18,11 @@ export enum VoteTokenType {
 }
 
 export enum ProposalDetailType {
-	PROPOSAL_VOTE = "1",
-	WITHDRAW_PROPOSAL = "2",
-	EXECUTE_PROPOSAL = "3",
-	CLOSE_PROPOSAL = "4",
+	DETAILS = "1",
+	PROPOSAL_VOTE = "2",
+	WITHDRAW_PROPOSAL = "3",
+	EXECUTE_PROPOSAL = "4",
+	CLOSE_PROPOSAL = "5",
 }
 
 export enum VoteOptions {

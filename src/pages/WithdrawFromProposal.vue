@@ -58,6 +58,7 @@ import { searchApplicationAndAccount } from "@/indexer";
 import ProposalStore from "@/store/ProposalStore";
 import { LogicSigAccount } from "algosdk/dist/types/src/logicsig";
 import { getProposalLsig } from "@/contract/dao";
+import { signTxUsingLsig } from "@/utility";
 
 export default defineComponent({
 	name: "WithdrawFromProposal",
@@ -95,7 +96,7 @@ export default defineComponent({
 					this.walletStore.address
 				);
 				// can only be withdrawn if the curent user is the proposer
-				if (lsig.address() === this.proposalStore.selected_address) {
+				if (lsig.address() === this.proposalStore.proposal_addr) {
 					try {
 						const withdrawParam: types.ExecParams = {
 							type: types.TransactionType.TransferAsset,
@@ -108,7 +109,8 @@ export default defineComponent({
 							payFlags: { totalFee: 1000 },
 						};
 						try {
-							await this.walletStore.webMode.executeTx([withdrawParam]);
+							const response = await signTxUsingLsig(lsig, withdrawParam);
+							console.log("withdraw from proposal", response);
 							searchApplicationAndAccount(); // to update locked and available token on UI
 							successMessage(this.key);
 							openSuccessNotificationWithIcon(
@@ -123,7 +125,7 @@ export default defineComponent({
 							console.error("Transaction Failed", error);
 						}
 					} catch (error) {
-						openErrorNotificationWithIcon(UNSUCCESSFUL, error);
+						openErrorNotificationWithIcon(UNSUCCESSFUL, error.message);
 					}
 				} else {
 					openErrorNotificationWithIcon(

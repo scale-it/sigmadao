@@ -100,8 +100,3 @@ export interface CreateDaoFormState {
 	url?: string;
 	dao_name?: string;
 }
-
-export interface ProposalStore {
-	selected_address: string;
-	name: string;
-}

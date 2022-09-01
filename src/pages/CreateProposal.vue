@@ -5,6 +5,26 @@
 		>
 		<a-breadcrumb-item>Create Proposal</a-breadcrumb-item>
 	</a-breadcrumb>
+	<a-row class="margin_bottom_sm">
+		<a-col>
+			<a-descriptions
+				size="small"
+				title="Current DAO conditions"
+				bordered
+				:column="{ xs: 1, sm: 3 }"
+			>
+				<a-descriptions-item label="Minimum deposit amount of the gov tokens"
+					>{{ globalStateMinAmount }} tokens
+				</a-descriptions-item>
+				<a-descriptions-item label="Maximum Duration of voting period">{{
+					toDaysMinutesSeconds(maxDuration)
+				}}</a-descriptions-item>
+				<a-descriptions-item label="Minimum Duration of voting period">{{
+					toDaysMinutesSeconds(minDuration)
+				}}</a-descriptions-item>
+			</a-descriptions>
+		</a-col>
+	</a-row>
 	<a-row>
 		<a-col :xs="{ span: 20, offset: 2 }" :sm="{ span: 14, offset: 6 }">
 			<div v-if="error" class="margin_bottom_sm">
@@ -217,13 +237,25 @@ export default defineComponent({
 		const walletStore = reactive(WalletStore());
 		const proposalDataStore = reactive(ProposalTableStore());
 		const daoStore = reactive(DaoID());
+		const maxDuration = daoStore.global_app_state?.get(
+			GLOBAL_STATE_MAP_KEY.MaxDuration
+		) as number;
 
+		const minDuration = daoStore.global_app_state?.get(
+			GLOBAL_STATE_MAP_KEY.MinDuration
+		) as number;
+		const globalStateMinAmount =
+			daoStore.global_app_state?.get(GLOBAL_STATE_MAP_KEY.Deposit) ?? 15; //  minimun deposit amount taken from dao app global state
 		return {
 			formState,
 			walletStore,
 			daoStore,
 			validateMessages: VALIDATE_MESSAGES,
 			proposalDataStore,
+			maxDuration,
+			minDuration,
+			globalStateMinAmount,
+			toDaysMinutesSeconds,
 		};
 	},
 	methods: {
@@ -263,21 +295,17 @@ export default defineComponent({
 					this.formState.vote_date?.[0]?.length &&
 					this.formState.vote_date?.[1]?.length
 				) {
-					const maxDuration = this.daoStore.global_app_state?.get(
-						GLOBAL_STATE_MAP_KEY.MaxDuration
-					) as number;
-
-					const minDuration = this.daoStore.global_app_state?.get(
-						GLOBAL_STATE_MAP_KEY.MinDuration
-					) as number;
 					const votingStart = convertToSeconds(this.formState.vote_date[0]);
 					const votingEnd = convertToSeconds(this.formState.vote_date[1]);
 					const diffInSeconds = getDifferenceInSeconds(votingStart, votingEnd);
-					if (minDuration > diffInSeconds || diffInSeconds > maxDuration) {
+					if (
+						this.minDuration > diffInSeconds ||
+						diffInSeconds > this.maxDuration
+					) {
 						return Promise.reject(
 							`Voting duration must be at least ${toDaysMinutesSeconds(
-								minDuration
-							)} and atmost ${toDaysMinutesSeconds(maxDuration)}.`
+								this.minDuration
+							)} and atmost ${toDaysMinutesSeconds(this.maxDuration)}.`
 						);
 					}
 					// voting_end must be > voting_start
@@ -354,7 +382,7 @@ export default defineComponent({
 							proposalParams.push(
 								`addr:${daoLsig.address()}`, // from
 								`addr:${recipient}`, // recipient
-								`int:${amount}` // amount
+								`int:${amount * 1e6}` // amount
 							);
 							break;
 						}
@@ -375,13 +403,9 @@ export default defineComponent({
 					await this.checkLsigFund(lsig);
 					await this.optInLsigToDao(lsig);
 
-					const globalStateMinAmount =
-						this.daoStore.global_app_state?.get(GLOBAL_STATE_MAP_KEY.Deposit) ??
-						15; //  minimun deposit amount taken from dao app global state
-
 					// check if min gov tokens required for tranfer are available with proposal creator
-					if ((this.daoStore.available as number) < globalStateMinAmount) {
-						this.error = `You have insufficient balance of available gov tokens, minimum tokens required for proposal is ${globalStateMinAmount}`;
+					if ((this.daoStore.available as number) < this.globalStateMinAmount) {
+						this.error = `You have insufficient balance of available gov tokens, minimum tokens required for proposal is ${this.globalStateMinAmount}`;
 						errorMessage(this.key);
 						openErrorNotificationWithIcon(UNSUCCESSFUL, this.error);
 						return;
@@ -404,7 +428,7 @@ export default defineComponent({
 							sk: new Uint8Array(0),
 						},
 						toAccountAddr: getApplicationAddress(this.daoStore.dao_id),
-						amount: globalStateMinAmount as number,
+						amount: this.globalStateMinAmount as number,
 						assetID: this.daoStore.govt_id as number,
 						payFlags: { totalFee: 1000 },
 					};

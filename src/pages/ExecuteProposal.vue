@@ -10,10 +10,41 @@
 				@close="error = ''"
 			/>
 		</div>
-		<description :content="EXECUTE_PROPOSAL_DESCRIPTION"></description>
+	</a-row>
+	<description :content="EXECUTE_PROPOSAL_DESCRIPTION"></description>
+	<a-row>
+		<a-col :xs="{ span: 20, offset: 2 }" :sm="{ span: 15, offset: 5 }">
+			<a-descriptions :column="{ xs: 1, sm: 2 }">
+				<a-descriptions-item label="Voting End">{{
+					secToFormat(
+						proposalStore.voting_end,
+						DateTimeFormat.DAY_TIME_WITH_DAY
+					)
+				}}</a-descriptions-item>
+				<a-descriptions-item label="Execute Before">{{
+					secToFormat(
+						proposalStore.voting_start,
+						DateTimeFormat.DAY_TIME_WITH_DAY
+					)
+				}}</a-descriptions-item>
+			</a-descriptions>
+			<p v-if="!checkExecuteValidity()">
+				<a-alert
+					message="Warning"
+					:description="errorDescription()"
+					type="warning"
+					show-icon
+				/>
+			</p>
+		</a-col>
 	</a-row>
 	<a-row justify="center">
-		<a-button type="primary" @click="handleExecuteProposal">Execute</a-button>
+		<a-button
+			type="primary"
+			:disabled="!checkExecuteValidity()"
+			@click="handleExecuteProposal"
+			>Execute</a-button
+		>
 	</a-row>
 </template>
 
@@ -34,45 +65,64 @@ import DaoID from "@/store/DaoID";
 import WalletStore from "@/store/WalletStore";
 import { defineComponent, reactive } from "vue";
 import { searchApplicationAndAccount } from "@/indexer";
-import { LogicSigAccount } from "algosdk/dist/types/src/logicsig";
-import { getProposalLsig } from "@/contract/dao";
 import Description from "@/UIKit/Description.vue";
-import { executeProposal } from "@/utility";
+import { executeProposal, isCurrentTimeValid, secToFormat } from "@/utility";
+import ProposalStore from "@/store/ProposalStore";
+import { DateTimeFormat } from "@/types";
+import moment from "moment";
 
 export default defineComponent({
 	name: "ExecuteProposal",
 	components: { Description },
-	props: ["proposalInfo"],
 	data() {
 		return {
 			error: "",
 			key: "ExecuteProposalKey",
+			DateTimeFormat,
 		};
 	},
 	setup() {
 		const daoIDStore = reactive(DaoID());
 		const walletStore = reactive(WalletStore());
+		const proposalStore = reactive(ProposalStore());
 		return {
 			daoIDStore,
 			walletStore,
 			validateMessages: VALIDATE_MESSAGES,
 			EXECUTE_PROPOSAL_DESCRIPTION,
+			proposalStore,
+			secToFormat,
 		};
 	},
 	methods: {
+		checkExecuteValidity() {
+			if (
+				isCurrentTimeValid(
+					this.proposalStore.voting_end,
+					this.proposalStore.execute_before
+				)
+			) {
+				return true;
+			}
+			return false;
+		},
+		errorDescription() {
+			if (this.proposalStore.voting_end > moment(new Date()).unix()) {
+				return "Voting period has not yet finished.";
+			} else if (this.proposalStore.executed === 1) {
+				return "Proposal has already been executed.";
+			}
+			return "Execution period has already ended.";
+		},
 		async handleExecuteProposal() {
 			try {
 				loadingMessage(this.key);
-				const lsig: LogicSigAccount = await getProposalLsig(
-					this.daoIDStore.dao_id as number,
-					this.walletStore.address
-				);
 
 				await executeProposal(
 					this.walletStore.address,
-					lsig.address(),
+					this.proposalStore.proposal_addr as string,
 					this.daoIDStore.dao_id as number,
-					this.proposalInfo,
+					this.proposalStore,
 					this.walletStore.webMode
 				);
 				searchApplicationAndAccount(); // to update locked and available token on UI
@@ -81,7 +131,7 @@ export default defineComponent({
 			} catch (error) {
 				errorMessage(this.key);
 				this.error = error.message;
-				openErrorNotificationWithIcon(UNSUCCESSFUL, error);
+				openErrorNotificationWithIcon(UNSUCCESSFUL);
 			}
 		},
 	},

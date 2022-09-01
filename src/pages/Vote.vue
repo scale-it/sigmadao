@@ -10,6 +10,32 @@
 				@close="error = ''"
 			/>
 		</div>
+		<a-row>
+			<a-col :xs="{ span: 20, offset: 2 }" :sm="{ span: 15, offset: 5 }">
+				<a-descriptions :column="{ xs: 1, sm: 2 }">
+					<a-descriptions-item label="Voting Start">{{
+						secToFormat(
+							proposalStore.voting_start,
+							DateTimeFormat.DAY_TIME_WITH_DAY
+						)
+					}}</a-descriptions-item>
+					<a-descriptions-item label="Voting End">{{
+						secToFormat(
+							proposalStore.voting_end,
+							DateTimeFormat.DAY_TIME_WITH_DAY
+						)
+					}}</a-descriptions-item>
+				</a-descriptions>
+				<p v-if="!checkVoteValidity()">
+					<a-alert
+						message="Warning"
+						:description="errorDescription()"
+						type="warning"
+						show-icon
+					/>
+				</p>
+			</a-col>
+		</a-row>
 		<a-form
 			:model="formState"
 			name="Vote"
@@ -22,6 +48,7 @@
 				<a-select
 					v-model:value="formState.vote_type"
 					placeholder="Please select your option"
+					:disabled="!checkVoteValidity()"
 				>
 					<a-select-option :value="VoteOptions.ABSTAIN"
 						>Abstain</a-select-option
@@ -31,16 +58,24 @@
 				</a-select>
 			</a-form-item>
 			<a-form-item>
-				<a-button class="margin_extra_sm" type="primary" html-type="submit"
+				<a-button
+					class="margin_extra_sm"
+					type="primary"
+					html-type="submit"
+					:disabled="!checkVoteValidity()"
 					>Vote</a-button
 				>
 				<a-button
 					class="margin_extra_sm"
 					type="primary"
 					danger
+					:disabled="!checkClearVoteValidity()"
 					@click="clearVote()"
-					>Clear Vote Record</a-button
-				>
+					>Clear Vote Record
+					<info-tool-tip
+						data="It will clear your local state by removing the record of vote cast by you from this proposal."
+					/>
+				</a-button>
 			</a-form-item>
 		</a-form>
 	</a-row>
@@ -64,9 +99,11 @@ import WalletStore from "@/store/WalletStore";
 import { types } from "@algo-builder/web";
 import { defineComponent, reactive } from "vue";
 import VoteStore from "../store/VoteStore";
-import { DAOActions, VoteOptions } from "../types/enum.types";
+import { DAOActions, VoteOptions, DateTimeFormat } from "../types/enum.types";
 import ProposalStore from "@/store/ProposalStore";
-import { clearVoteRecord } from "@/utility";
+import { clearVoteRecord, secToFormat, isCurrentTimeValid } from "@/utility";
+import InfoToolTip from "../components/InfoToolTip.vue";
+import moment from "moment";
 
 export default defineComponent({
 	name: "VotePage",
@@ -75,26 +112,51 @@ export default defineComponent({
 			VoteOptions,
 			error: "",
 			key: "VoteKey",
+			DateTimeFormat,
 		};
 	},
+	components: { InfoToolTip },
 	setup() {
 		const formState = reactive(VoteStore());
 		const daoIDStore = reactive(DaoID());
 		const walletStore = reactive(WalletStore());
 		const proposalStore = reactive(ProposalStore());
+
 		return {
 			formState,
 			daoIDStore,
 			walletStore,
 			validateMessages: VALIDATE_MESSAGES,
 			proposalStore,
+			secToFormat,
 		};
 	},
 	methods: {
+		checkVoteValidity() {
+			return isCurrentTimeValid(
+				this.proposalStore.voting_start,
+				this.proposalStore.voting_end
+			);
+		},
+		errorDescription() {
+			if (this.proposalStore.voting_start > moment(new Date()).unix()) {
+				return "Voting time period has not yet started.";
+			}
+			return "Voting time period is over.";
+		},
+		async checkClearVoteValidity() {
+			if (
+				!this.checkVoteValidity() ||
+				this.proposalStore.voting_start < moment(new Date()).unix()
+			) {
+				return false;
+			}
+			return true;
+		},
 		async clearVote() {
 			try {
 				await clearVoteRecord(
-					this.proposalStore.selected_address,
+					this.proposalStore.proposal_addr as string,
 					this.walletStore.address,
 					this.daoIDStore.dao_id as number,
 					this.walletStore.webMode
@@ -111,7 +173,7 @@ export default defineComponent({
 			this.error = overallErrorCheck();
 			if (!this.error) {
 				loadingMessage(this.key);
-				const proposalAddress = this.proposalStore.selected_address;
+				const proposalAddress = this.proposalStore.proposal_addr as string;
 				console.log(`* Register votes by ${this.walletStore.address} *`);
 				// call to DAO app by voter (to register deposited votes)
 				const registerVoteParam: types.ExecParams = {

@@ -4,7 +4,7 @@ import AllProposal from "../pages/AllProposal.vue";
 import AllDao from "../pages/AllDao.vue";
 import VoteToken from "../pages/Token.vue";
 import CreateDaoPage from "../pages/CreateDao.vue";
-import ProposalInfo from "../pages/ProposalInfo.vue";
+import ProposalDetailsTab from "../pages/ProposalDetailsTab.vue";
 import { EndPoint } from "@/types";
 
 const routes = [
@@ -23,7 +23,7 @@ const routes = [
 	{
 		path: EndPoint.PROPOSAL_INFO,
 		name: "ProposalInfo",
-		component: ProposalInfo,
+		component: ProposalDetailsTab,
 	},
 	{
 		path: EndPoint.PROPOSALS,
