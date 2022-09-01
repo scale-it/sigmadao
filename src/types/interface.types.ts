@@ -69,7 +69,7 @@ export interface ProposalTableData {
 	amount?: number;
 	from?: string;
 	hash_algo?: string;
-	reciepient?: string;
+	recipient?: string;
 	executed?: number;
 	name: string;
 	msg: string;
