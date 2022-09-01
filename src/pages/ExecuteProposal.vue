@@ -23,7 +23,7 @@
 				}}</a-descriptions-item>
 				<a-descriptions-item label="Execute Before">{{
 					secToFormat(
-						proposalStore.voting_start,
+						proposalStore.execute_before,
 						DateTimeFormat.DAY_TIME_WITH_DAY
 					)
 				}}</a-descriptions-item>

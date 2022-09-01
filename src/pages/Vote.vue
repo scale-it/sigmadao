@@ -11,7 +11,7 @@
 			/>
 		</div>
 		<a-row>
-			<a-col :xs="{ span: 20, offset: 2 }" :sm="{ span: 15, offset: 5 }">
+			<a-col :xs="{ span: 20, offset: 2 }" :sm="{ span: 15, offset: 6 }">
 				<a-descriptions :column="{ xs: 1, sm: 2 }">
 					<a-descriptions-item label="Voting Start">{{
 						secToFormat(
