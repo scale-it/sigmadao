@@ -296,7 +296,7 @@ export async function decodeProposalParams(
 		name: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Name) as string,
 		amount: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Amount) as number,
 		from: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.From) as string,
-		reciepient: globalState.get(
+		recipient: globalState.get(
 			PROPOSAL_LOCAL_STATE_MAP_KEY.Recipient
 		) as string,
 		msg: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Message) as string,
