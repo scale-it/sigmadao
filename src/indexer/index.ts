@@ -304,6 +304,9 @@ export async function decodeProposalParams(
 		type: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Type) as number,
 		url_hash: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Url_Hash) as string,
 		executed: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Executed) as number,
+		yes: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Yes) as number,
+		no: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.No) as number,
+		abstain: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Abstain) as number,
 		voting_start: globalState.get(
 			PROPOSAL_LOCAL_STATE_MAP_KEY.Voting_Start
 		) as number,

@@ -106,6 +106,13 @@ export default defineComponent({
 			}
 			return item.amount;
 		},
+		isVoteRecordsAvailable() {
+			return (
+				this.proposalInfo?.yes ||
+				this.proposalInfo?.no ||
+				this.proposalInfo?.abstain
+			);
+		},
 	},
 	setup() {
 		const proposalInfo = reactive(ProposalStore());

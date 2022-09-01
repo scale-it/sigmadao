@@ -11,6 +11,7 @@ import {
 	Plugin,
 } from "chart.js";
 import { VOTE_YES, VOTE_NO, VOTE_ABSTAIN } from "../constants";
+import { calculatePercentage } from "@/utility";
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
 export default defineComponent({
@@ -44,15 +45,38 @@ export default defineComponent({
 			type: Array as PropType<Plugin<"pie">[]>,
 			default: () => [],
 		},
+		yesDeposit: {
+			type: Number,
+			default: 0,
+		},
+		noDeposit: {
+			type: Number,
+			default: 0,
+		},
+		abstainDeposit: {
+			type: Number,
+			default: 0,
+		},
 	},
 	setup(props) {
-		// TODO: Dynamic vote details fetch
+		const totalDeposit =
+			props.yesDeposit + props.noDeposit + props.abstainDeposit;
+		const yesVotePercentage = calculatePercentage(
+			props.yesDeposit,
+			totalDeposit
+		);
+		const noVotePercentage = calculatePercentage(props.noDeposit, totalDeposit);
+		const abstainVotePercentage = calculatePercentage(
+			props.abstainDeposit,
+			totalDeposit
+		);
+
 		const chartData = {
-			labels: ["Yes", "No", "Abstain"],
+			labels: ["Yes ", "No ", "Abstain "],
 			datasets: [
 				{
 					backgroundColor: [VOTE_YES, VOTE_NO, VOTE_ABSTAIN],
-					data: [40, 20, 10],
+					data: [yesVotePercentage, noVotePercentage, abstainVotePercentage],
 				},
 			],
 		};
@@ -72,6 +96,9 @@ export default defineComponent({
 				cssClasses: props.cssClasses,
 				styles: props.styles,
 				plugins: props.plugins,
+				yesDeposit: props.yesDeposit,
+				noDeposit: props.noDeposit,
+				abstainDeposit: props.abstainDeposit,
 			});
 	},
 });

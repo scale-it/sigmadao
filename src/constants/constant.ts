@@ -48,6 +48,9 @@ export const PROPOSAL_LOCAL_STATE_MAP_KEY = {
 	Recipient: "recipient",
 	ASA_ID: "asa_id",
 	Amount: "amount",
+	Yes: "yes",
+	No: "no",
+	Abstain: "abstain",
 };
 
 export const MILLI_SECOND = 1000;
