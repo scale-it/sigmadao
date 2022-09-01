@@ -115,6 +115,8 @@ other proposals.`;
 export const EXECUTE_PROPOSAL_DESCRIPTION = `Anyone is able to execute a proposal. User can only execute a proposal after voting end. The proposal has to be executed
 before the execute_before.`;
 
+export const CLOSE_PROPOSAL_DESCRIPTION = `Close proposal fails, if the proposal is still in progress. This closes proposal record and returns back the deposit. Sender must be an account with a recorded proposal.`;
+
 export const EmptyDataDescription = {
 	DAO: "No Sigma DAOs Exists",
 	PROPOSAL: "No Proposals Exists",

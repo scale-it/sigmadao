@@ -37,6 +37,7 @@
 						<a-card
 							:class="isCurrentProposalSelected(item) && 'selected_dao_card'"
 							hoverable
+							@click="handleSelectProposal(item)"
 						>
 							<template #title>
 								<a :href="'//' + item.url" target="_blank">
@@ -50,18 +51,6 @@
 								>
 									Selected
 								</div></template
-							>
-							<template #actions>
-								<a-button type="link" @click="() => handleSelectProposal(item)">
-									Select
-								</a-button>
-								<a-button
-									type="link"
-									danger
-									@click="() => handleCloseProposal(item)"
-								>
-									Close
-								</a-button></template
 							>
 							<a-descriptions :column="1">
 								<a-descriptions-item label="Type">{{
@@ -335,31 +324,6 @@ export default defineComponent({
 				openErrorNotificationWithIcon(
 					UNSUCCESSFUL,
 					daoAppMessage.PROPOSAL_UNSUCCESSFUL
-				);
-			}
-		},
-		async handleCloseProposal(record: ProposalTableData) {
-			const lsig: LogicSigAccount = await getProposalLsig(
-				this.daoStore.dao_id as number,
-				this.walletStore.address
-			);
-			// checking if the requestor is proposal creator
-			if (lsig.address() === record.proposal_addr) {
-				try {
-					await closeProposal(
-						this.walletStore.address,
-						lsig,
-						this.daoStore.govt_id as number,
-						this.daoStore.dao_id as number,
-						this.walletStore.webMode
-					);
-				} catch (error) {
-					openErrorNotificationWithIcon(UNSUCCESSFUL, error);
-				}
-			} else {
-				openErrorNotificationWithIcon(
-					UNSUCCESSFUL,
-					"Only creator of the proposal can close the proposal."
 				);
 			}
 		},
