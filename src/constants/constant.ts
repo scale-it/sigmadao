@@ -41,7 +41,9 @@ export const PROPOSAL_LOCAL_STATE_MAP_KEY = {
 	Url_Hash: "url_hash",
 	Voting_Start: "voting_start",
 	Voting_End: "voting_end",
-	Execute_Before: "Execute_Before",
+	Execute_Before: "execute_before",
+	Executed: "executed",
+	amount: "amount",
 	From: "from",
 	Recipient: "recipient",
 	ASA_ID: "asa_id",
@@ -109,6 +111,11 @@ export const TOKEN_DESCRIPTION = `In order to vote for proposals you have to dep
 <code>max({p in proposal_you_voted; p.end_voting_end})</code>). After
 that time you can withdraw your tokens, or keep them locked to vote for
 other proposals.`;
+
+export const EXECUTE_PROPOSAL_DESCRIPTION = `Anyone is able to execute a proposal. User can only execute a proposal after voting end. The proposal has to be executed
+before the execute_before.`;
+
+export const CLOSE_PROPOSAL_DESCRIPTION = `Close proposal fails, if the proposal is still in progress. This closes proposal record and returns back the deposit. Sender must be an account with a recorded proposal.`;
 
 export const EmptyDataDescription = {
 	DAO: "No Sigma DAOs Exists",

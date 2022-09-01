@@ -17,6 +17,13 @@ export enum VoteTokenType {
 	WITHDRAW_TOKEN = "2",
 }
 
+export enum ProposalDetailType {
+	PROPOSAL_VOTE = "1",
+	WITHDRAW_PROPOSAL = "2",
+	EXECUTE_PROPOSAL = "3",
+	CLOSE_PROPOSAL = "4",
+}
+
 export enum VoteOptions {
 	YES = "yes",
 	NO = "no",
@@ -24,8 +31,8 @@ export enum VoteOptions {
 }
 
 export enum EndPoint {
-	VOTE = "/vote",
 	ADD_PROPOSAL = "/addProposal",
+	PROPOSAL_INFO = "/proposalInfo",
 	PROPOSALS = "/proposals",
 	ALL_DAO = "/",
 	VOTE_TOKEN = "/voteTokens",

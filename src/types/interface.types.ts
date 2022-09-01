@@ -66,6 +66,11 @@ export interface DaoTableData {
 export interface ProposalTableData {
 	key?: number;
 	proposal_addr?: string;
+	amount?: number;
+	from?: string;
+	hash_algo?: string;
+	recipient?: string;
+	executed?: number;
 	name: string;
 	msg: string;
 	type: number;

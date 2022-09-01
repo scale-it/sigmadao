@@ -25,6 +25,7 @@
 		"@ant-design/icons-vue": "^6.1.0",
 		"algosdk": "^1.19.0",
 		"ant-design-vue": "^3.2.5",
+		"chart.js": "^3.9.1",
 		"core-js": "^3.21.1",
 		"crypto-browserify": "^3.12.0",
 		"express": "^4.18.1",
@@ -34,13 +35,14 @@
 		"postgraphile": "^4.12.9",
 		"stream-browserify": "^3.0.0",
 		"vue": "^3.2.31",
+		"vue-chartjs": "^4.1.1",
 		"vue-router": "^4.0.14"
 	},
 	"lint-staged": {
 		"*.{js,ts,vue}": "eslint --cache",
 		"*.**": "prettier --ignore-unknown --write"
 	},
-	"packageManager": "yarn@3.2.0",
+	"packageManager": "yarn@3.2.3",
 	"devDependencies": {
 		"@babel/core": "^7.17.7",
 		"@babel/eslint-parser": "^7.17.0",

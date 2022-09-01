@@ -37,6 +37,7 @@
 						<a-card
 							:class="isCurrentProposalSelected(item) && 'selected_dao_card'"
 							hoverable
+							@click="handleSelectProposal(item)"
 						>
 							<template #title>
 								<a :href="'//' + item.url" target="_blank">
@@ -50,18 +51,6 @@
 								>
 									Selected
 								</div></template
-							>
-							<template #actions>
-								<a-button type="link" @click="() => handleSelectProposal(item)">
-									Select
-								</a-button>
-								<a-button
-									type="link"
-									danger
-									@click="() => handleCloseProposal(item)"
-								>
-									Close
-								</a-button></template
 							>
 							<a-descriptions :column="1">
 								<a-descriptions-item label="Type">{{
@@ -130,12 +119,7 @@ import { defineComponent, reactive } from "vue";
 import DaoID from "../store/DaoID";
 import ProposalTableStore from "../store/ProposalTableStore";
 import ProposalStore from "../store/ProposalStore";
-import {
-	secToFormat,
-	convertHexToAlgorandAddr,
-	redirectTo,
-	closeProposal,
-} from "../utility";
+import { secToFormat, convertHexToAlgorandAddr, redirectTo } from "../utility";
 import { decodeProposalParams } from "@/indexer";
 import TablePagination from "../UIKit/TablePagination.vue";
 import {
@@ -144,8 +128,6 @@ import {
 	getProposalCursorReq,
 } from "@/api";
 import WalletStore from "@/store/WalletStore";
-import { LogicSigAccount } from "algosdk";
-import { getProposalLsig } from "@/contract/dao";
 
 export default defineComponent({
 	name: "AllProposals",
@@ -326,7 +308,7 @@ export default defineComponent({
 		async handleSelectProposal(record: ProposalTableData) {
 			if (record.proposal_addr) {
 				this.proposalStore.setInfo(record);
-
+				redirectTo(this.$router, EndPoint.PROPOSAL_INFO, record);
 				openSuccessNotificationWithIcon(
 					SUCCESSFUL,
 					daoAppMessage.PROPOSAL_SUCCESSFUL(record.name)
@@ -335,31 +317,6 @@ export default defineComponent({
 				openErrorNotificationWithIcon(
 					UNSUCCESSFUL,
 					daoAppMessage.PROPOSAL_UNSUCCESSFUL
-				);
-			}
-		},
-		async handleCloseProposal(record: ProposalTableData) {
-			const lsig: LogicSigAccount = await getProposalLsig(
-				this.daoStore.dao_id as number,
-				this.walletStore.address
-			);
-			// checking if the requestor is proposal creator
-			if (lsig.address() === record.proposal_addr) {
-				try {
-					await closeProposal(
-						this.walletStore.address,
-						lsig,
-						this.daoStore.govt_id as number,
-						this.daoStore.dao_id as number,
-						this.walletStore.webMode
-					);
-				} catch (error) {
-					openErrorNotificationWithIcon(UNSUCCESSFUL, error);
-				}
-			} else {
-				openErrorNotificationWithIcon(
-					UNSUCCESSFUL,
-					"Only creator of the proposal can close the proposal."
 				);
 			}
 		},
