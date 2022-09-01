@@ -117,6 +117,7 @@ import ProposalStore from "../store/ProposalStore";
 import { secToFormat, convertHexToAlgorandAddr, redirectTo } from "../utility";
 import { decodeProposalParams } from "@/indexer";
 import TablePagination from "../UIKit/TablePagination.vue";
+import { PlusOutlined } from "@ant-design/icons-vue";
 import {
 	executeReq,
 	searchProposalsByAppIdReq,
@@ -128,6 +129,7 @@ export default defineComponent({
 	name: "AllProposals",
 	components: {
 		TablePagination,
+		PlusOutlined,
 	},
 	data() {
 		return {
