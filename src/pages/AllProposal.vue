@@ -119,12 +119,7 @@ import { defineComponent, reactive } from "vue";
 import DaoID from "../store/DaoID";
 import ProposalTableStore from "../store/ProposalTableStore";
 import ProposalStore from "../store/ProposalStore";
-import {
-	secToFormat,
-	convertHexToAlgorandAddr,
-	redirectTo,
-	closeProposal,
-} from "../utility";
+import { secToFormat, convertHexToAlgorandAddr, redirectTo } from "../utility";
 import { decodeProposalParams } from "@/indexer";
 import TablePagination from "../UIKit/TablePagination.vue";
 import {
@@ -133,8 +128,6 @@ import {
 	getProposalCursorReq,
 } from "@/api";
 import WalletStore from "@/store/WalletStore";
-import { LogicSigAccount } from "algosdk";
-import { getProposalLsig } from "@/contract/dao";
 
 export default defineComponent({
 	name: "AllProposals",
