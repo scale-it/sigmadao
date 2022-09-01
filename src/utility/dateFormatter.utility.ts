@@ -55,7 +55,7 @@ export const makeHumanReadable = (num: number, singular: string) => {
 
 export const isCurrentTimeValid = (startTime: number, endTime: number) => {
 	const currentTime = moment(new Date()).unix();
-	if (startTime < currentTime && currentTime < endTime) {
+	if (startTime <= currentTime && currentTime <= endTime) {
 		return true;
 	}
 	return false;

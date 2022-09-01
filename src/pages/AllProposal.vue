@@ -115,7 +115,7 @@ import DaoID from "../store/DaoID";
 import ProposalTableStore from "../store/ProposalTableStore";
 import ProposalStore from "../store/ProposalStore";
 import { secToFormat, convertHexToAlgorandAddr, redirectTo } from "../utility";
-import { decodeProposalParams } from "@/indexer";
+import { decodeProposalParams, getAccountInfoByAddress } from "@/indexer";
 import TablePagination from "../UIKit/TablePagination.vue";
 import { PlusOutlined } from "@ant-design/icons-vue";
 import {
@@ -318,9 +318,14 @@ export default defineComponent({
 			this.handlePagination(PaginationCallType.FIRST_PAGE);
 		},
 	},
-	mounted() {
+	async mounted() {
 		this.proposalDataStore.loadTable = this.loadTable;
 		this.loadTable();
+		console.log(
+			await getAccountInfoByAddress(
+				"EDXG4GGBEHFLNX6A7FGT3F6Z3TQGIU6WVVJNOXGYLVNTLWDOCEJJ35LWJY"
+			)
+		);
 	},
 });
 </script>
