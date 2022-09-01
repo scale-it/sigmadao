@@ -12,8 +12,25 @@
 		</div>
 	</a-row>
 	<description :content="CLOSE_PROPOSAL_DESCRIPTION"></description>
+	<a-row>
+		<a-col :xs="{ span: 20, offset: 2 }" :sm="{ span: 14, offset: 6 }">
+			<p v-if="checkCloseValidity()">
+				<a-alert
+					message="Warning"
+					:description="errorDescription()"
+					type="warning"
+					show-icon
+				/>
+			</p>
+		</a-col>
+	</a-row>
 	<a-row justify="center">
-		<a-button type="primary" @click="handleCloseProposal">Close</a-button>
+		<a-button
+			type="primary"
+			:disabled="checkCloseValidity()"
+			@click="handleCloseProposal"
+			>Close</a-button
+		>
 	</a-row>
 </template>
 
@@ -38,6 +55,7 @@ import { getProposalLsig } from "@/contract/dao";
 import Description from "@/UIKit/Description.vue";
 import { closeProposal } from "@/utility";
 import ProposalStore from "@/store/ProposalStore";
+import moment from "moment";
 
 export default defineComponent({
 	name: "CloseProposal",
@@ -62,6 +80,24 @@ export default defineComponent({
 		};
 	},
 	methods: {
+		errorDescription() {
+			if (this.proposalStore.voting_end > moment(new Date()).unix()) {
+				return "Voting period has not yet finished.";
+			} else if (this.proposalStore.executed === 1) {
+				return "Proposal has already been executed.";
+			}
+			return "Execution period has already ended.";
+		},
+		async checkCloseValidity() {
+			// proposal is executed or failed
+			if (
+				this.proposalStore.executed === 1 ||
+				this.proposalStore.execute_before < moment(new Date()).unix()
+			) {
+				return true;
+			}
+			return false;
+		},
 		async handleCloseProposal() {
 			loadingMessage(this.key);
 

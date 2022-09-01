@@ -69,7 +69,7 @@
 					class="margin_extra_sm"
 					type="primary"
 					danger
-					:disabled="!checkClearVoteValidity()"
+					:disabled="checkClearVoteValidity()"
 					@click="clearVote()"
 					>Clear Vote Record
 					<info-tool-tip
@@ -145,13 +145,14 @@ export default defineComponent({
 			return "Voting time period is over.";
 		},
 		async checkClearVoteValidity() {
+			// proposal is executed or failed
 			if (
-				!this.checkVoteValidity() ||
-				this.proposalStore.voting_start < moment(new Date()).unix()
+				this.proposalStore.executed === 1 ||
+				this.proposalStore.execute_before < moment(new Date()).unix()
 			) {
-				return false;
+				return true;
 			}
-			return true;
+			return false;
 		},
 		async clearVote() {
 			try {
