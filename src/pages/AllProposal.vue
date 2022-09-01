@@ -34,24 +34,13 @@
 			>
 				<template #renderItem="{ item }">
 					<a-list-item class="margin_top_sm">
-						<a-card
-							:class="isCurrentProposalSelected(item) && 'selected_dao_card'"
-							hoverable
-							@click="handleSelectProposal(item)"
-						>
+						<a-card hoverable @click="handleSelectProposal(item)">
 							<template #title>
 								<a :href="'//' + item.url" target="_blank">
 									{{ item.name }}
 								</a>
 							</template>
-							<template #extra>
-								<div
-									v-if="isCurrentProposalSelected(item)"
-									style="color: #1890ff"
-								>
-									Selected
-								</div></template
-							>
+
 							<a-descriptions :column="1">
 								<a-descriptions-item label="Type">{{
 									ProposalType[item.type]
@@ -64,6 +53,12 @@
 								}}</a-descriptions-item>
 								<a-descriptions-item label="Voting End">{{
 									secToFormat(item.voting_end, DateTimeFormat.DAY_TIME_WITH_DAY)
+								}}</a-descriptions-item>
+								<a-descriptions-item label="Execute Before">{{
+									secToFormat(
+										item.execute_before,
+										DateTimeFormat.DAY_TIME_WITH_DAY
+									)
 								}}</a-descriptions-item>
 							</a-descriptions>
 						</a-card>

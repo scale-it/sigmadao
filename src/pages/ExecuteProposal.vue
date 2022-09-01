@@ -68,24 +68,19 @@ export default defineComponent({
 					this.walletStore.address
 				);
 
-				executeProposal(
+				await executeProposal(
 					this.walletStore.address,
 					lsig.address(),
 					this.daoIDStore.dao_id as number,
 					this.proposalInfo,
 					this.walletStore.webMode
 				);
-
-				try {
-					searchApplicationAndAccount(); // to update locked and available token on UI
-					successMessage(this.key);
-					openSuccessNotificationWithIcon(SUCCESSFUL, PROPOSAL_EXECUTED);
-				} catch (error) {
-					errorMessage(this.key);
-					this.error = error.message;
-					console.error("Transaction Failed", error);
-				}
+				searchApplicationAndAccount(); // to update locked and available token on UI
+				successMessage(this.key);
+				openSuccessNotificationWithIcon(SUCCESSFUL, PROPOSAL_EXECUTED);
 			} catch (error) {
+				errorMessage(this.key);
+				this.error = error.message;
 				openErrorNotificationWithIcon(UNSUCCESSFUL, error);
 			}
 		},

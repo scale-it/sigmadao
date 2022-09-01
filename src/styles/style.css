@@ -37,3 +37,7 @@ html {
 .ant-page-header {
 	padding-inline: 0 !important;
 }
+
+.ant-alert-with-description .ant-alert-description {
+	word-break: break-all;
+}

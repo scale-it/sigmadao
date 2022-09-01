@@ -128,7 +128,7 @@ export default defineComponent({
 				} else {
 					openErrorNotificationWithIcon(
 						UNSUCCESSFUL,
-						"Only creator of the proposal can close the proposal."
+						"Only creator of the proposal can withdraw from the proposal."
 					);
 				}
 			}

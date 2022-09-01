@@ -13,7 +13,7 @@
 		<description :content="CLOSE_PROPOSAL_DESCRIPTION"></description>
 	</a-row>
 	<a-row justify="center">
-		<a-button type="primary" @click="handleCloseProposal">Execute</a-button>
+		<a-button type="primary" @click="handleCloseProposal">Close</a-button>
 	</a-row>
 </template>
 

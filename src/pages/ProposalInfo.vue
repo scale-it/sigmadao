@@ -13,12 +13,6 @@
 				<a-descriptions-item label="Name">{{
 					proposalInfo.name
 				}}</a-descriptions-item>
-				<a-descriptions-item label="Amount">{{
-					proposalInfo.amount
-				}}</a-descriptions-item>
-				<a-descriptions-item label="Type">{{
-					ProposalType[proposalInfo.type]
-				}}</a-descriptions-item>
 				<a-descriptions-item label="Voting Start">{{
 					secToFormat(
 						proposalInfo.voting_start,
@@ -34,11 +28,29 @@
 						DateTimeFormat.DAY_TIME_WITH_DAY
 					)
 				}}</a-descriptions-item>
-				<a-descriptions-item label="URL">{{
-					proposalInfo.url
-				}}</a-descriptions-item>
+				<a-descriptions-item label="URL">
+					<a :href="'//' + proposalInfo.url" target="_blank">
+						{{ proposalInfo.url }}
+					</a></a-descriptions-item
+				>
 				<a-descriptions-item label="URL Hash">{{
 					proposalInfo.url_hash
+				}}</a-descriptions-item>
+
+				<a-descriptions-item label="Type">{{
+					ProposalType[proposalInfo.type]
+				}}</a-descriptions-item>
+				<a-descriptions-item v-if="proposalInfo.from" label="From">{{
+					proposalInfo.from
+				}}</a-descriptions-item>
+				<a-descriptions-item v-if="proposalInfo.recipient" label="Recipient">{{
+					proposalInfo.recipient
+				}}</a-descriptions-item>
+				<a-descriptions-item v-if="proposalInfo.amount" label="Amount">
+					{{ getAlgoAmount(proposalInfo) }}</a-descriptions-item
+				>
+				<a-descriptions-item v-if="proposalInfo.asa_id" label="ASA ID">{{
+					proposalInfo.asa_id
 				}}</a-descriptions-item>
 			</a-descriptions>
 		</a-card>
@@ -52,8 +64,8 @@
 <script lang="ts">
 import { ProposalType } from "@/constants";
 import { defineComponent } from "vue";
-import { secToFormat } from "../utility";
-import { DateTimeFormat, ProposalTableData } from "@/types";
+import { redirectTo, secToFormat } from "../utility";
+import { DateTimeFormat, EndPoint, ProposalTableData } from "@/types";
 import PieChart from "../components/PieChart.vue";
 import ProposalDetailsTab from "./ProposalDetailsTab.vue";
 
@@ -73,6 +85,17 @@ export default defineComponent({
 			ProposalType,
 			proposalInfo,
 		};
+	},
+	methods: {
+		redirectToAllProposal() {
+			redirectTo(this.$router, EndPoint.PROPOSALS);
+		},
+		getAlgoAmount(item: ProposalTableData) {
+			if (item.type === ProposalType.ALGO_TRANSFER) {
+				return (item.amount as number) / 1e6;
+			}
+			return item.amount;
+		},
 	},
 	setup() {
 		return {
