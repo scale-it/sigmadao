@@ -3530,6 +3530,7 @@ __metadata:
     "@vue/eslint-config-typescript": ^10.0.0
     algosdk: ^1.19.0
     ant-design-vue: ^3.2.5
+    chart.js: ^3.9.1
     core-js: ^3.21.1
     crypto-browserify: ^3.12.0
     eslint: ^8.11.0
@@ -3549,6 +3550,7 @@ __metadata:
     ts-node: ^10.7.0
     typescript: ^4.6.2
     vue: ^3.2.31
+    vue-chartjs: ^4.1.1
     vue-router: ^4.0.14
   languageName: unknown
   linkType: soft
@@ -4817,6 +4819,13 @@ __metadata:
   version: 0.2.0
   resolution: "charcodes@npm:0.2.0"
   checksum: 972443ed359d54382e721b9db0a298eb95c4c454386f7e98886586f433e1e6686225416114e6f6bb2e6ef3facc9ba3b4ab9946a56a180fe64ef67816a05d4fe4
+  languageName: node
+  linkType: hard
+
+"chart.js@npm:^3.9.1":
+  version: 3.9.1
+  resolution: "chart.js@npm:3.9.1"
+  checksum: 9ab0c0ac01215af0b3f020f2e313030fd6e347b48ed17d5484ee9c4e8ead45e78ae71bea16c397621c386b409ce0b14bf17f9f6c2492cd15b56c0f433efdfff6
   languageName: node
   linkType: hard
 
@@ -14456,6 +14465,16 @@ __metadata:
   version: 2.0.4
   resolution: "vlq@npm:2.0.4"
   checksum: b2ed0d3a5423f34bba98a18250f8b13a96eebff9c8f9427fa9cd78065d31f35641f6fd659c5642253b79532000a37aec0582abac95d1ef4af2cd0c96a716f1b6
+  languageName: node
+  linkType: hard
+
+"vue-chartjs@npm:^4.1.1":
+  version: 4.1.1
+  resolution: "vue-chartjs@npm:4.1.1"
+  peerDependencies:
+    chart.js: ^3.7.0
+    vue: ^3.0.0-0 || ^2.6.0
+  checksum: 9d1e3c17558113a3cb8a9bf695270f74ce79cafbbeb05f3dcf0eea9a10d6169a65a09f557ab3004a40e485bfb8f8ae557a67d9af72e5cef4bf57ffc7f9ed13dc
   languageName: node
   linkType: hard
 

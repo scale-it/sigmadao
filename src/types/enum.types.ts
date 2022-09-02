@@ -17,6 +17,14 @@ export enum VoteTokenType {
 	WITHDRAW_TOKEN = "2",
 }
 
+export enum ProposalDetailType {
+	DETAILS = "1",
+	PROPOSAL_VOTE = "2",
+	WITHDRAW_PROPOSAL = "3",
+	EXECUTE_PROPOSAL = "4",
+	CLOSE_PROPOSAL = "5",
+}
+
 export enum VoteOptions {
 	YES = "yes",
 	NO = "no",
@@ -24,8 +32,8 @@ export enum VoteOptions {
 }
 
 export enum EndPoint {
-	VOTE = "/vote",
 	ADD_PROPOSAL = "/addProposal",
+	PROPOSAL_INFO = "/proposalInfo",
 	PROPOSALS = "/proposals",
 	ALL_DAO = "/",
 	VOTE_TOKEN = "/voteTokens",
@@ -40,6 +48,7 @@ export enum DAOActions {
 	WITHDRAW_VOTE_DEPOSIT = "str:withdraw_vote_deposit",
 	CLEAR_VOTE_RECORD = "str:clear_vote_record",
 	CLOSE_PROPOSAL = "str:close_proposal",
+	OPT_IN_GOV_TOKEN = "str:optin_gov_token",
 }
 
 export enum NetworkTypes {

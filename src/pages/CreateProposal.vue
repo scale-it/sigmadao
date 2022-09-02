@@ -1,5 +1,30 @@
 <template>
-	<h3 class="text_center">Create Proposal</h3>
+	<a-breadcrumb class="margin_bottom_sm">
+		<a-breadcrumb-item
+			><a @click="redirectToAllProposal">All Proposals</a></a-breadcrumb-item
+		>
+		<a-breadcrumb-item>Create Proposal</a-breadcrumb-item>
+	</a-breadcrumb>
+	<a-row class="margin_bottom_sm">
+		<a-col>
+			<a-descriptions
+				size="small"
+				title="Current DAO conditions"
+				bordered
+				:column="{ xs: 1, sm: 3 }"
+			>
+				<a-descriptions-item label="Minimum deposit amount of the gov tokens"
+					>{{ globalStateMinAmount }} tokens
+				</a-descriptions-item>
+				<a-descriptions-item label="Maximum Duration of voting period">{{
+					toDaysMinutesSeconds(maxDuration)
+				}}</a-descriptions-item>
+				<a-descriptions-item label="Minimum Duration of voting period">{{
+					toDaysMinutesSeconds(minDuration)
+				}}</a-descriptions-item>
+			</a-descriptions>
+		</a-col>
+	</a-row>
 	<a-row>
 		<a-col :xs="{ span: 20, offset: 2 }" :sm="{ span: 14, offset: 6 }">
 			<div v-if="error" class="margin_bottom_sm">
@@ -73,7 +98,7 @@
 					name="execute_before"
 					:rules="[{ required: true, validator: validateExecuteBefore }]"
 				>
-					<a-time-picker
+					<a-date-picker
 						v-model:value="formState.execute_before"
 						showTime
 						format="YYYY-MM-DD HH:mm"
@@ -146,8 +171,11 @@
 						<a-input v-model:value="formState.message" />
 					</a-form-item>
 				</div>
+				<a-form-item label="Algos Amount to fund Lsig" name="lsig_fund_amount">
+					<a-input-number v-model:value="lsig_fund_amount" />
+				</a-form-item>
 				<a-form-item :wrapper-col="{ offset: 10, span: 20 }">
-					<a-button type="primary" html-type="submit">Submit</a-button>
+					<a-button type="primary" html-type="submit">Create Proposal</a-button>
 				</a-form-item>
 			</a-form>
 		</a-col>
@@ -168,10 +196,10 @@ import {
 	SUCCESSFUL,
 	openErrorNotificationWithIcon,
 	UNSUCCESSFUL,
-	daoAppMessage,
 	GLOBAL_STATE_MAP_KEY,
+	DEFAULT_FUND_AMT,
 } from "@/constants";
-import { DateRange, DAOActions } from "@/types";
+import { DateRange, DAOActions, EndPoint } from "@/types";
 import { defineComponent, reactive } from "vue";
 import ProposalFormStore from "../store/AddProposalStore";
 import WalletStore from "../store/WalletStore";
@@ -179,14 +207,14 @@ import DaoID from "../store/DaoID";
 import { types } from "@algo-builder/web";
 import type { LogicSigAccount } from "algosdk";
 import { getProposalLsig, getDaoFundLSig } from "../contract/dao";
-import { getAccountInfoByAddress, isApplicationOpted } from "@/indexer";
+import { isApplicationOpted, searchApplicationAndAccount } from "@/indexer";
 import {
 	fundAmount,
 	convertToSeconds,
-	optInUsingLsig,
-	optInToAppUsingSecretKey,
 	getDifferenceInSeconds,
 	toDaysMinutesSeconds,
+	redirectTo,
+	signTxUsingLsig,
 } from "../utility";
 import DaoStore from "../store/DaoID";
 import ProposalTableStore from "../store/ProposalTableStore";
@@ -201,6 +229,7 @@ export default defineComponent({
 			error: "",
 			key: "AddProposalKey",
 			DaoStore,
+			lsig_fund_amount: DEFAULT_FUND_AMT,
 		};
 	},
 	setup() {
@@ -208,38 +237,30 @@ export default defineComponent({
 		const walletStore = reactive(WalletStore());
 		const proposalDataStore = reactive(ProposalTableStore());
 		const daoStore = reactive(DaoID());
+		const maxDuration = daoStore.global_app_state?.get(
+			GLOBAL_STATE_MAP_KEY.MaxDuration
+		) as number;
 
+		const minDuration = daoStore.global_app_state?.get(
+			GLOBAL_STATE_MAP_KEY.MinDuration
+		) as number;
+		const globalStateMinAmount =
+			daoStore.global_app_state?.get(GLOBAL_STATE_MAP_KEY.Deposit) ?? 15; //  minimun deposit amount taken from dao app global state
 		return {
 			formState,
 			walletStore,
 			daoStore,
 			validateMessages: VALIDATE_MESSAGES,
 			proposalDataStore,
+			maxDuration,
+			minDuration,
+			globalStateMinAmount,
+			toDaysMinutesSeconds,
 		};
 	},
 	methods: {
-		async optInDaoApp() {
-			try {
-				if (this.daoStore.dao_id) {
-					const isOptedIn = await isApplicationOpted(
-						this.walletStore.address,
-						this.daoStore.dao_id
-					);
-					if (!isOptedIn) {
-						await optInToAppUsingSecretKey(
-							this.walletStore.address,
-							this.daoStore.dao_id,
-							this.walletStore.webMode
-						);
-						openSuccessNotificationWithIcon(
-							"Successful",
-							daoAppMessage.OPT_IN_SUCCESSFUL(this.daoStore.dao_id)
-						);
-					}
-				}
-			} catch (error) {
-				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message);
-			}
+		redirectToAllProposal() {
+			redirectTo(this.$router, EndPoint.PROPOSALS);
 		},
 		//  execute_before must be after voting_end
 		async validateExecuteBefore(_rule: Rule, value: string) {
@@ -274,21 +295,17 @@ export default defineComponent({
 					this.formState.vote_date?.[0]?.length &&
 					this.formState.vote_date?.[1]?.length
 				) {
-					const maxDuration = this.daoStore.global_app_state?.get(
-						GLOBAL_STATE_MAP_KEY.MaxDuration
-					) as number;
-
-					const minDuration = this.daoStore.global_app_state?.get(
-						GLOBAL_STATE_MAP_KEY.MinDuration
-					) as number;
 					const votingStart = convertToSeconds(this.formState.vote_date[0]);
 					const votingEnd = convertToSeconds(this.formState.vote_date[1]);
 					const diffInSeconds = getDifferenceInSeconds(votingStart, votingEnd);
-					if (minDuration > diffInSeconds || diffInSeconds > maxDuration) {
+					if (
+						this.minDuration > diffInSeconds ||
+						diffInSeconds > this.maxDuration
+					) {
 						return Promise.reject(
 							`Voting duration must be at least ${toDaysMinutesSeconds(
-								minDuration
-							)} and atmost ${toDaysMinutesSeconds(maxDuration)}.`
+								this.minDuration
+							)} and atmost ${toDaysMinutesSeconds(this.maxDuration)}.`
 						);
 					}
 					// voting_end must be > voting_start
@@ -299,6 +316,25 @@ export default defineComponent({
 					}
 				}
 				return Promise.resolve();
+			}
+		},
+		async optInLsigToDao(lsig: LogicSigAccount) {
+			const isAppOpted = await isApplicationOpted(
+				lsig.address(),
+				this.daoStore.dao_id as number
+			);
+
+			if (!isAppOpted) {
+				const execParam: types.ExecParams = {
+					type: types.TransactionType.OptInToApp,
+					sign: types.SignType.LogicSignature,
+					fromAccountAddr: lsig.address(),
+					lsig: lsig,
+					appID: this.daoStore.dao_id as number,
+					payFlags: { totalFee: 1000 },
+				};
+				const response = await signTxUsingLsig(lsig, execParam);
+				console.log(response);
 			}
 		},
 		async onFinish(values: any) {
@@ -318,7 +354,7 @@ export default defineComponent({
 				this.error = overallErrorCheck();
 				if (!this.error) {
 					loadingMessage(this.key);
-					await this.optInDaoApp();
+
 					let lsig: LogicSigAccount = await getProposalLsig(
 						this.daoStore.dao_id as number,
 						this.walletStore.address
@@ -346,7 +382,7 @@ export default defineComponent({
 							proposalParams.push(
 								`addr:${daoLsig.address()}`, // from
 								`addr:${recipient}`, // recipient
-								`int:${amount}` // amount
+								`int:${amount * 1e6}` // amount
 							);
 							break;
 						}
@@ -364,52 +400,50 @@ export default defineComponent({
 							break;
 						}
 					}
-					await this.checkOptInLsigToApp(lsig);
 					await this.checkLsigFund(lsig);
-
-					const globalStateMinAmount =
-						this.daoStore.global_app_state?.get(GLOBAL_STATE_MAP_KEY.Deposit) ??
-						15; //  minimun deposit amount taken from dao app global state
+					await this.optInLsigToDao(lsig);
 
 					// check if min gov tokens required for tranfer are available with proposal creator
-					if ((this.daoStore.available as number) < globalStateMinAmount) {
-						this.error = `You have insufficient balance of available gov tokens, minimum tokens required for proposal is ${globalStateMinAmount}`;
+					if ((this.daoStore.available as number) < this.globalStateMinAmount) {
+						this.error = `You have insufficient balance of available gov tokens, minimum tokens required for proposal is ${this.globalStateMinAmount}`;
 						errorMessage(this.key);
 						openErrorNotificationWithIcon(UNSUCCESSFUL, this.error);
 						return;
 					}
-					const addProposalTx: types.ExecParams[] = [
-						{
-							type: types.TransactionType.CallApp,
-							sign: types.SignType.LogicSignature,
-							fromAccountAddr: lsig.address(),
-							appID: this.daoStore.dao_id as number,
-							lsig: lsig,
-							payFlags: {},
-							appArgs: proposalParams,
+					const callAppTx: types.ExecParams = {
+						type: types.TransactionType.CallApp,
+						sign: types.SignType.LogicSignature,
+						fromAccountAddr: lsig.address(),
+						appID: this.daoStore.dao_id as number,
+						lsig: lsig,
+						payFlags: {},
+						appArgs: proposalParams,
+					};
+
+					const transferAssetTx: types.ExecParams = {
+						type: types.TransactionType.TransferAsset,
+						sign: types.SignType.SecretKey,
+						fromAccount: {
+							addr: this.walletStore.address,
+							sk: new Uint8Array(0),
 						},
-						{
-							type: types.TransactionType.TransferAsset,
-							sign: types.SignType.SecretKey,
-							fromAccount: {
-								addr: this.walletStore.address,
-								sk: new Uint8Array(0),
-							},
-							toAccountAddr: getApplicationAddress(this.daoStore.dao_id),
-							amount: globalStateMinAmount as number,
-							assetID: this.daoStore.govt_id as number,
-							payFlags: {},
-						},
-					];
-					let response = await this.walletStore.webMode.executeTx(
-						addProposalTx
-					);
+						toAccountAddr: getApplicationAddress(this.daoStore.dao_id),
+						amount: this.globalStateMinAmount as number,
+						assetID: this.daoStore.govt_id as number,
+						payFlags: { totalFee: 1000 },
+					};
+					let addProposalResponse = await this.walletStore.webMode.executeTx([
+						callAppTx,
+						transferAssetTx,
+					]);
+					console.log("Add Proposal txn response", addProposalResponse);
+					await searchApplicationAndAccount(); // to update locked and available token on UI
 					successMessage(this.key);
 					openSuccessNotificationWithIcon(
 						SUCCESSFUL,
 						proposalMessage.SUCCESSFUL
 					);
-					console.log(response);
+					this.redirectToAllProposal();
 				}
 			} catch (error) {
 				this.error = error.message;
@@ -450,45 +484,12 @@ export default defineComponent({
 		// funding lsig if the account has no algos
 		async checkLsigFund(lsig: LogicSigAccount) {
 			try {
-				const response = await getAccountInfoByAddress(lsig.address());
-				let amount = null;
-				if (response) {
-					amount = response?.amount;
-				}
-				if (amount) return;
-				// fund lsig
 				await fundAmount(
 					this.walletStore.address,
 					lsig.address(),
-					2e6,
+					this.lsig_fund_amount * 1e6,
 					this.walletStore.webMode
 				);
-			} catch (error) {
-				this.error = error.message;
-				errorMessage(this.key);
-				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message);
-			}
-		},
-		async checkOptInLsigToApp(lsig: LogicSigAccount) {
-			try {
-				// check if app is already opted
-				const isApplicationAlreadyOpted = await isApplicationOpted(
-					lsig.address(),
-					this.daoStore.dao_id as number
-				);
-				if (isApplicationAlreadyOpted) return;
-
-				// optin to app
-				const execParam: types.ExecParams = {
-					type: types.TransactionType.OptInToApp,
-					sign: types.SignType.LogicSignature,
-					fromAccountAddr: lsig.address(),
-					lsig: lsig,
-					appID: this.daoStore.dao_id as number,
-					payFlags: {},
-				};
-				let response = await optInUsingLsig(lsig, execParam);
-				console.log(response);
 			} catch (error) {
 				this.error = error.message;
 				errorMessage(this.key);

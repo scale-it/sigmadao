@@ -1,5 +1,5 @@
 <template>
-	<div class="padding_inline_med margin_bottom_sm">
+	<div class="margin_bottom_sm">
 		<h3 style="text-align: center">
 			{{ ProposalFilterType[this.proposalDataStore.filterType] }} Proposals
 		</h3>
@@ -27,42 +27,20 @@
 		</div>
 	</div>
 	<a-row class="dao-table" type="flex" justify="center">
-		<div v-if="dataSource.length > 0" class="padding_inline_med">
+		<div v-if="dataSource.length > 0">
 			<a-list
 				:grid="{ gutter: 25, xs: 1, sm: 2, column: 3, size: 'middle' }"
 				:data-source="dataSource"
 			>
 				<template #renderItem="{ item }">
 					<a-list-item class="margin_top_sm">
-						<a-card
-							:class="isCurrentProposalSelected(item) && 'selected_dao_card'"
-							hoverable
-						>
+						<a-card hoverable @click="handleSelectProposal(item)">
 							<template #title>
 								<a :href="'//' + item.url" target="_blank">
 									{{ item.name }}
 								</a>
 							</template>
-							<template #extra>
-								<div
-									v-if="isCurrentProposalSelected(item)"
-									style="color: #1890ff"
-								>
-									Selected
-								</div></template
-							>
-							<template #actions>
-								<a-button type="link" @click="() => handleSelectProposal(item)">
-									Select
-								</a-button>
-								<a-button
-									type="link"
-									danger
-									@click="() => handleCloseProposal(item)"
-								>
-									Close
-								</a-button></template
-							>
+
 							<a-descriptions :column="1">
 								<a-descriptions-item label="Type">{{
 									ProposalType[item.type]
@@ -74,8 +52,11 @@
 									)
 								}}</a-descriptions-item>
 								<a-descriptions-item label="Voting End">{{
+									secToFormat(item.voting_end, DateTimeFormat.DAY_TIME_WITH_DAY)
+								}}</a-descriptions-item>
+								<a-descriptions-item label="Execute Before">{{
 									secToFormat(
-										item.voting_start,
+										item.execute_before,
 										DateTimeFormat.DAY_TIME_WITH_DAY
 									)
 								}}</a-descriptions-item>
@@ -134,8 +115,9 @@ import DaoID from "../store/DaoID";
 import ProposalTableStore from "../store/ProposalTableStore";
 import ProposalStore from "../store/ProposalStore";
 import { secToFormat, convertHexToAlgorandAddr, redirectTo } from "../utility";
-import { decodeProposalParams } from "@/indexer";
+import { decodeProposalParams, getAccountInfoByAddress } from "@/indexer";
 import TablePagination from "../UIKit/TablePagination.vue";
+import { PlusOutlined } from "@ant-design/icons-vue";
 import {
 	executeReq,
 	searchProposalsByAppIdReq,
@@ -147,6 +129,7 @@ export default defineComponent({
 	name: "AllProposals",
 	components: {
 		TablePagination,
+		PlusOutlined,
 	},
 	data() {
 		return {
@@ -200,9 +183,6 @@ export default defineComponent({
 		};
 	},
 	methods: {
-		isCurrentProposalSelected(item: ProposalTableData) {
-			return this.proposalStore.selected_address === item.proposal_addr;
-		},
 		handleCreateProposal() {
 			redirectTo(this.$router, EndPoint.ADD_PROPOSAL);
 		},
@@ -321,7 +301,8 @@ export default defineComponent({
 		},
 		async handleSelectProposal(record: ProposalTableData) {
 			if (record.proposal_addr) {
-				this.proposalStore.selected_address = record.proposal_addr;
+				this.proposalStore.setInfo(record);
+				redirectTo(this.$router, EndPoint.PROPOSAL_INFO);
 				openSuccessNotificationWithIcon(
 					SUCCESSFUL,
 					daoAppMessage.PROPOSAL_SUCCESSFUL(record.name)
@@ -333,16 +314,18 @@ export default defineComponent({
 				);
 			}
 		},
-		async handleCloseProposal(record: ProposalTableData) {
-			console.log("closed", record);
-		},
 		async loadTable() {
 			this.handlePagination(PaginationCallType.FIRST_PAGE);
 		},
 	},
-	mounted() {
+	async mounted() {
 		this.proposalDataStore.loadTable = this.loadTable;
 		this.loadTable();
+		console.log(
+			await getAccountInfoByAddress(
+				"EDXG4GGBEHFLNX6A7FGT3F6Z3TQGIU6WVVJNOXGYLVNTLWDOCEJJ35LWJY"
+			)
+		);
 	},
 });
 </script>

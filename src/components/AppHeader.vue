@@ -39,14 +39,6 @@
 									>Deposit Vote Tokens</a-button
 								>
 							</router-link>
-							<router-link :to="{ path: EndPoint.VOTE }">
-								<a-button
-									class="menu_option"
-									:type="isLinkActive(EndPoint.VOTE)"
-									:disabled="DaoStore().disableActions"
-									>Vote</a-button
-								>
-							</router-link>
 						</div>
 					</a-col>
 				</a-row>

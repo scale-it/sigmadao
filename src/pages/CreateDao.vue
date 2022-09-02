@@ -1,5 +1,10 @@
 <template>
-	<h3 class="text_center">Create DAO</h3>
+	<a-breadcrumb class="margin_bottom_sm">
+		<a-breadcrumb-item
+			><a @click="redirectToAllDao">All Dao</a></a-breadcrumb-item
+		>
+		<a-breadcrumb-item>Create Dao</a-breadcrumb-item>
+	</a-breadcrumb>
 	<a-row>
 		<a-col :xs="{ span: 20, offset: 2 }" :sm="{ span: 14, offset: 6 }">
 			<div v-if="error" class="margin_bottom_sm">
@@ -116,8 +121,20 @@
 				>
 					<a-input maxlength="32" v-model:value="formState.dao_name" />
 				</a-form-item>
+				<a-form-item
+					label="Algos amount to fund DAO Account"
+					name="dao_acc_fund_amount"
+				>
+					<a-input-number v-model:value="dao_acc_fund_amount" />
+				</a-form-item>
+				<a-form-item
+					label="Algos amount fund DAO Lsig"
+					name="dao_lsig_fund_amount"
+				>
+					<a-input-number v-model:value="dao_lsig_fund_amount" />
+				</a-form-item>
 				<a-form-item :wrapper-col="{ offset: 10, span: 20 }">
-					<a-button type="primary" html-type="submit">Submit</a-button>
+					<a-button type="primary" html-type="submit">Create DAO</a-button>
 				</a-form-item>
 			</a-form>
 		</a-col>
@@ -128,6 +145,7 @@
 import {
 	createDaoMessage,
 	DAO_CONTRACT_STATE_CONFIG,
+	DEFAULT_FUND_AMT,
 	errorMessage,
 	loadingMessage,
 	openErrorNotificationWithIcon,
@@ -141,8 +159,13 @@ import WalletStore from "@/store/WalletStore";
 import { types } from "@algo-builder/web";
 import { defineComponent, reactive } from "vue";
 import CreateDAOStore from "../store/CreateDaoStore";
-import { DurationType, CreateDaoFormState, EndPoint } from "@/types";
-import { MetaType } from "@algo-builder/web/build/types";
+import {
+	DurationType,
+	CreateDaoFormState,
+	EndPoint,
+	DAOActions,
+} from "@/types";
+import { ExecParams, MetaType } from "@algo-builder/web/build/types";
 import {
 	getCompiledDaoApproval,
 	getCompiledDaoClear,
@@ -151,13 +174,12 @@ import {
 import { Rule } from "ant-design-vue/lib/form";
 import {
 	convertDurationTypeToSeconds,
-	fundAmount,
-	optInUsingLsig,
 	redirectTo,
+	signTxUsingLsig,
 } from "@/utility";
 import { getAssetInformation } from "@/indexer";
 import InfoToolTip from "../components/InfoToolTip.vue";
-import { LogicSigAccount } from "algosdk";
+import { getApplicationAddress, LogicSigAccount } from "algosdk";
 import { ConfirmedTxInfo } from "@algo-builder/algob/build/types";
 
 export default defineComponent({
@@ -173,6 +195,8 @@ export default defineComponent({
 			maxDurationInputType: DurationType.HOURS,
 			DurationType,
 			EndPoint,
+			dao_lsig_fund_amount: DEFAULT_FUND_AMT,
+			dao_acc_fund_amount: DEFAULT_FUND_AMT,
 		};
 	},
 	setup() {
@@ -210,33 +234,6 @@ export default defineComponent({
 				}
 				return Promise.resolve();
 			}
-		},
-		async fundDaoLsig(lsig: LogicSigAccount) {
-			try {
-				await fundAmount(
-					this.walletStore.address,
-					lsig.address(),
-					2e6,
-					this.walletStore.webMode
-				);
-			} catch (error) {
-				this.error = error.message;
-				errorMessage(this.key);
-				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message);
-			}
-		},
-		// opt in dao lsig to gov asa
-		async optInLsigToASA(lsig: LogicSigAccount) {
-			const execParam: types.ExecParams = {
-				type: types.TransactionType.OptInASA,
-				sign: types.SignType.LogicSignature,
-				fromAccountAddr: lsig.address(),
-				lsig: lsig,
-				assetID: this.formState.token_id as number,
-				payFlags: {},
-			};
-			let response = await optInUsingLsig(lsig, execParam);
-			console.log(response);
 		},
 		async onFinish(value: CreateDaoFormState) {
 			let {
@@ -300,23 +297,83 @@ export default defineComponent({
 				const response = (await this.walletStore.webMode.executeTx(
 					deployApp
 				)) as unknown as ConfirmedTxInfo;
+
+				const daoId = response?.["application-index"];
+				let daoLsig: LogicSigAccount = await getDaoFundLSig(daoId as number);
+
+				// Fund application account with some ALGO(5)
+				const fundAppParameters: ExecParams = {
+					type: types.TransactionType.TransferAlgo,
+					sign: types.SignType.SecretKey,
+					fromAccount: {
+						addr: this.walletStore.address,
+						sk: new Uint8Array(0),
+					},
+					toAccountAddr: getApplicationAddress(daoId),
+					amountMicroAlgos: this.dao_acc_fund_amount * 1e6,
+					payFlags: { totalFee: 1000 },
+				};
+
+				// opt in deposit account (dao app account) to gov_token asa so as to recieve gov tokens in future(like add_proposal, vote token, etc)
+				const optInToGovASAParam: ExecParams = {
+					type: types.TransactionType.CallApp,
+					sign: types.SignType.SecretKey,
+					fromAccount: {
+						addr: this.walletStore.address,
+						sk: new Uint8Array(0),
+					},
+					appID: daoId,
+					payFlags: { totalFee: 2000 },
+					foreignAssets: [token_id as number],
+					appArgs: [DAOActions.OPT_IN_GOV_TOKEN],
+				};
+
+				const fundLsigParam: ExecParams = {
+					type: types.TransactionType.TransferAlgo,
+					sign: types.SignType.SecretKey,
+					fromAccount: {
+						addr: this.walletStore.address,
+						sk: new Uint8Array(0),
+					},
+					toAccountAddr: daoLsig.address(),
+					amountMicroAlgos: this.dao_lsig_fund_amount * 1e6,
+					payFlags: { totalFee: 1000 },
+				};
+
+				const optInDaoLsigParam: types.ExecParams = {
+					type: types.TransactionType.TransferAsset,
+					sign: types.SignType.LogicSignature,
+					fromAccountAddr: daoLsig.address(),
+					toAccountAddr: daoLsig.address(),
+					lsig: daoLsig,
+					amount: 0,
+					assetID: this.formState.token_id as number,
+					payFlags: { totalFee: 1000 },
+				};
+
+				await this.walletStore.webMode
+					.executeTx([fundAppParameters])
+					.then(async () => {
+						await this.walletStore.webMode.executeTx([optInToGovASAParam]);
+						await this.walletStore.webMode.executeTx([fundLsigParam]);
+						await signTxUsingLsig(daoLsig, optInDaoLsigParam);
+					});
+
+				successMessage(this.key);
 				openSuccessNotificationWithIcon(
 					SUCCESSFUL,
 					createDaoMessage.SUCCESSFUL
 				);
-				const daoId = response?.["application-index"];
-				let daoLsig: LogicSigAccount = await getDaoFundLSig(daoId as number);
-
-				await this.fundDaoLsig(daoLsig);
-				await this.optInLsigToASA(daoLsig);
-				successMessage(this.key);
-				redirectTo(this.$router, EndPoint.ALL_DAO);
+				this.redirectToAllDao();
 			} catch (error) {
 				this.error = error.message;
 				errorMessage(this.key);
 				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message);
 				console.error("Transaction Failed", error);
 			}
+		},
+		redirectToAllDao() {
+			redirectTo(this.$router, EndPoint.ALL_DAO);
 		},
 		onFinishFailed(errorinfo: Event) {
 			console.warn("Failed:", errorinfo);

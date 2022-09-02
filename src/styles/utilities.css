@@ -30,6 +30,10 @@
 	margin-top: 2rem;
 }
 
+.margin_extra_sm {
+	margin: 0.5rem;
+}
+
 .margin_right_extra_sm {
 	margin-right: 0.5rem;
 }

@@ -66,6 +66,11 @@ export interface DaoTableData {
 export interface ProposalTableData {
 	key?: number;
 	proposal_addr?: string;
+	amount?: number;
+	from?: string;
+	hash_algo?: string;
+	recipient?: string;
+	executed?: number;
 	name: string;
 	msg: string;
 	type: number;
@@ -74,6 +79,10 @@ export interface ProposalTableData {
 	voting_start: number; // seconds
 	voting_end: number; // seconds
 	execute_before: number; // seconds
+	yes?: number;
+	no?: number;
+	abstain?: number;
+	asa_id?: number;
 }
 
 export interface ProposalTableStore {
@@ -94,8 +103,4 @@ export interface CreateDaoFormState {
 	max_duration?: number; // maximum voting time in number of seconds
 	url?: string;
 	dao_name?: string;
-}
-
-export interface ProposalStore {
-	selected_address: string;
 }

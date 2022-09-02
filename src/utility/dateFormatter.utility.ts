@@ -52,3 +52,11 @@ export const makeHumanReadable = (num: number, singular: string) => {
 		? num + (num === 1 ? ` ${singular}, ` : ` ${singular}s, `)
 		: "";
 };
+
+export const isCurrentTimeValid = (startTime: number, endTime: number) => {
+	const currentTime = moment(new Date()).unix();
+	if (startTime <= currentTime && currentTime <= endTime) {
+		return true;
+	}
+	return false;
+};

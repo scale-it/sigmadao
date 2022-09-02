@@ -30,7 +30,7 @@ export const fundAmount = async (
 	console.log("Funded: ", response);
 };
 
-export const optInUsingLsig = async (
+export const signTxUsingLsig = async (
 	lsig: LogicSigAccount,
 	execParam: types.ExecParams
 ) => {
@@ -43,9 +43,10 @@ export const optInUsingLsig = async (
 		).blob;
 		const txInfo = await algodClient.sendRawTransaction(rawLsigSignedTx).do();
 		const confirmationWait = await waitForConfirmation(txInfo.txId);
-		console.log("optInResponse: ", confirmationWait);
+		console.log("confirmed: ", confirmationWait);
 	} catch (error) {
 		console.error(error);
+		throw error;
 	}
 };
 
@@ -89,7 +90,7 @@ export const optInToAppUsingSecretKey = async (
 			sk: new Uint8Array(0),
 		},
 		appID: appID,
-		payFlags: {},
+		payFlags: { totalFee: 1000 },
 	};
 	try {
 		const response = await webMode.executeTx([execParam]);

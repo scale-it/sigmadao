@@ -21,3 +21,4 @@ export const successMessage = (key: string) => {
 };
 
 export const SUCCESSFUL = "Successful";
+export const PROPOSAL_EXECUTED = "Proposal Executed.";

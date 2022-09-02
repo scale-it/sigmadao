@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
 import CreateProposal from "../pages/CreateProposal.vue";
 import AllProposal from "../pages/AllProposal.vue";
-import VotePage from "../pages/Vote.vue";
 import AllDao from "../pages/AllDao.vue";
 import VoteToken from "../pages/Token.vue";
 import CreateDaoPage from "../pages/CreateDao.vue";
+import ProposalDetailsTab from "../pages/ProposalDetailsTab.vue";
 import { EndPoint } from "@/types";
 
 const routes = [
@@ -21,15 +21,14 @@ const routes = [
 		props: true,
 	},
 	{
+		path: EndPoint.PROPOSAL_INFO,
+		name: "ProposalInfo",
+		component: ProposalDetailsTab,
+	},
+	{
 		path: EndPoint.PROPOSALS,
 		name: "AllProposals",
 		component: AllProposal,
-		props: true,
-	},
-	{
-		path: EndPoint.VOTE,
-		name: "VotePage",
-		component: VotePage,
 		props: true,
 	},
 	{

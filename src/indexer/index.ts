@@ -7,7 +7,7 @@ import DaoID from "@/store/DaoID";
 import WalletStore from "@/store/WalletStore";
 import ProposalFormStore from "@/store/AddProposalStore";
 import { Key, StateValue } from "@algo-builder/algob/build/types";
-import type { LogicSigAccount } from "algosdk";
+import { encodeAddress, LogicSigAccount } from "algosdk";
 import { getProposalLsig } from "../contract/dao";
 import { convertToHex } from "@/utility";
 import {
@@ -222,10 +222,22 @@ export function decodeAppParamsState(state: any): Map<Key, StateValue> {
 	if (state) {
 		for (const key in state) {
 			if (state[key].tt === SchemaType.BYTES) {
-				stateMap.set(
-					Buffer.from(key, "base64").toString("ascii"),
-					Buffer.from(state[key].tb, "base64").toString("ascii")
-				);
+				const parsedKey = Buffer.from(key, "base64").toString("ascii");
+				// decode algorand account address
+				if (
+					parsedKey === PROPOSAL_LOCAL_STATE_MAP_KEY.From ||
+					parsedKey === PROPOSAL_LOCAL_STATE_MAP_KEY.Recipient
+				) {
+					stateMap.set(
+						Buffer.from(key, "base64").toString("ascii"),
+						encodeAddress(Buffer.from(state[key].tb, "base64"))
+					);
+				} else {
+					stateMap.set(
+						Buffer.from(key, "base64").toString("ascii"),
+						Buffer.from(state[key].tb, "base64").toString("ascii")
+					);
+				}
 			} else {
 				stateMap.set(
 					Buffer.from(key, "base64").toString("ascii"),
@@ -282,10 +294,19 @@ export async function decodeProposalParams(
 	const globalState = decodeAppParamsState(appParams.tkv);
 	return {
 		name: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Name) as string,
+		amount: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Amount) as number,
+		from: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.From) as string,
+		recipient: globalState.get(
+			PROPOSAL_LOCAL_STATE_MAP_KEY.Recipient
+		) as string,
 		msg: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Message) as string,
 		url: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Url) as string,
 		type: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Type) as number,
 		url_hash: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Url_Hash) as string,
+		executed: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Executed) as number,
+		yes: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Yes) as number,
+		no: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.No) as number,
+		abstain: globalState.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Abstain) as number,
 		voting_start: globalState.get(
 			PROPOSAL_LOCAL_STATE_MAP_KEY.Voting_Start
 		) as number,
