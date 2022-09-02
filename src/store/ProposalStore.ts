@@ -1,5 +1,6 @@
+import { PROPOSAL_LOCAL_STATE_MAP_KEY } from "@/constants";
 import { defineStore } from "pinia";
-import { ProposalTableData } from "../types";
+import { ProposalTableData, StateValue } from "../types";
 
 export default defineStore("ProposalStore", {
 	state: (): ProposalTableData => {
@@ -27,6 +28,17 @@ export default defineStore("ProposalStore", {
 	actions: {
 		setInfo(record: ProposalTableData) {
 			this.$state = record;
+		},
+		setInfoFromLocalState(record: Map<string, StateValue>) {
+			this.$state.yes = record.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Yes) as
+				| number
+				| undefined;
+			this.$state.no = record.get(PROPOSAL_LOCAL_STATE_MAP_KEY.No) as
+				| number
+				| undefined;
+			this.$state.abstain = record.get(PROPOSAL_LOCAL_STATE_MAP_KEY.Abstain) as
+				| number
+				| undefined;
 		},
 		resetProposalStore() {
 			this.$state.key = undefined;

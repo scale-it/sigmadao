@@ -206,6 +206,13 @@ export default defineComponent({
 					openSuccessNotificationWithIcon(SUCCESSFUL, voteMessage.SUCCESSFUL);
 					successMessage(this.key);
 					await this.checkCurrentUserVote();
+					const proposalLocalState = await getAccountAppLocalState(
+						this.proposalStore.proposal_addr as string,
+						this.daoIDStore.dao_id as number
+					);
+					if (proposalLocalState) {
+						this.proposalStore.setInfoFromLocalState(proposalLocalState);
+					}
 				} catch (error) {
 					this.error = error.message;
 					errorMessage(this.key);

@@ -82,6 +82,7 @@ export interface ProposalTableData {
 	yes?: number;
 	no?: number;
 	abstain?: number;
+	asa_id?: number;
 }
 
 export interface ProposalTableStore {
