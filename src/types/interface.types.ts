@@ -79,6 +79,9 @@ export interface ProposalTableData {
 	voting_start: number; // seconds
 	voting_end: number; // seconds
 	execute_before: number; // seconds
+	yes?: number;
+	no?: number;
+	abstain?: number;
 }
 
 export interface ProposalTableStore {

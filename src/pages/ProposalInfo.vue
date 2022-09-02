@@ -63,7 +63,14 @@
 		</a-col>
 		<a-col :xs="{ span: 24 }" :lg="{ span: 13, offset: 2 }">
 			<a-card title="Vote" style="width: 400px">
-				<PieChart />
+				<div v-if="isVoteRecordsAvailable()">
+					<PieChart
+						:yesDeposit="proposalInfo.yes"
+						:noDeposit="proposalInfo.no"
+						:abstainDeposit="proposalInfo.abstain"
+					/>
+				</div>
+				<div v-else>No Record Found</div>
 			</a-card>
 		</a-col>
 	</a-row>
@@ -105,6 +112,13 @@ export default defineComponent({
 				return (item.amount as number) / 1e6;
 			}
 			return item.amount;
+		},
+		isVoteRecordsAvailable() {
+			return (
+				this.proposalInfo?.yes ||
+				this.proposalInfo?.no ||
+				this.proposalInfo?.abstain
+			);
 		},
 	},
 	setup() {

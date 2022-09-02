@@ -19,6 +19,9 @@ export default defineStore("ProposalStore", {
 			voting_start: 0, // seconds
 			voting_end: 0, // seconds
 			execute_before: 0, // seconds
+			yes: undefined,
+			no: undefined,
+			abstain: undefined,
 		};
 	},
 	actions: {
@@ -41,6 +44,9 @@ export default defineStore("ProposalStore", {
 			this.$state.voting_start = 0; // seconds
 			this.$state.voting_end = 0; // seconds
 			this.$state.execute_before = 0; // seconds
+			this.$state.yes = undefined; // seconds
+			this.$state.no = undefined; // seconds
+			this.$state.abstain = undefined; // seconds
 		},
 	},
 });
