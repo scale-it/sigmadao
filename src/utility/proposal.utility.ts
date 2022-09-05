@@ -1,10 +1,17 @@
-import { ProposalType, PROPOSAL_LOCAL_STATE_MAP_KEY } from "@/constants";
+import {
+	GLOBAL_STATE_MAP_KEY,
+	ProposalType,
+	PROPOSAL_LOCAL_STATE_MAP_KEY,
+} from "@/constants";
 import { getDaoFundLSig } from "@/contract/dao";
 import { getAccountAppLocalState, isAssetOpted } from "@/indexer";
+import DaoID from "@/store/DaoID";
 import { DAOActions, ProposalTableData } from "@/types";
 import { types } from "@algo-builder/web";
 import { LogicSigAccount } from "algosdk";
+import moment from "moment";
 import { signTxUsingLsig } from "./algod.utility";
+import { isCurrentTimeValid } from "./dateFormatter.utility";
 
 /**
  * closes proposal by creator
@@ -194,4 +201,53 @@ export const executeProposal = async (
 		console.error("Execute Proposal transaction failed", error);
 		throw error;
 	}
+};
+
+export const checkCurrentProposalState = (
+	record: ProposalTableData
+): { text: string; color: string } => {
+	let text = "";
+	let color = "";
+	const currentTime = moment(new Date()).unix();
+	if (isCurrentTimeValid(record.voting_start, record.voting_end)) {
+		text = "Voting is active";
+		color = "processing";
+	} else if (
+		isCurrentTimeValid(record.voting_end, record.execute_before) &&
+		record.executed !== 1 &&
+		checkProposalResult(record)
+	) {
+		text = "Waiting for Execution";
+		color = "warning";
+	} else if (
+		record.executed !== 1 &&
+		record.execute_before < currentTime &&
+		checkProposalResult(record)
+	) {
+		text = "Overdue";
+		color = "default";
+	} else if (record.executed === 1) {
+		text = "Executed";
+		color = "success";
+	} else if (record.voting_start > currentTime) {
+		text = "Voting is yet to start";
+		color = "default";
+	} else if (record.voting_end < currentTime && !checkProposalResult(record)) {
+		text = "Proposal didn't pass";
+		color = "error";
+	}
+	return { text, color };
+};
+
+export const checkProposalResult = (record: ProposalTableData) => {
+	const daoStore = DaoID();
+	const minSupport = daoStore.global_app_state?.get(
+		GLOBAL_STATE_MAP_KEY.MinSupport
+	) as number;
+	const yesVotes = record.yes ?? 0;
+	const noVotes = record.no ?? 0;
+	if (yesVotes > minSupport && yesVotes > noVotes) {
+		return true;
+	}
+	return false;
 };

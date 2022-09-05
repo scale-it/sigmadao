@@ -5,14 +5,10 @@
 		>
 		<a-breadcrumb-item>Create Proposal</a-breadcrumb-item>
 	</a-breadcrumb>
-	<a-row class="margin_bottom_sm">
+	<a-row>
 		<a-col>
-			<a-descriptions
-				size="small"
-				title="Current DAO conditions"
-				bordered
-				:column="{ xs: 1, sm: 3 }"
-			>
+			<h3>Current DAO conditions</h3>
+			<a-descriptions size="small" bordered :column="{ xs: 1, sm: 3 }">
 				<a-descriptions-item label="Minimum deposit amount of the gov tokens"
 					>{{ globalStateMinAmount }} tokens
 				</a-descriptions-item>
@@ -25,7 +21,7 @@
 			</a-descriptions>
 		</a-col>
 	</a-row>
-	<a-row>
+	<a-row class="margin_top_large">
 		<a-col :xs="{ span: 20, offset: 2 }" :sm="{ span: 14, offset: 6 }">
 			<div v-if="error" class="margin_bottom_sm">
 				<a-alert

@@ -18,6 +18,7 @@ export const GLOBAL_STATE_MAP_KEY = {
 	Deposit: "deposit",
 	MinDuration: "min_duration",
 	MaxDuration: "max_duration",
+	MinSupport: "min_support",
 };
 export const MINUTE_TO_SECONDS = 60;
 export const HOUR_TO_SECONDS = 60 * MINUTE_TO_SECONDS;
@@ -120,9 +121,12 @@ before the execute before.`;
 
 export const CLOSE_PROPOSAL_DESCRIPTION = `Only proposal creator can close the proposal. This closes proposal record and returns back the deposit. It should be done after the proposal voting time has ended or it has been executed.`;
 
+export const WITHDRAW_FROM_PROPOSAL_DESCRIPTION =
+	"Only proposal creator can withdraw from the proposal. This refund back the tokens which user deposited during proposal creation.";
+
 export const EmptyDataDescription = {
 	DAO: "No Sigma DAOs Exists",
 	PROPOSAL: "No Proposals Exists",
 };
 
-export const DEFAULT_FUND_AMT = 0.3;
+export const DEFAULT_FUND_AMT = 1;
