@@ -187,7 +187,7 @@ import WalletStore from "@/store/WalletStore";
 import { types } from "@algo-builder/web";
 import { getAccountAppLocalState, getAssetInformation } from "@/indexer";
 import InfoToolTip from "@/components/InfoToolTip.vue";
-import { checkProposalResult } from "@/utility/proposal.utility";
+import { checkProposalResult } from "@/utility";
 
 export default defineComponent({
 	name: "ProposalInfo",
