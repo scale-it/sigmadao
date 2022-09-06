@@ -124,12 +124,28 @@
 				<a-form-item
 					label="Algos amount to fund DAO Account"
 					name="dao_acc_fund_amount"
+					:rules="[
+						{
+							required: true,
+							type: 'number',
+							validator: (rule, value) =>
+								validateFundAmount(rule, value, dao_acc_fund_amount),
+						},
+					]"
 				>
 					<a-input-number v-model:value="dao_acc_fund_amount" />
 				</a-form-item>
 				<a-form-item
 					label="Algos amount fund DAO Lsig"
 					name="dao_lsig_fund_amount"
+					:rules="[
+						{
+							required: true,
+							type: 'number',
+							validator: (rule, value) =>
+								validateFundAmount(rule, value, dao_lsig_fund_amount),
+						},
+					]"
 				>
 					<a-input-number v-model:value="dao_lsig_fund_amount" />
 				</a-form-item>
@@ -181,6 +197,7 @@ import { getAssetInformation } from "@/indexer";
 import InfoToolTip from "../components/InfoToolTip.vue";
 import { getApplicationAddress, LogicSigAccount } from "algosdk";
 import { ConfirmedTxInfo } from "@algo-builder/algob/build/types";
+import { validateFundAmount } from "@/utility";
 
 export default defineComponent({
 	name: "CreateDaoPage",
@@ -207,6 +224,7 @@ export default defineComponent({
 			CreateDAOStore,
 			walletStore,
 			validateMessages: VALIDATE_MESSAGES,
+			validateFundAmount,
 		};
 	},
 	methods: {

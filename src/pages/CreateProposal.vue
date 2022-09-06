@@ -167,7 +167,18 @@
 						<a-input v-model:value="formState.message" />
 					</a-form-item>
 				</div>
-				<a-form-item label="Algos Amount to fund Lsig" name="lsig_fund_amount">
+				<a-form-item
+					label="Algos Amount to fund Lsig"
+					name="lsig_fund_amount"
+					:rules="[
+						{
+							required: true,
+							type: 'number',
+							validator: (rule, value) =>
+								validateFundAmount(rule, value, lsig_fund_amount),
+						},
+					]"
+				>
 					<a-input-number v-model:value="lsig_fund_amount" />
 				</a-form-item>
 				<a-form-item :wrapper-col="{ offset: 10, span: 20 }">
@@ -211,6 +222,7 @@ import {
 	toDaysMinutesSeconds,
 	redirectTo,
 	signTxUsingLsig,
+	validateFundAmount,
 } from "../utility";
 import DaoStore from "../store/DaoID";
 import ProposalTableStore from "../store/ProposalTableStore";
@@ -252,6 +264,7 @@ export default defineComponent({
 			minDuration,
 			globalStateMinAmount,
 			toDaysMinutesSeconds,
+			validateFundAmount,
 		};
 	},
 	methods: {
