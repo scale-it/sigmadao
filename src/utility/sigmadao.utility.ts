@@ -24,7 +24,7 @@ export const calculatePercentage = (value: number, total: number): number => {
 export const validateFundAmount = (
 	_rule: Rule,
 	value: string,
-	formValue: number | undefined
+	formValue?: number
 ) => {
 	if (value === null) {
 		return Promise.reject("Please input the fund amount.");
