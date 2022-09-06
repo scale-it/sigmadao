@@ -117,6 +117,7 @@ export default defineComponent({
 							this.formState.withdraw_amt as number
 						)
 					);
+					this.formState.$reset();
 				} catch (error) {
 					errorMessage(this.key);
 					this.error = error.message;
