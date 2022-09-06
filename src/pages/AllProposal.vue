@@ -40,7 +40,11 @@
 									{{ item.name }}
 								</a>
 							</template>
-
+							<template #extra>
+								<a-tag :color="checkCurrentProposalState(item).color">{{
+									checkCurrentProposalState(item).text
+								}}</a-tag>
+							</template>
 							<a-descriptions :column="1">
 								<a-descriptions-item label="Type">{{
 									ProposalType[item.type]
@@ -114,7 +118,12 @@ import { defineComponent, reactive } from "vue";
 import DaoID from "../store/DaoID";
 import ProposalTableStore from "../store/ProposalTableStore";
 import ProposalStore from "../store/ProposalStore";
-import { secToFormat, convertHexToAlgorandAddr, redirectTo } from "../utility";
+import {
+	secToFormat,
+	convertHexToAlgorandAddr,
+	redirectTo,
+	checkCurrentProposalState,
+} from "../utility";
 import { decodeProposalParams, getAccountInfoByAddress } from "@/indexer";
 import TablePagination from "../UIKit/TablePagination.vue";
 import { PlusOutlined } from "@ant-design/icons-vue";
@@ -180,6 +189,7 @@ export default defineComponent({
 			ProposalFilterType,
 			proposalStore,
 			walletStore,
+			checkCurrentProposalState,
 		};
 	},
 	methods: {
