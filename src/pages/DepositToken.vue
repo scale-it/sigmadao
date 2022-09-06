@@ -130,6 +130,7 @@ export default defineComponent({
 						SUCCESSFUL,
 						depositTokenMessage.SUCCESSFUL(this.formState.deposit_amt as number)
 					);
+					this.formState.$reset();
 				} catch (error) {
 					this.error = error.message;
 					errorMessage(this.key);

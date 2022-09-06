@@ -365,6 +365,7 @@ export default defineComponent({
 					createDaoMessage.SUCCESSFUL
 				);
 				this.redirectToAllDao();
+				this.formState.$reset();
 			} catch (error) {
 				this.error = error.message;
 				errorMessage(this.key);

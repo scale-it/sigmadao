@@ -440,6 +440,7 @@ export default defineComponent({
 						proposalMessage.SUCCESSFUL
 					);
 					this.redirectToAllProposal();
+					this.formState.$reset();
 				}
 			} catch (error) {
 				this.error = error.message;
