@@ -12,6 +12,7 @@ import {
 	openErrorNotificationWithIcon,
 	openSuccessNotificationWithIcon,
 } from "@/constants";
+import { shallowRef } from "vue";
 
 export default defineStore("WalletStore", {
 	state: (): WalletStoreState => {
@@ -32,7 +33,15 @@ export default defineStore("WalletStore", {
 			this.walletKind = walletType;
 		},
 		setWebMode(webMode: WebModeTypes) {
-			this.webMode = webMode;
+			// my algo wallet has issue with ref in vue
+			// for reference : https://github.com/randlabs/myalgo-connect/issues/71
+			let myalgo = shallowRef() as any;
+			if (this.walletKind === WalletType.MY_ALGO) {
+				myalgo = webMode;
+				this.walletKind = myalgo;
+			} else {
+				this.webMode = webMode;
+			}
 			console.log("WebMode Initialized", webMode);
 		},
 		setWalletAddress(address: string) {
