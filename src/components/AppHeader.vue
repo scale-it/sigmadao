@@ -2,7 +2,9 @@
 	<div class="components-page-header-demo-responsive">
 		<a-page-header>
 			<template #title>
-				<img src="../assets/logo.png" class="logo" />
+				<router-link :to="{ path: EndPoint.ALL_DAO }">
+					<img src="../assets/logo.png" class="logo" />
+				</router-link>
 			</template>
 			<template #extra>
 				<div style="width: min-content">

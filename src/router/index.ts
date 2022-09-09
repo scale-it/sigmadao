@@ -5,6 +5,7 @@ import AllDao from "../pages/AllDao.vue";
 import VoteToken from "../pages/Token.vue";
 import CreateDaoPage from "../pages/CreateDao.vue";
 import ProposalDetailsTab from "../pages/ProposalDetailsTab.vue";
+import PageNotFound from "../pages/PageNotFound.vue";
 import { EndPoint } from "@/types";
 
 const routes = [
@@ -41,6 +42,12 @@ const routes = [
 		path: EndPoint.CREATE_DAO,
 		name: "CreateDaoPage",
 		component: CreateDaoPage,
+		props: true,
+	},
+	{
+		path: EndPoint.PAGE_404,
+		name: "NotFound",
+		component: PageNotFound,
 		props: true,
 	},
 ];
