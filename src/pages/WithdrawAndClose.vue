@@ -62,7 +62,7 @@ import { searchApplicationAndAccount } from "@/indexer";
 import ProposalStore from "@/store/ProposalStore";
 import { LogicSigAccount } from "algosdk/dist/types/src/logicsig";
 import { getProposalLsig } from "@/contract/dao";
-import { closeProposal, signTxUsingLsig } from "@/utility";
+import { closeProposal } from "@/utility";
 import moment from "moment";
 
 export default defineComponent({
@@ -131,7 +131,9 @@ export default defineComponent({
 						payFlags: { totalFee: 1000 },
 					};
 					try {
-						const response = await signTxUsingLsig(proposalLsig, withdrawParam);
+						const response = await this.walletStore.webMode.executeTx([
+							withdrawParam,
+						]);
 						console.log("withdraw from proposal", response);
 						searchApplicationAndAccount(); // to update locked and available token on UI
 						successMessage(this.key);
