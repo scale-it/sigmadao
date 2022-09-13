@@ -10,7 +10,6 @@ import { DAOActions, ProposalTableData } from "@/types";
 import { types } from "@algo-builder/web";
 import { LogicSigAccount } from "algosdk";
 import moment from "moment";
-import { signTxUsingLsig } from "./algod.utility";
 import { isCurrentTimeValid } from "./dateFormatter.utility";
 
 /**
@@ -71,11 +70,7 @@ export const closeProposal = async (
 			console.log("optin", optInResponse);
 		}
 
-		const closeProposalResponse = await signTxUsingLsig(
-			proposalLsig,
-			closeProposalTx
-		);
-
+		const closeProposalResponse = await webMode.executeTx([closeProposalTx]);
 		console.log(closeProposalResponse);
 	} catch (error) {
 		console.error("Close Proposal transaction failed", error);

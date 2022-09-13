@@ -243,6 +243,7 @@ export default defineComponent({
 				if (myAlgo.accounts.length) {
 					this.walletAddress = myAlgo.accounts[0].address;
 					this.setAddress(myAlgo.accounts[0].address);
+					searchApplicationAndAccount();
 				}
 			} catch (e) {
 				openErrorNotificationWithIcon(
@@ -264,6 +265,7 @@ export default defineComponent({
 					if (response.accounts.length) {
 						this.walletAddress = response.accounts[0];
 						this.setAddress(response.accounts[0]);
+						searchApplicationAndAccount();
 					}
 					if (error) {
 						openErrorNotificationWithIcon(

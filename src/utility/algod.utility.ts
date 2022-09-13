@@ -1,11 +1,8 @@
-import { types, tx as webTx } from "@algo-builder/web";
-import { types as aTypes } from "@algo-builder/algob";
+import { types } from "@algo-builder/web";
 import { algodClient } from "@/config/algob.config";
-import type { LogicSigAccount } from "algosdk";
 import { EncodingType } from "@/types";
 import algosdk from "algosdk";
 const base32 = require("hi-base32");
-const confirmedRound = "confirmed-round";
 
 export const fundAmount = async (
 	from: string,
@@ -28,39 +25,6 @@ export const fundAmount = async (
 	];
 	const response = await webMode.executeTx(txParams);
 	console.log("Funded: ", response);
-};
-
-export const signTxUsingLsig = async (
-	lsig: LogicSigAccount,
-	execParam: types.ExecParams
-) => {
-	try {
-		const params = await algodClient.getTransactionParams().do();
-		const optInLsigToAppTx = await webTx.mkTransaction(execParam, params);
-		const rawLsigSignedTx = algosdk.signLogicSigTransactionObject(
-			optInLsigToAppTx,
-			lsig
-		).blob;
-		const txInfo = await algodClient.sendRawTransaction(rawLsigSignedTx).do();
-		const confirmationWait = await waitForConfirmation(txInfo.txId);
-		console.log("confirmed: ", confirmationWait);
-	} catch (error) {
-		console.error(error);
-		throw error;
-	}
-};
-
-const waitForConfirmation = async (txId: string) => {
-	const pendingInfo = await algosdk.waitForConfirmation(algodClient, txId, 6);
-	if (pendingInfo["pool-error"]) {
-		throw new Error(
-			`Transaction Pool Error: ${pendingInfo["pool-error"] as string}`
-		);
-	}
-	if (pendingInfo[confirmedRound] !== null && pendingInfo[confirmedRound] > 0) {
-		return pendingInfo as aTypes.ConfirmedTxInfo;
-	}
-	throw new Error("timeout");
 };
 
 export const compileSignature = async (proposalSrc: string) => {

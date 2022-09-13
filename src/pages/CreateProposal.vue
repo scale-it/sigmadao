@@ -221,7 +221,6 @@ import {
 	getDifferenceInSeconds,
 	toDaysMinutesSeconds,
 	redirectTo,
-	signTxUsingLsig,
 	validateFundAmount,
 } from "../utility";
 import DaoStore from "../store/DaoID";
@@ -342,8 +341,8 @@ export default defineComponent({
 					appID: this.daoStore.dao_id as number,
 					payFlags: { totalFee: 1000 },
 				};
-				const response = await signTxUsingLsig(lsig, execParam);
-				console.log(response);
+				const response = await this.walletStore.webMode.executeTx([execParam]);
+				console.log("optin :", response);
 			}
 		},
 		async onFinish(values: any) {
