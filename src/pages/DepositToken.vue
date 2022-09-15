@@ -55,7 +55,7 @@ import DaoID from "@/store/DaoID";
 import WalletStore from "@/store/WalletStore";
 import { types } from "@algo-builder/web";
 import { getApplicationAddress } from "algosdk";
-import { defineComponent, reactive } from "vue";
+import { defineComponent, reactive, toRaw } from "vue";
 import VoteStore from "../store/VoteStore";
 import { DAOActions } from "../types/enum.types";
 import { searchApplicationAndAccount } from "@/indexer";
@@ -123,7 +123,7 @@ export default defineComponent({
 					},
 				];
 				try {
-					await this.walletStore.webMode.executeTx(depositVoteParam);
+					await toRaw(this.walletStore.webMode).executeTx(depositVoteParam);
 					searchApplicationAndAccount(); // to update locked and available token on UI
 					successMessage(this.key);
 					openSuccessNotificationWithIcon(

@@ -10,6 +10,7 @@ import { DAOActions, ProposalTableData } from "@/types";
 import { types } from "@algo-builder/web";
 import { LogicSigAccount } from "algosdk";
 import moment from "moment";
+import { toRaw } from "vue";
 import { isCurrentTimeValid } from "./dateFormatter.utility";
 
 /**
@@ -28,6 +29,7 @@ export const closeProposal = async (
 	webMode: any // eslint-disable-line
 ) => {
 	try {
+		const webmode = toRaw(webMode);
 		// optIn to ASA(GOV_TOKEN) by proposalLsig
 		// we will receive the deposit back into proposalLsig
 		const optInTx: types.ExecParams = {
@@ -66,11 +68,11 @@ export const closeProposal = async (
 
 		const isGovTokenOpted = await isAssetOpted(proposalLsig.address(), tokenID);
 		if (!isGovTokenOpted) {
-			const optInResponse = await webMode.executeTx([transferAlgoTx, optInTx]);
+			const optInResponse = await webmode.executeTx([transferAlgoTx, optInTx]);
 			console.log("optin", optInResponse);
 		}
 
-		const closeProposalResponse = await webMode.executeTx([closeProposalTx]);
+		const closeProposalResponse = await webmode.executeTx([closeProposalTx]);
 		console.log(closeProposalResponse);
 	} catch (error) {
 		console.error("Close Proposal transaction failed", error);
@@ -104,7 +106,9 @@ export const clearVoteRecord = async (
 			appArgs: [DAOActions.CLEAR_VOTE_RECORD],
 			accounts: [proposalLsigAddr],
 		};
-		const clearVoteResponse = await webMode.executeTx([clearVoteRecordTx]);
+		const clearVoteResponse = await toRaw(webMode).executeTx([
+			clearVoteRecordTx,
+		]);
 		console.log(clearVoteResponse);
 	} catch (error) {
 		console.error("Clear Vote Record transaction failed", error);
@@ -190,7 +194,7 @@ export const executeProposal = async (
 				break;
 		}
 
-		const executeResponse = await webMode.executeTx(executeParams);
+		const executeResponse = await toRaw(webMode).executeTx(executeParams);
 		console.log(executeResponse);
 	} catch (error) {
 		console.error("Execute Proposal transaction failed", error);

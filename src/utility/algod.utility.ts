@@ -2,6 +2,7 @@ import { types } from "@algo-builder/web";
 import { algodClient } from "@/config/algob.config";
 import { EncodingType } from "@/types";
 import algosdk from "algosdk";
+import { toRaw } from "vue";
 const base32 = require("hi-base32");
 
 export const fundAmount = async (
@@ -23,7 +24,7 @@ export const fundAmount = async (
 			payFlags: { totalFee: 1000 },
 		},
 	];
-	const response = await webMode.executeTx(txParams);
+	const response = await toRaw(webMode).executeTx(txParams);
 	console.log("Funded: ", response);
 };
 
@@ -57,7 +58,7 @@ export const optInToAppUsingSecretKey = async (
 		payFlags: { totalFee: 1000 },
 	};
 	try {
-		const response = await webMode.executeTx([execParam]);
+		const response = await toRaw(webMode).executeTx([execParam]);
 		console.log(response);
 	} catch (error) {
 		console.error("Transaction Failed", error);

@@ -169,7 +169,7 @@ import {
 	UNSUCCESSFUL,
 	voteMessage,
 } from "@/constants";
-import { defineComponent, reactive } from "vue";
+import { defineComponent, reactive, toRaw } from "vue";
 import { clearVoteRecord, isCurrentTimeValid, secToFormat } from "../utility";
 import {
 	DAOActions,
@@ -315,7 +315,7 @@ export default defineComponent({
 					accounts: [proposalAddress],
 				};
 
-				await this.walletStore.webMode.executeTx([registerVoteParam]);
+				await toRaw(this.walletStore.webMode).executeTx([registerVoteParam]);
 				openSuccessNotificationWithIcon(SUCCESSFUL, voteMessage.SUCCESSFUL);
 				successMessage(this.key);
 				await this.checkCurrentUserVote();
