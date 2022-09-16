@@ -57,7 +57,7 @@ import {
 import DaoID from "@/store/DaoID";
 import WalletStore from "@/store/WalletStore";
 import { types } from "@algo-builder/web";
-import { defineComponent, reactive } from "vue";
+import { defineComponent, reactive, toRaw } from "vue";
 import { searchApplicationAndAccount } from "@/indexer";
 import ProposalStore from "@/store/ProposalStore";
 import { LogicSigAccount } from "algosdk/dist/types/src/logicsig";
@@ -131,7 +131,7 @@ export default defineComponent({
 						payFlags: { totalFee: 1000 },
 					};
 					try {
-						const response = await this.walletStore.webMode.executeTx([
+						const response = await toRaw(this.walletStore.webMode).executeTx([
 							withdrawParam,
 						]);
 						console.log("withdraw from proposal", response);

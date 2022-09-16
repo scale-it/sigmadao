@@ -173,7 +173,7 @@ import {
 } from "@/constants";
 import WalletStore from "@/store/WalletStore";
 import { types } from "@algo-builder/web";
-import { defineComponent, reactive } from "vue";
+import { defineComponent, reactive, toRaw } from "vue";
 import CreateDAOStore from "../store/CreateDaoStore";
 import {
 	DurationType,
@@ -308,7 +308,8 @@ export default defineComponent({
 			];
 
 			try {
-				const response = (await this.walletStore.webMode.executeTx(
+				const webMode = toRaw(this.walletStore.webMode);
+				const response = (await webMode.executeTx(
 					deployApp
 				)) as unknown as ConfirmedTxInfo;
 
@@ -365,14 +366,12 @@ export default defineComponent({
 					payFlags: { totalFee: 1000 },
 				};
 
-				await this.walletStore.webMode
-					.executeTx([fundAppParameters])
-					.then(async () => {
-						// all txns are singled since they can't be grouped as per contract conditions
-						await this.walletStore.webMode.executeTx([optInToGovASAParam]);
-						await this.walletStore.webMode.executeTx([fundLsigParam]);
-						await this.walletStore.webMode.executeTx([optInDaoLsigParam]);
-					});
+				await webMode.executeTx([fundAppParameters]).then(async () => {
+					// all txns are singled since they can't be grouped as per contract conditions
+					await webMode.executeTx([optInToGovASAParam]);
+					await webMode.executeTx([fundLsigParam]);
+					await webMode.executeTx([optInDaoLsigParam]);
+				});
 
 				successMessage(this.key);
 				openSuccessNotificationWithIcon(

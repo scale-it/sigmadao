@@ -34,15 +34,7 @@ export default defineStore("WalletStore", {
 			this.walletKind = walletType;
 		},
 		setWebMode(webMode: WebModeTypes) {
-			// my algo wallet has issue with ref in vue
-			// for reference : https://github.com/randlabs/myalgo-connect/issues/71
-			let myalgo = shallowRef() as any;
-			if (this.walletKind === WalletType.MY_ALGO) {
-				myalgo = webMode;
-				this.webMode = myalgo as MyAlgoWalletSession;
-			} else {
-				this.webMode = webMode;
-			}
+			this.webMode = webMode;
 			console.log("WebMode Initialized", webMode);
 		},
 		setWalletAddress(address: string) {

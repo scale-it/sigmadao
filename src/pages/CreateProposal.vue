@@ -207,7 +207,7 @@ import {
 	DEFAULT_FUND_AMT,
 } from "@/constants";
 import { DateRange, DAOActions, EndPoint } from "@/types";
-import { defineComponent, reactive } from "vue";
+import { defineComponent, reactive, toRaw } from "vue";
 import ProposalFormStore from "../store/AddProposalStore";
 import WalletStore from "../store/WalletStore";
 import DaoID from "../store/DaoID";
@@ -341,7 +341,9 @@ export default defineComponent({
 					appID: this.daoStore.dao_id as number,
 					payFlags: { totalFee: 1000 },
 				};
-				const response = await this.walletStore.webMode.executeTx([execParam]);
+				const response = await toRaw(this.walletStore.webMode).executeTx([
+					execParam,
+				]);
 				console.log("optin :", response);
 			}
 		},
@@ -440,10 +442,9 @@ export default defineComponent({
 						assetID: this.daoStore.govt_id as number,
 						payFlags: { totalFee: 1000 },
 					};
-					let addProposalResponse = await this.walletStore.webMode.executeTx([
-						callAppTx,
-						transferAssetTx,
-					]);
+					let addProposalResponse = await toRaw(
+						this.walletStore.webMode
+					).executeTx([callAppTx, transferAssetTx]);
 					console.log("Add Proposal txn response", addProposalResponse);
 					await searchApplicationAndAccount(); // to update locked and available token on UI
 					successMessage(this.key);
