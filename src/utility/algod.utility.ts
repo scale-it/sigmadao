@@ -29,7 +29,7 @@ export const fundAmount = async (
 };
 
 export const compileSignature = async (proposalSrc: string) => {
-	const response = await algodClient.compile(proposalSrc).do();
+	const response = await algodClient().compile(proposalSrc).do();
 	if (!response["hash"]) {
 		throw Error();
 	}
@@ -38,7 +38,7 @@ export const compileSignature = async (proposalSrc: string) => {
 };
 
 export const compileToUnit8Array = async (appProgram: string) => {
-	const response = await algodClient.compile(appProgram).do();
+	const response = await algodClient().compile(appProgram).do();
 	return new Uint8Array(Buffer.from(response["result"], "base64"));
 };
 
@@ -110,4 +110,46 @@ export const convertHexToAlgorandAddr = (hex: string) => {
 	} catch (error) {
 		console.log(error);
 	}
+};
+
+export function getAlgodNetworkConfig(
+	networkType: NetworkTypes
+): HttpNetworkConfig {
+	switch (networkType) {
+		case NetworkTypes.MAIN_NET:
+			return {
+				token: "",
+				server: MAIN_NET_URL,
+				port: "",
+			};
+		case NetworkTypes.TEST_NET:
+			return {
+				token: "",
+				server: TEST_NET_URL,
+				port: "",
+			};
+		case NetworkTypes.BETA_NET:
+			return {
+				token: "",
+				server: BETA_NET_URL,
+				port: "",
+			};
+		case NetworkTypes.PRIVATE_NET:
+			return {
+				token: token,
+				server: server,
+				port: port,
+			};
+		default:
+			return {
+				token: "",
+				server: "",
+				port: "",
+			};
+	}
+}
+
+export const getWalletConfig = () => {
+	const walletStore = WalletStore();
+	return getAlgodNetworkConfig(walletStore.network);
 };
