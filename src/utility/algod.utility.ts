@@ -1,8 +1,11 @@
 import { types } from "@algo-builder/web";
-import { algodClient } from "@/config/algob.config";
-import { EncodingType } from "@/types";
+import { algodClient, port, server, token } from "@/config/algob.config";
+import { EncodingType, NetworkTypes } from "@/types";
 import algosdk from "algosdk";
 import { toRaw } from "vue";
+import { HttpNetworkConfig } from "@algo-builder/web/build/types";
+import { BETA_NET_URL, MAIN_NET_URL, TEST_NET_URL } from "@/constants";
+import WalletStore from "@/store/WalletStore";
 const base32 = require("hi-base32");
 
 export const fundAmount = async (
