@@ -2,10 +2,10 @@ import { getWalletConfig } from "@/utility";
 import algosdk from "algosdk";
 
 const token =
-	process.env.ALGOSDK_TOKEN ||
+	process.env.VUE_APP_ALGOSDK_TOKEN ||
 	"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-const server = process.env.ALGOSDK_URL || "http://localhost";
-const port = process.env.ALGOSDK_PORT || 4001;
+const server = process.env.VUE_APP_ALGOSDK_URL || "http://localhost";
+const port = parseInt(process.env.VUE_APP_ALGOSDK_PORT || "4001");
 
 const algodClient = () => {
 	const walletConfig = getWalletConfig();
