@@ -98,11 +98,15 @@ export const quotesWrapper = (value: string | null) => {
 	return typeof value === "string" ? '"' + value + '"' : value;
 };
 
-export const MAIN_NET_URL = process.env.VUE_APP_MAIN_NET_URL || "https://node.algoexplorerapi.io";
-export const TEST_NET_URL = process.env.VUE_APP_TEST_NET_URL || "https://node.testnet.algoexplorerapi.io";
-export const BETA_NET_URL = process.env.VUE_APP_BETA_NET_URL || "https://node.betanet.algoexplorerapi.io";
+export const MAIN_NET_URL =
+	process.env.VUE_APP_MAIN_NET_URL || "https://node.algoexplorerapi.io";
+export const TEST_NET_URL =
+	process.env.VUE_APP_TEST_NET_URL || "https://node.testnet.algoexplorerapi.io";
+export const BETA_NET_URL =
+	process.env.VUE_APP_BETA_NET_URL || "https://node.betanet.algoexplorerapi.io";
 
-export const ALGO_BUILDER_URL = process.env.VUE_APP_ALGO_BUILDER_URL || "https://algobuilder.dev/";
+export const ALGO_BUILDER_URL =
+	process.env.VUE_APP_ALGO_BUILDER_URL || "https://algobuilder.dev/";
 
 export const DAO_CONTRACT_STATE_CONFIG = {
 	localInts: 9,
