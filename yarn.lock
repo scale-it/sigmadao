@@ -3533,6 +3533,7 @@ __metadata:
     chart.js: ^3.9.1
     core-js: ^3.21.1
     crypto-browserify: ^3.12.0
+    dotenv: ^16.0.2
     eslint: ^8.11.0
     eslint-config-prettier: ^8.5.0
     eslint-plugin-vue: ^8.5.0
@@ -6220,6 +6221,13 @@ __metadata:
   version: 10.0.0
   resolution: "dotenv@npm:10.0.0"
   checksum: f412c5fe8c24fbe313d302d2500e247ba8a1946492db405a4de4d30dd0eb186a88a43f13c958c5a7de303938949c4231c56994f97d05c4bc1f22478d631b4005
+  languageName: node
+  linkType: hard
+
+"dotenv@npm:^16.0.2":
+  version: 16.0.2
+  resolution: "dotenv@npm:16.0.2"
+  checksum: ca8f9ca2d67929c7771069f4c31b4e46b9932621009e658e5afd655dde2d69b77642bf36dbc9e72bc170523dfd908a9ee41c26f034c1fdc605ace3b1b4b10faf
   languageName: node
   linkType: hard
 
