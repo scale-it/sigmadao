@@ -4,7 +4,7 @@
 	"homepage": "https://algobuilder.dev",
 	"license": "mpl-2.0",
 	"engines": {
-		"node": ">=14.11.0",
+		"node": ">=16.11.0",
 		"yarn": ">=3.1.0"
 	},
 	"scripts": {
