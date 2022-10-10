@@ -12,8 +12,6 @@ import {
 	openErrorNotificationWithIcon,
 	openSuccessNotificationWithIcon,
 } from "@/constants";
-import { shallowRef } from "vue";
-import { MyAlgoWalletSession } from "@algo-builder/web";
 
 export default defineStore("WalletStore", {
 	state: (): WalletStoreState => {
