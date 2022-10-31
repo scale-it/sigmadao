@@ -10,7 +10,7 @@
 	 `(console.log as any).restore();` in your test.
  */
 
-import sinon from "sinon";
+const sinon = require("sinon");
 
 const levels = ["log", "debug", "info", "warn", "error"];
 

@@ -7,7 +7,8 @@
 		"@algo-builder/algob": "^5.0.1",
 		"@algo-builder/runtime": "^5.0.1",
 		"@algo-builder/web": "^5.0.1",
-		"algosdk": "^1.19.0"
+		"algosdk": "^1.19.0",
+		"chai": "^4.3.6"
 	},
 	"devDependencies": {
 		"@types/mocha": "^9.1.0",
@@ -28,5 +29,11 @@
 	},
 	"mocha": {
 		"file": "./test/setup.js"
+	},
+	"lint-staged": {
+		"**/{src,test,scripts}/**/*.{ts,js}": [
+			"eslint --format stylish --fix",
+			"prettier --write"
+		]
 	}
 }

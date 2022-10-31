@@ -43,8 +43,10 @@
 		"vue-router": "^4.0.14"
 	},
 	"lint-staged": {
-		"*.{js,ts,vue}": "eslint --cache",
-		"*.**": "prettier --ignore-unknown --write"
+		"*.{js,ts,vue}": [
+			"eslint --format stylish --fix",
+			"prettier --write"
+		]
 	},
 	"packageManager": "yarn@3.2.3",
 	"devDependencies": {

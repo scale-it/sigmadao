@@ -6,7 +6,7 @@ import { toRaw } from "vue";
 import { HttpNetworkConfig } from "@algo-builder/web/build/types";
 import { BETA_NET_URL, MAIN_NET_URL, TEST_NET_URL } from "@/constants";
 import WalletStore from "@/store/WalletStore";
-const base32 = require("hi-base32");
+import base32 from 'hi-base32'
 
 export const fundAmount = async (
 	from: string,

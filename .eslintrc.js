@@ -28,12 +28,13 @@ module.exports = {
 		"no-unused-vars": unusedVarsCfg,
 		"@typescript-eslint/no-unused-vars": unusedVarsCfg,
 		"import/no-named-as-default-member": "off",
-		"simple-import-sort/imports": "warn",
+		"simple-import-sort/imports": "off",
 		"sort-imports": "off",
+		"@typescript-eslint/no-var-requires": "off",
 	},
 	overrides: [
 		{
-			files: ["**/*.js"],
+			files: ["**/*.js, **/*.ts"],
 			rules: {
 				"@typescript-eslint/no-var-requires": "off",
 			},
