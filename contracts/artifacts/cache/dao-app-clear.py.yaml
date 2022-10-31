@@ -1,0 +1,15 @@
+filename: dao-app-clear.py
+timestamp: 1667115111
+compiled: BoEBQw==
+compiledHash: OO7F7V6NG6BISF336ST4UVBTVMYNSG2BOOA3XKF5OBFP6LPMIJHRYWZRO4
+srcHash: 934332439
+base64ToBytes:
+  - 6
+  - 129
+  - 1
+  - 67
+tealCode: |
+  #pragma version 6
+  int 1
+  return
+scParams: {}

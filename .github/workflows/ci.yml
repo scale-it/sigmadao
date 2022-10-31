@@ -44,9 +44,12 @@ jobs:
             ${{ runner.os }}-yarn-
 
       - name: Install dependencies
-        run: yarn
+        run: yarn install
 
-      - name: Run linter
+      - name: Execute format
+        run: yarn format
+
+      - name: Execute lint
         run: yarn lint
 
       - name: Run tests

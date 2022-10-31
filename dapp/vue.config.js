@@ -16,5 +16,13 @@ module.exports = defineConfig({
 				Buffer: ["buffer", "Buffer"],
 			}),
 		],
+		module: {
+			rules: [
+				{
+					test: /\.ya?ml$/,
+					use: "yaml-loader",
+				},
+			],
+		},
 	},
 });

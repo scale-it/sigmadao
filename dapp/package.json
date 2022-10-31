@@ -1,0 +1,63 @@
+{
+	"name": "dapp",
+	"description": "Sigma DAO UI",
+	"homepage": "https://algobuilder.dev",
+	"license": "mpl-2.0",
+	"engines": {
+		"node": ">=16.11.0"
+	},
+	"scripts": {
+		"start:mainnet": "vue-cli-service serve --mode mainnet",
+		"start:testnet": "vue-cli-service serve --mode testnet",
+		"start:betanet": "vue-cli-service serve --mode betanet",
+		"start:privatenet": "vue-cli-service serve --mode privatenet",
+		"server:mainnet": "nodemon -r dotenv/config backend/server.ts dotenv_config_path=backend/.env.mainnet dotenv_config_debug=false",
+		"server:testnet": "nodemon -r dotenv/config backend/server.ts dotenv_config_path=backend/.env.testnet dotenv_config_debug=false",
+		"server:betanet": "nodemon -r dotenv/config backend/server.ts dotenv_config_path=backend/.env.betanet dotenv_config_debug=false",
+		"server:privatenet": "nodemon -r dotenv/config backend/server.ts dotenv_config_path=backend/.env.privatenet dotenv_config_debug=true",
+		"build": "vue-cli-service build",
+		"lint:check": "eslint --ext .js,.ts src",
+		"lint": "eslint --cache --fix --ext .js,.ts src",
+		"lint:unix": "eslint --cache --format unix --ext .js,.ts src",
+		"upgrade:dependency": "npx yarn-upgrade-all",
+		"test": "echo 'no test'",
+		"test:watch:p": "echo 'no test'"
+	},
+	"dependencies": {
+		"@algo-builder/algob": "^5.0.1",
+		"@algo-builder/web": "^5.0.1",
+		"@ant-design/icons-vue": "^6.1.0",
+		"algosdk": "^1.19.0",
+		"ant-design-vue": "^3.2.5",
+		"chart.js": "^3.9.1",
+		"core-js": "^3.21.1",
+		"crypto-browserify": "^3.12.0",
+		"express": "^4.18.1",
+		"hi-base32": "^0.5.1",
+		"moment": "^2.29.3",
+		"pinia": "^2.0.12",
+		"postgraphile": "^4.12.9",
+		"stream-browserify": "^3.0.0",
+		"vue": "^3.2.31",
+		"vue-chartjs": "^4.1.1",
+		"vue-router": "^4.0.14"
+	},
+	"lint-staged": {
+		"*.{js,ts,vue}": "eslint --cache",
+		"*.**": "prettier --ignore-unknown --write"
+	},
+	"packageManager": "yarn@3.2.3",
+	"devDependencies": {
+		"@babel/core": "^7.17.7",
+		"@babel/eslint-parser": "^7.17.0",
+		"@vue/cli-plugin-babel": "^5.0.1",
+		"@vue/cli-plugin-typescript": "^5.0.1",
+		"@vue/cli-service": "^5.0.1",
+		"@vue/compiler-sfc": "^3.2.31",
+		"dotenv": "^16.0.2",
+		"jest": "^27.5.1",
+		"nodemon": "^2.0.16",
+		"ts-node": "^10.7.0",
+		"typescript": "^4.6.2"
+	}
+}
