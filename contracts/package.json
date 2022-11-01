@@ -7,7 +7,6 @@
 		"@algo-builder/algob": "^5.0.1",
 		"@algo-builder/web": "^5.0.1",
 		"algosdk": "^1.19.0"
-		
 	},
 	"devDependencies": {
 		"eslint": "^8.10.0"
