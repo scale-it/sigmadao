@@ -1,3 +1,13 @@
+const unusedVarsCfg = [
+	"warn",
+	{
+		vars: "all",
+		args: "none",
+		ignoreRestSiblings: false,
+		varsIgnorePattern: "_",
+	},
+];
+
 module.exports = {
 	root: true,
 	env: {
@@ -6,7 +16,7 @@ module.exports = {
 	extends: [
 		"plugin:vue/vue3-essential",
 		"eslint:recommended",
-		"@vue/typescript/recommended",
+		"plugin:@typescript-eslint/recommended",
 		"prettier",
 	],
 	parserOptions: {
@@ -15,6 +25,20 @@ module.exports = {
 	rules: {
 		"no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
 		"no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",
-		"@typescript-eslint/no-var-requires": 0,
+		"no-unused-vars": unusedVarsCfg,
+		"@typescript-eslint/no-unused-vars": unusedVarsCfg,
+		"import/no-named-as-default-member": "off",
+		"simple-import-sort/imports": "off",
+		"sort-imports": "off",
+		"@typescript-eslint/no-var-requires": "off",
 	},
+	overrides: [
+		{
+			files: ["**/*.js, **/*.ts"],
+			rules: {
+				"@typescript-eslint/no-var-requires": "off",
+			},
+		},
+	],
+	ignorePatterns: ["**/*.json"],
 };

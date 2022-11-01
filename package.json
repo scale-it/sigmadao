@@ -1,74 +1,38 @@
 {
-	"name": "SigmaDAO",
-	"description": "Sigma DAO UI",
-	"homepage": "https://algobuilder.dev",
-	"license": "mpl-2.0",
+	"name": "sigma-dao",
+	"repository": "https://github.com/scale-it/sigmadao-ui.git",
+	"packageManager": "yarn@3.2.4",
+	"license": "Apache-2.0",
+	"private": true,
 	"engines": {
 		"node": ">=16.11.0",
 		"yarn": ">=3.1.0"
 	},
-	"scripts": {
-		"start:mainnet": "vue-cli-service serve --mode mainnet",
-		"start:testnet": "vue-cli-service serve --mode testnet",
-		"start:betanet": "vue-cli-service serve --mode betanet",
-		"start:privatenet": "vue-cli-service serve --mode privatenet",
-		"server:mainnet": "nodemon -r dotenv/config backend/server.ts dotenv_config_path=backend/.env.mainnet dotenv_config_debug=false",
-		"server:testnet": "nodemon -r dotenv/config backend/server.ts dotenv_config_path=backend/.env.testnet dotenv_config_debug=false",
-		"server:betanet": "nodemon -r dotenv/config backend/server.ts dotenv_config_path=backend/.env.betanet dotenv_config_debug=false",
-		"server:privatenet": "nodemon -r dotenv/config backend/server.ts dotenv_config_path=backend/.env.privatenet dotenv_config_debug=true",
-		"build": "vue-cli-service build",
-		"lint": "yarn lint:js && yarn lint:prettier",
-		"lint:js": "eslint --ext \".js,.ts,.vue\" --ignore-path .gitignore .",
-		"lint:prettier": "prettier --check .",
-		"lint:fix": "prettier --write --list-different . && yarn lint:js --fix",
-		"upgrade:dependency": "npx yarn-upgrade-all",
-		"test": "echo 'no test'"
+	"workspaces": [
+		"contracts/",
+		"dapp/"
+	],
+	"devDependencies": {
+		"@typescript-eslint/eslint-plugin": "^5.42.0",
+		"@typescript-eslint/parser": "^5.42.0",
+		"eslint": "^8.26.0",
+		"eslint-config-prettier": "^8.5.0",
+		"eslint-plugin-prettier": "^4.2.1",
+		"eslint-plugin-vue": "^9.7.0",
+		"husky": "^8.0.1",
+		"lint-staged": "^13.0.3",
+		"prettier": "^2.7.1"
 	},
-	"dependencies": {
-		"@algo-builder/algob": "^5.0.1",
-		"@algo-builder/web": "^5.0.1",
-		"@ant-design/icons-vue": "^6.1.0",
-		"algosdk": "^1.19.0",
-		"ant-design-vue": "^3.2.5",
-		"chart.js": "^3.9.1",
-		"core-js": "^3.21.1",
-		"crypto-browserify": "^3.12.0",
-		"express": "^4.18.1",
-		"hi-base32": "^0.5.1",
-		"moment": "^2.29.3",
-		"pinia": "^2.0.12",
-		"postgraphile": "^4.12.9",
-		"stream-browserify": "^3.0.0",
-		"vue": "^3.2.31",
-		"vue-chartjs": "^4.1.1",
-		"vue-router": "^4.0.14"
+	"scripts": {
+		"format": "prettier --loglevel warn --write .",
+		"format:check": "prettier --check .",
+		"lint": "yarn workspaces foreach -p run lint",
+		"lint:check": "yarn workspaces foreach -p run lint:check"
 	},
 	"lint-staged": {
-		"*.{js,ts,vue}": "eslint --cache",
-		"*.**": "prettier --ignore-unknown --write"
-	},
-	"packageManager": "yarn@3.2.3",
-	"devDependencies": {
-		"@babel/core": "^7.17.7",
-		"@babel/eslint-parser": "^7.17.0",
-		"@typescript-eslint/eslint-plugin": "^5.3.1",
-		"@typescript-eslint/parser": "^5.3.1",
-		"@vue/cli-plugin-babel": "^5.0.1",
-		"@vue/cli-plugin-eslint": "^5.0.1",
-		"@vue/cli-plugin-typescript": "^5.0.1",
-		"@vue/cli-service": "^5.0.1",
-		"@vue/compiler-sfc": "^3.2.31",
-		"@vue/eslint-config-typescript": "^10.0.0",
-		"dotenv": "^16.0.2",
-		"eslint": "^8.11.0",
-		"eslint-config-prettier": "^8.5.0",
-		"eslint-plugin-vue": "^8.5.0",
-		"husky": "^7.0.4",
-		"jest": "^27.5.1",
-		"lint-staged": "^12.3.5",
-		"nodemon": "^2.0.16",
-		"prettier": "^2.5.1",
-		"ts-node": "^10.7.0",
-		"typescript": "^4.6.2"
+		"**/{src,test,scripts}/**/*.{ts,js}": [
+			"eslint --fix --ext .js,.ts scripts src",
+			"prettier --write src/**/*.{js,jsx,css,scss}"
+		]
 	}
 }

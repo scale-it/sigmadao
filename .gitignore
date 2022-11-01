@@ -1,11 +1,11 @@
-node_modules
+**/node_modules
 /dist
 *.log
 .env
 .yalc/
 
-.yarn/cache
-.yarn/install-state.gz
+**/.yarn/cache
+**/.yarn/install-state.gz
 
 .cache
 .eslintcache
@@ -32,3 +32,5 @@ node_modules
 
 # macOS
 .DS_Store
+
+*/artifacts

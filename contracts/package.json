@@ -1,0 +1,28 @@
+{
+	"name": "contracts",
+	"version": "0.0.1",
+	"main": "index.js",
+	"license": "Apache-2.0",
+	"dependencies": {
+		"@algo-builder/algob": "^5.0.1",
+		"@algo-builder/web": "^5.0.1",
+		"algosdk": "^1.19.0"
+	},
+	"devDependencies": {
+		"eslint": "^8.10.0"
+	},
+	"scripts": {
+		"algob": "algob",
+		"lint:check": "eslint --ext .js,.ts scripts",
+		"lint": "eslint --cache --fix --ext .js,.ts scripts",
+		"lint:unix": "eslint --cache --format unix --ext .js,.ts scripts",
+		"build:docs": "echo ok",
+		"build": "echo ok"
+	},
+	"lint-staged": {
+		"**/{src,test,scripts}/**/*.{ts,js}": [
+			"eslint --format stylish --fix",
+			"prettier --write"
+		]
+	}
+}
