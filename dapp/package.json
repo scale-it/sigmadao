@@ -19,9 +19,7 @@
 		"lint:check": "eslint --ext .js,.ts src",
 		"lint": "eslint --cache --fix --ext .js,.ts src",
 		"lint:unix": "eslint --cache --format unix --ext .js,.ts src",
-		"upgrade:dependency": "npx yarn-upgrade-all",
-		"test": "echo 'no test'",
-		"test:watch:p": "echo 'no test'"
+		"upgrade:dependency": "npx yarn-upgrade-all"
 	},
 	"dependencies": {
 		"@algo-builder/algob": "^5.0.1",

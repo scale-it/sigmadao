@@ -39,39 +39,7 @@ async function fundAccount(deployer, accounts) {
 	}
 }
 
-const ProposalType = {
-	ALGO_TRANSFER: 1,
-	ASA_TRANSFER: 2,
-	MESSAGE: 3,
-};
-
-const Vote = {
-	YES: "yes",
-	NO: "no",
-	ABSTAIN: "abstain",
-};
-
-const DAOActions = {
-	addProposal: "str:add_proposal",
-	depositVoteToken: "str:deposit_vote_token",
-	registerVote: "str:register_vote",
-	execute: "str:execute",
-	withdrawVoteDeposit: "str:withdraw_vote_deposit",
-	clearVoteRecord: "str:clear_vote_record",
-	closeProposal: "str:close_proposal",
-};
-
-const ExampleProposalConfig = {
-	name: "my-custom-proposal",
-	URL: "www.myurl.com",
-	URLHash: "url-hash",
-};
-
 module.exports = {
 	fundAccount,
-	ProposalType,
-	Vote,
-	DAOActions,
-	ExampleProposalConfig,
 	tryExecuteTx,
 };

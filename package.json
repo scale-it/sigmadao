@@ -24,8 +24,6 @@
 		"prettier": "^2.7.1"
 	},
 	"scripts": {
-		"test": "yarn workspaces foreach -p run test",
-		"test:watch": "yarn workspaces foreach run test:watch:p",
 		"format": "prettier --loglevel warn --write .",
 		"format:check": "prettier --check .",
 		"lint": "yarn workspaces foreach -p run lint",
