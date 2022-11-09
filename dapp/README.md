@@ -79,7 +79,7 @@ Run below script to delete the sigma dao user, sigma dao user should be present:
 
 Make sure you are in /dapp directory of this project before executing below steps.
 
-Start the development server on http://localhost:4000 configured for private-net.
+Start the backend server on http://localhost:4000 configured for private-net.
 
 ```bash
 yarn server:privatenet
