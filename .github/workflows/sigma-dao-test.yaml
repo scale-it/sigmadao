@@ -45,7 +45,7 @@ jobs:
         run: cd infrastructure && make setup-private-net
 
       - name: Example DAO
-        working-directory: ./contracts/dao
+        working-directory: ./contracts
         run: |
           pipenv run yarn algob deploy
           pipenv run yarn algob run scripts/run/add_proposal.js
