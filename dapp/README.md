@@ -32,7 +32,7 @@ Add proposal page of SigmaDAO. On this page user can add a proposal on a existin
 
 ## Setup
 
-This section demonstrates end-to-end setup required to run SigmaDAO application full functioning.
+This section demonstrates the end-to-end setup required to run the SigmaDAO application fully functioning.
 
 ### How to setup postgres?
 
