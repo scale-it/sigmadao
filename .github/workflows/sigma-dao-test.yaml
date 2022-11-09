@@ -1,4 +1,4 @@
-name: Run SigmaDAO scripts test
+name: Run SigmaDAO test
 
 on:
   push:
