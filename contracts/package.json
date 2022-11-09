@@ -6,7 +6,7 @@
 	"dependencies": {
 		"@algo-builder/algob": "^6.0.0",
 		"@algo-builder/web": "^6.0.0",
-		"algosdk": "^1.19.0",
+		"algosdk": "^1.22.0",
 		"chai": "^4.3.7",
 		"mocha": "^10.1.0"
 	},
@@ -18,7 +18,7 @@
 		"lint:check": "eslint --ext .js,.ts scripts",
 		"lint": "eslint --cache --fix --ext .js,.ts scripts",
 		"lint:unix": "eslint --cache --format unix --ext .js,.ts scripts",
-		"test": "echo testing SigmaDAO; mocha -R progress"
+		"test": "echo testing SigmaDAO; mocha -R progress --timeout 15000"
 	},
 	"lint-staged": {
 		"**/{src,test,scripts}/**/*.{ts,js}": [

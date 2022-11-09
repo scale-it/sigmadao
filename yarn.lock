@@ -5126,7 +5126,7 @@ __metadata:
   dependencies:
     "@algo-builder/algob": ^6.0.0
     "@algo-builder/web": ^6.0.0
-    algosdk: ^1.19.0
+    algosdk: ^1.22.0
     chai: ^4.3.7
     eslint: ^8.10.0
     mocha: ^10.1.0
