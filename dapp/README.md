@@ -77,7 +77,7 @@ Run below script to delete the sigma dao user, sigma dao user should be present:
 
 ### How to setup sigmadao backend?
 
-Make sure you are in /dapp directory of this project before executing below steps.
+Make sure you are in `/dapp` directory of this project before executing below steps.
 
 Start the backend server on http://localhost:4000 configured for private-net.
 
