@@ -85,7 +85,7 @@ Start the backend server on http://localhost:4000 configured for private-net.
 yarn server:privatenet
 ```
 
-Note: The above backend server is running configured for private-net network. You can configure it to MainNet, TestNet or BetaNet using below command:
+Note: The above backend server is configured for private-net network. You can configure it to MainNet, TestNet or BetaNet using the below command:
 
 ```bash
 yarn server:[mainnet/testnet/betanet]
