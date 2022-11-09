@@ -91,7 +91,7 @@ Note: The above backend server is configured for private-net network. You can co
 yarn server:[mainnet/testnet/betanet]
 ```
 
-Once, abobe backend setup is done. The backend should be running on [localhost](http://localhost:4000) which connects to PostgreSQL database. [Postgraphile](https://www.graphile.org/postgraphile/) has automatic resolver which reads the schema of table and function for auto query generation.
+Once, the above backend setup is done. The backend should be running on [localhost](http://localhost:4000) which connects to PostgreSQL database. [Postgraphile](https://www.graphile.org/postgraphile/) has automatic resolver which reads the schema of table and function for auto query generation.
 
 ### How to setup SigmaDAO frontend application?
 
