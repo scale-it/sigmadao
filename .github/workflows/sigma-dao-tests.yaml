@@ -1,4 +1,4 @@
-name: Run SigmaDAO test
+name: Run SigmaDAO tests
 
 on:
   push:
@@ -44,10 +44,15 @@ jobs:
       - name: Setup Network
         run: cd infrastructure && make setup-private-net
 
-      - name: Example DAO
+      - name: SigmaDAO scripts
         working-directory: ./contracts
         run: |
           pipenv run yarn algob deploy
           pipenv run yarn algob run scripts/run/add_proposal.js
           pipenv run yarn algob run scripts/run/deposit_vote_token.js
+
+      - name: SigmaDAO tests
+        working-directory: ./contracts
+        run: |
+          pipenv run yarn test
 
