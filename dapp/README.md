@@ -61,7 +61,9 @@ cmd/algorand-indexer/algorand-indexer daemon --data-dir /tmp -P "host=localhost 
 
 ### How to create a sigmada user and setup sigmadao with read-only permission to database?
 
-Sigmadao-indexer should be running before executing the below scripts.
+Make sure you are:
+- [sigmadao-indexer](https://github.com/scale-it/sigmadao-indexer) should be running before executing the below scripts.
+- in `/contracts` directory of this project before executing belows scripts.
 
 Create a sigma dao user, if not already created:
 
