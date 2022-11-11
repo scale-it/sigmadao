@@ -32,33 +32,90 @@ Add proposal page of SigmaDAO. On this page user can add a proposal on a existin
 
 ## Setup
 
-Install the dependencies
+This section demonstrates the end-to-end setup required to run the SigmaDAO application fully functioning.
+
+### How to setup postgres?
+
+Download and install the postgres version >= 12 from [here](https://www.postgresql.org/download/).
+
+### How to setup sigmada-indexer?
+
+1. Clone [sigmadao-indexer](https://github.com/scale-it/sigmadao-indexer) repo.
+2. Install go version 1.17 from [here](https://go.dev/dl/).
+3. Build the sigmadao-indexer project:
+
+```bash
+make
+```
+4. Please make sure postgres server is running.
+5. Sigmadao-indexer can be run on any network using below command:
+
+```bash
+cmd/algorand-indexer/algorand-indexer daemon --data-dir /tmp -P "host=localhost port=5432 user=<postgres-user> password=<postgres-password> dbname=<postgres-database-name> sslmode=disable" --algod-net <link-to-network> --algod-token <network-token> --genesis <path-to-genesis-file>
+```
+Example of sigmadao-indexer running on private-net:
+
+```bash
+cmd/algorand-indexer/algorand-indexer daemon --data-dir /tmp -P "host=localhost port=5432 user=algorand password=indexer dbname=pgdb sslmode=disable" --algod-net 127.0.0.1:4001 --algod-token aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa --genesis ../algo-builder/infrastructure/node_data/genesis.json
+```
+
+### How to create a sigmada user and setup sigmadao with read-only permission to database?
+
+Make sure you are:
+- [sigmadao-indexer](https://github.com/scale-it/sigmadao-indexer) should be running before executing the below scripts.
+- in `/contracts` directory of this project before executing belows scripts.
+
+Create a sigma dao user, if not already created:
+
+    make create-sigma-dao-user
+
+Setup SigmaDAO with indexer:
+
+    make setup-sigma-dao
+
+Run below script to delete the sigma dao user, sigma dao user should be present:
+
+    make drop-sigma-dao-user
+
+### How to setup sigmadao backend?
+
+Make sure you are in `/dapp` directory of this project before executing below steps.
+
+Start the backend server on http://localhost:4000 configured for private-net.
+
+```bash
+yarn server:privatenet
+```
+
+Note: The above backend server is configured for private-net network. You can configure it to MainNet, TestNet or BetaNet using the below command:
+
+```bash
+yarn server:[mainnet/testnet/betanet]
+```
+
+Once, the above backend setup is done. The backend should be running on [localhost](http://localhost:4000) which connects to PostgreSQL database. [Postgraphile](https://www.graphile.org/postgraphile/) has automatic resolver which reads the schema of table and function for auto query generation.
+
+### How to setup SigmaDAO frontend application?
+
+1. Install the dependecies.
 
 ```bash
 yarn install
 ```
 
-## Setup the Sigma Dao role and table in PostgreSQL with read only access to database
-
-Follow the examples/dao [README.MD](https://github.com/scale-it/algo-builder/blob/develop/examples/dao/README.md#setup-sigma-dao) in algo-builder to setup the Sigma Dao role and table in PostgreSQL.
-
-## Development
-
-Start the development server on http://localhost:3000
+2. Run the server configured on private-net using below command:
 
 ```bash
-yarn dev
+yarn start:privatenet
 ```
 
-Backend is running on [postgraphile](https://www.graphile.org/postgraphile/) which connects to PostgreSQL database. [Postgraphile](https://www.graphile.org/postgraphile/) has automatic resolver which reads the schema of table and function for auto query generation.
-
-Start the backend development server on http://localhost:4000/graphiql
+Note: The above frontend server is running configured for private-net network. You can configure it to MainNet, TestNet or BetaNet using below command:
 
 ```bash
-yarn server
+yarn start:[mainnet/testnet/betanet]
 ```
 
-## Production
+## Production build of SigmaDAO app
 
 Build the application for production:
 
