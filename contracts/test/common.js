@@ -54,8 +54,6 @@ class Context {
 	}
 
 	deployDAOApp(sender, daoApprovalProgramFileName, daoClearStateProgramFileName) {
-		// const daoApprovalProgram = getProgram(approvalProgram, , false);
-		// const daoClearProgram = getProgram(clearStateProgram, {}, false);
 
 		const appDef = {
 			appName: "daoApp",
