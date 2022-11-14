@@ -25,7 +25,7 @@
 		"@algo-builder/algob": "^6.0.0",
 		"@algo-builder/web": "^6.0.0",
 		"@ant-design/icons-vue": "^6.1.0",
-		"algosdk": "^1.19.0",
+		"algosdk": "^1.22.0",
 		"ant-design-vue": "^3.2.5",
 		"chart.js": "^3.9.1",
 		"core-js": "^3.21.1",
