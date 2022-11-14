@@ -24,6 +24,8 @@
 		"prettier": "^2.7.1"
 	},
 	"scripts": {
+		"cleanup": "./cleanup.sh",
+		"build": "yarn workspaces foreach -t run build",
 		"format": "prettier --loglevel warn --write .",
 		"format:check": "prettier --check .",
 		"lint": "yarn workspaces foreach -p run lint",
