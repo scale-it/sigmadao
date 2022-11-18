@@ -26,19 +26,19 @@
 		"@algo-builder/web": "^6.0.0",
 		"@ant-design/icons-vue": "^6.1.0",
 		"algosdk": "^1.22.0",
-		"ant-design-vue": "^3.2.5",
+		"ant-design-vue": "^3.2.15",
 		"chart.js": "^3.9.1",
 		"core-js": "^3.21.1",
 		"crypto-browserify": "^3.12.0",
 		"express": "^4.18.1",
 		"hi-base32": "^0.5.1",
 		"moment": "^2.29.3",
-		"pinia": "^2.0.12",
+		"pinia": "^2.0.24",
 		"postgraphile": "^4.12.9",
 		"stream-browserify": "^3.0.0",
-		"vue": "^3.2.31",
-		"vue-chartjs": "^4.1.1",
-		"vue-router": "^4.0.14"
+		"vue": "^3.2.45",
+		"vue-chartjs": "^4.1.2",
+		"vue-router": "^4.1.6"
 	},
 	"lint-staged": {
 		"*.{js,ts,vue}": [
