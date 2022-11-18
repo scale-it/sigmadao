@@ -1,7 +1,7 @@
 export enum WalletType {
 	NONE,
 	ALGOSIGNER = "AlgoSigner",
-	MY_ALGO = "My Algo Connect",
+	MY_ALGO = "MyAlgo Wallet",
 	WALLET_CONNECT = "Wallet Connect",
 }
 
