@@ -80,6 +80,7 @@
 						>
 							<a-radio :value="DurationType.DAYS">Days</a-radio>
 							<a-radio :value="DurationType.HOURS">Hours</a-radio>
+							<a-radio :value="DurationType.MINUTES">Minutes</a-radio>
 						</a-radio-group>
 					</a-form-item-rest>
 					<a-input-number v-model:value="formState.min_duration" />

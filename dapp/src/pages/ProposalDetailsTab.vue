@@ -24,7 +24,7 @@
 			tab="Execute Proposal"
 			force-render
 		>
-			<ExecuteProposal />
+			<ExecuteProposal :updateStatus="getStatusOfProposal" />
 		</a-tab-pane>
 	</a-tabs>
 </template>

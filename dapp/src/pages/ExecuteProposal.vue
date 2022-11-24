@@ -74,6 +74,7 @@ import moment from "moment";
 export default defineComponent({
 	name: "ExecuteProposal",
 	components: { Description },
+	props: ["updateStatus"],
 	data() {
 		return {
 			error: "",
@@ -126,6 +127,7 @@ export default defineComponent({
 					this.walletStore.webMode
 				);
 				searchApplicationAndAccount(); // to update locked and available token on UI
+				this.updateStatus();
 				successMessage(this.key);
 				openSuccessNotificationWithIcon(SUCCESSFUL, PROPOSAL_EXECUTED);
 			} catch (error) {
