@@ -124,7 +124,7 @@ import {
 	redirectTo,
 	checkCurrentProposalState,
 } from "../utility";
-import { decodeProposalParams, getAccountInfoByAddress } from "@/indexer";
+import { decodeProposalParams } from "@/indexer";
 import TablePagination from "../UIKit/TablePagination.vue";
 import { PlusOutlined } from "@ant-design/icons-vue";
 import {
@@ -331,11 +331,6 @@ export default defineComponent({
 	async mounted() {
 		this.proposalDataStore.loadTable = this.loadTable;
 		this.loadTable();
-		console.log(
-			await getAccountInfoByAddress(
-				"EDXG4GGBEHFLNX6A7FGT3F6Z3TQGIU6WVVJNOXGYLVNTLWDOCEJJ35LWJY"
-			)
-		);
 	},
 });
 </script>
