@@ -1,30 +1,48 @@
 <img src="./dapp/src/assets/logo.png" height="200" title="SigmaDAO" />
 
-# SigmaDAO
+# Sigma DAO
 
 A decentralized autonomous organization (DAO) is an entity with no central leadership. Decisions get made from the bottom-up, governed by a community organized around a specific set of rules enforced on a blockchain. DAOs are internet-native organizations collectively owned and managed by their members. They have built-in treasuries that are only accessible with the approval of their members. Decisions are made via proposals the group votes on during a specified period.
 
-## DAO parameters:
+A DAO is usually implemented using blockchain smart contracts:
 
-Every DAO has the following parameters:
+- organization is managed by a defined group
+- blockchain and smart contracts is a trustless execution layer where rules and decisions are recorded
+- decisions are usually made by voting.
 
-- `deposit` — a deposit amount in `gov_tokens` required to make a proposal.
+In this template, We are going to implement a DAO, where the members are defined by ASA holding (1 ASA = 1 voting power): each token holder is a DAO member and can participate equally in the governance.
 
-- `min_support` — a minimum number of `yes` power votes (other votes like `abstain` and `no` are not counted) to validate the proposal.
+## Functionality
 
-- `min_duration` — minimum voting time (in number of seconds) for a new proposal.
+DAO is managed by DAO members identified by a governance token. DAO functions by creating proposals:
 
-- `max_duration` — maximum voting time (in number of seconds) for a new proposal.
+- Everyone can create a proposal. To avoid a spam, a deposit of the gov tokens is required. The deposit is returned once the proposal is finished.
+- There are 3 types of a proposal: text, Algo transfer, Asset transfer.
+- Every gov token holder can vote in a proposal.
+- Once proposal passes, anyone can trigger proposal execution.
 
-- `url` — a link with more information about the DAO. We don’t need a hash as this document is meant to evolve and provide more details together with the DAO evolution.
+### Spec document
 
-### Contracts
+Please read the [Sigma DAO specification](https://paper.dropbox.com/doc/Algo-Builder-DAO--BRlh~FwufNzIzk4wNUuAjLTuAg-ncLdytuFa7EJrRerIASSl) for more details about each use case.
 
-To deploy and execute the above discussed functions check the `/contracts` folder and its `README.md`
+### Smart Contract
+
+See [contracts/README](contracts/README.md) information how the smart contracts are setup and how to create a DAO.
+The project is created using [`Algo Builder`](https://algobuilder.dev).
+
+## Setup
+
+Requirements:
+
+- [Sigma DAO Indexer](https://github.com/scale-it/sigmadao-indexer): a customized Algorand Indexer for Sigma DAO (we removed all unnecessary transactions and records from the indexer DB).
+  See [indexer_setup/README](indexer_setup/README.md) for additional instructions required for running Indexer with SigmaDAO webserver.
+- Algorand Archival Node: unfortunately Algorand Indexer requires an Algoran Archival Node, and we didn't went that deep with the Sigma DAO Indexer modifications to remove that dependency. We hope that this requirement will change in the future.
+- Service to host Vue.js web UI (dapp).
+- Node.js webserver: the web UI sources data through graphql interface provided by the webserver.
 
 ### Dapp
 
-SigmaDAO is a web application that lets anyone create a DAO, enable them to Add Proposal, Deposit and Withdraw Tokens and also allow them to Vote.
+SigmaDAO Dapp is a web application that lets anyone create a DAO, enable them to Add Proposal, Deposit and Withdraw Tokens and also allow them to Vote.
 
 Wallets supported by the SigmaDAO are:
 
@@ -32,4 +50,4 @@ Wallets supported by the SigmaDAO are:
 - [MyAlgo Wallet](https://wallet.myalgo.com/new-account)
 - [Wallet Connect](https://walletconnect.com/)
 
-To setup the SigmaDAO website follow the steps in `/dapp` folder `README.md`
+To setup the SigmaDAO website follow the steps in [dapp/README.md](dapp/README.md).

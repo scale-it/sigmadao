@@ -1,16 +1,8 @@
-# Algo Builder DAO
+# Sigma DAO
 
-A decentralized autonomous organization (DAO) is an entity with no central leadership. Decisions get made from the bottom-up, governed by a community organized around a specific set of rules enforced on a blockchain. DAOs are internet-native organizations collectively owned and managed by their members. They have built-in treasuries that are only accessible with the approval of their members. Decisions are made via proposals the group votes on during a specified period.
+Sigma DAO i an [`Algo Builder`](https://algobuilder.dev) powered project. We provide templates for creating new DAOs, proposals and scripts to vote. User can also setup a webapp UI to interact with a DAO.
 
-A DAO is usually implemented using blockchain smart contracts:
-
-- organization is managed by a defined group
-- blockchain and smart contracts is a trustless execution layer where rules and decisions are recorded
-- decisions are usually made by voting.
-
-In this template, We are going to implement a DAO, where the members are defined by ASA holding (1 ASA = 1 voting power): each token holder is a DAO member and can participate equally in the governance.
-
-## DAO parameters:
+### DAO Parameters
 
 Every DAO has the following parameters:
 
@@ -24,7 +16,7 @@ Every DAO has the following parameters:
 
 - `url` — a link with more information about the DAO. We don’t need a hash as this document is meant to evolve and provide more details together with the DAO evolution.
 
-### Use Cases
+### DAO functions
 
 We use functional notation to describe use cases we will implement.
 
@@ -76,26 +68,6 @@ We use functional notation to describe use cases we will implement.
 Below diagram describes the flow of DAO application.
 
 <img src="./docs/DAO-Flow.svg" height="600" width="500" title="DAO flow" />
-
-## Setup Sigma Dao
-
-Setup the sigma_daos table. Indexer should be running before executing below script.
-
-Create a sigma dao user, if not already created:
-
-    make create-sigma-dao-user
-
-Setup sigma dao, indexer should be running before executing this script:
-
-    make setup-sigma-dao
-
-Run below script to delete the sigma dao user, sigma dao user should be present:
-
-    make drop-sigma-dao-user
-
-## Spec document
-
-Please read the Algo Builder DAO [specification](https://paper.dropbox.com/doc/Algo-Builder-DAO--BRlh~FwufNzIzk4wNUuAjLTuAg-ncLdytuFa7EJrRerIASSl) for more details about each use case.
 
 ## Scripts
 

@@ -1,3 +1,5 @@
+# Makefile to setup postgresql DB for the Sigma DAO indexer
+
 export SIGMA_DAO_UNAME = sigma_dao_user
 export SIGMA_DAO_PASSWORD = SigmaDao@1234
 export SIGMA_DAO_SETUP_FILE = setup_sigma_dao.sql
@@ -20,7 +22,7 @@ drop-sigma-dao-user:
 	@psql -d $(POSTGRES_DBNAME) -c "DROP OWNED BY $(SIGMA_DAO_UNAME);"
 	@psql -d $(POSTGRES_DBNAME) -c "DROP USER $(SIGMA_DAO_UNAME);"
 
-# execute sigma dao setup file. Indexer should be running before executing this script
+# execute SIGMA_DAO_SETUP_FILE. Indexer must be running before executing this script
 setup-sigma-dao:
 # pg_trgm extension.
 	@psql -d $(POSTGRES_DBNAME) -c "CREATE EXTENSION IF NOT EXISTS pg_trgm;"
