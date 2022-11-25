@@ -169,7 +169,7 @@ export const executeProposal = async (
 						toAccountAddr: recipientAddr as string,
 						amountMicroAlgos: amount,
 						lsig: daoFundLsig,
-						payFlags: { totalFee: 1000 },
+						payFlags: { totalFee: 0 },
 					});
 				}
 				break;
@@ -185,7 +185,7 @@ export const executeProposal = async (
 						) as number,
 						toAccountAddr: recipientAddr as string,
 						lsig: daoFundLsig,
-						payFlags: { totalFee: 1000 },
+						payFlags: { totalFee: 0 },
 					});
 				}
 				break;
@@ -245,7 +245,7 @@ export const checkProposalResult = (record: ProposalTableData) => {
 	) as number;
 	const yesVotes = record.yes ?? 0;
 	const noVotes = record.no ?? 0;
-	if (yesVotes > minSupport && yesVotes > noVotes) {
+	if (yesVotes >= minSupport && yesVotes > noVotes) {
 		return true;
 	}
 	return false;
