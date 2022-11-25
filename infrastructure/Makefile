@@ -1,4 +1,5 @@
-# https://developer.algorand.org/tutorials/create-private-network/
+# This is a helper script to setup a private Algorand Node
+# copied from https://github.com/scale-it/algo-builder/tree/master/infrastructure
 
 # check platform
 PLATFORM := $(shell uname -s)
