@@ -1,4 +1,4 @@
-<img src="./dapp/src/assets/logo.png" height="200" title="SigmaDAO" />
+<img src="./design/logo.svg" height="200" title="SigmaDAO" />
 
 # Sigma DAO
 
