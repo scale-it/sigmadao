@@ -213,6 +213,7 @@ import WalletStore from "../store/WalletStore";
 import DaoID from "../store/DaoID";
 import { types } from "@algo-builder/web";
 import type { LogicSigAccount } from "algosdk";
+import { algosToMicroalgos } from "algosdk";
 import { getProposalLsig, getDaoFundLSig } from "../contract/dao";
 import { isApplicationOpted, searchApplicationAndAccount } from "@/indexer";
 import {
@@ -222,6 +223,7 @@ import {
 	toDaysMinutesSeconds,
 	redirectTo,
 	validateFundAmount,
+	optInASAToAccount,
 } from "../utility";
 import DaoStore from "../store/DaoID";
 import ProposalTableStore from "../store/ProposalTableStore";
@@ -392,7 +394,7 @@ export default defineComponent({
 							proposalParams.push(
 								`addr:${daoLsig.address()}`, // from
 								`addr:${recipient}`, // recipient
-								`int:${amount * 1e6}` // amount
+								`int:${algosToMicroalgos(amount)}` // amount in microalgos
 							);
 							break;
 						}
@@ -401,7 +403,7 @@ export default defineComponent({
 								`addr:${daoLsig.address()}`, // from
 								`int:${asaId}`, // asaId
 								`addr:${recipient}`, // recipient
-								`int:${amount}` // amount
+								`int:${algosToMicroalgos(amount)}` // amount in microalgos
 							);
 							break;
 						}
@@ -452,6 +454,15 @@ export default defineComponent({
 						SUCCESSFUL,
 						proposalMessage.SUCCESSFUL
 					);
+					// opt ASA into dao fund lsig
+					if (proposal_type === ProposalType.ASA_TRANSFER) {
+						await optInASAToAccount(
+							daoLsig.address(),
+							asaId,
+							daoLsig,
+							this.walletStore.webMode
+						);
+					}
 					this.redirectToAllProposal();
 					this.formState.$reset();
 				}
