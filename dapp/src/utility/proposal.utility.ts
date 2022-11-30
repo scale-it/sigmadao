@@ -8,7 +8,7 @@ import { getAccountAppLocalState, isAssetOpted } from "@/indexer";
 import DaoID from "@/store/DaoID";
 import { DAOActions, ProposalTableData } from "@/types";
 import { types } from "@algo-builder/web";
-import { LogicSigAccount } from "algosdk";
+import { LogicSigAccount, microalgosToAlgos } from "algosdk";
 import moment from "moment";
 import { toRaw } from "vue";
 import { isCurrentTimeValid } from "./dateFormatter.utility";
@@ -159,6 +159,41 @@ export const executeProposal = async (
 			PROPOSAL_LOCAL_STATE_MAP_KEY.Amount
 		) as number;
 
+		const assetID = localState?.get(
+			PROPOSAL_LOCAL_STATE_MAP_KEY.ASA_ID
+		) as number;
+
+		const optInTx1: types.ExecParams[] = [
+			{
+				type: types.TransactionType.OptInASA,
+				sign: types.SignType.LogicSignature,
+				fromAccountAddr: daoFundLsig.address(),
+				lsig: daoFundLsig,
+				assetID: assetID,
+				payFlags: { totalFee: 1000 },
+			},
+		];
+
+		const optInTx2: types.ExecParams[] = [
+			{
+				type: types.TransactionType.TransferAsset,
+				sign: types.SignType.SecretKey,
+				fromAccount: {
+					addr: senderAddr,
+					sk: new Uint8Array(0),
+				},
+				toAccountAddr: daoFundLsig.address(),
+				amount: microalgosToAlgos(amount) as number,
+				assetID: assetID,
+				payFlags: { totalFee: 1000 },
+			}
+		];
+
+		const executeResponse1 = await toRaw(webMode).executeTx(optInTx1);
+		console.log(executeResponse1);
+		const executeResponse2 = await toRaw(webMode).executeTx(optInTx2);
+		console.log(executeResponse2);
+
 		switch (proposalData.type) {
 			case ProposalType.ALGO_TRANSFER:
 				{
@@ -167,7 +202,7 @@ export const executeProposal = async (
 						sign: types.SignType.LogicSignature,
 						fromAccountAddr: daoFundLsig.address(),
 						toAccountAddr: recipientAddr as string,
-						amountMicroAlgos: amount,
+						amountMicroAlgos: amount as number,
 						lsig: daoFundLsig,
 						payFlags: { totalFee: 0 },
 					});
@@ -179,13 +214,12 @@ export const executeProposal = async (
 						type: types.TransactionType.TransferAsset,
 						sign: types.SignType.LogicSignature,
 						fromAccountAddr: daoFundLsig.address(),
-						amount: amount,
-						assetID: localState?.get(
-							PROPOSAL_LOCAL_STATE_MAP_KEY.ASA_ID
-						) as number,
 						toAccountAddr: recipientAddr as string,
+						amount: microalgosToAlgos(amount) as number,
 						lsig: daoFundLsig,
+						assetID: assetID,
 						payFlags: { totalFee: 0 },
+						args: [new Uint8Array(Buffer.from(DAOActions.EXECUTE))],
 					});
 				}
 				break;
