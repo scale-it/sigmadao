@@ -5,7 +5,7 @@ export default defineStore("ProposalFormStore", {
 	state: (): ProposalFormState => {
 		return {
 			proposal_name: "",
-			proposal_type: "",
+			proposal_type: undefined,
 			url: "",
 			url_hash: "",
 			vote_date: ["", ""],

@@ -1,80 +1,91 @@
 <template>
-	<div class="margin_bottom_sm">
-		<h3 class="text_center">Sigma DAOs</h3>
-		<div class="flexbox_justify_space">
-			<a-input-search
-				style="width: 40%; margin: auto"
-				enter-button
-				placeholder="Search DAO by Name"
-				v-model:value="searchText"
-				@search="handleFilterData()"
-			/>
-			<a-button
-				type="primary"
-				:disabled="!walletStore.address"
-				@click="handleCreateDAO"
-			>
-				Create a DAO
-				<template #icon><PlusOutlined /></template>
-			</a-button>
-		</div>
+	<div v-if="showNetworkSelection">
+		<a-result title="Please select a network to fetch DAOs" />
 	</div>
-	<a-row class="dao-table" type="flex" justify="center">
-		<div v-if="dataSource.length > 0">
-			<a-list
-				:grid="{ gutter: 25, xs: 1, sm: 2, column: 3, size: 'middle' }"
-				:data-source="dataSource"
-			>
-				<template #renderItem="{ item }">
-					<a-list-item class="margin_top_sm">
-						<a-card
-							:class="isDaoSelected(item) && 'selected_dao_card'"
-							hoverable
-							:title="item.name"
-							@click="handleSelectDAO(item)"
-						>
-							<template #extra>
-								<div v-if="isDaoSelected(item)" style="color: #1890ff">
-									Selected
-								</div></template
+	<div v-else>
+		<div class="margin_bottom_sm">
+			<h3 class="text_center">Sigma DAOs</h3>
+			<div class="flexbox_justify_space">
+				<a-input-search
+					style="width: 40%; margin: auto"
+					enter-button
+					placeholder="Search DAO by Name"
+					v-model:value="searchText"
+					@search="handleFilterData()"
+				/>
+				<a-button
+					type="primary"
+					:disabled="!walletStore.address"
+					@click="handleCreateDAO"
+				>
+					Create a DAO
+					<template #icon><PlusOutlined /></template>
+				</a-button>
+			</div>
+		</div>
+		<a-row class="dao-table" type="flex" justify="center">
+			<div v-if="dataSource.length > 0">
+				<a-list
+					:grid="{ gutter: 25, xs: 1, sm: 2, column: 3, size: 'middle' }"
+					:data-source="dataSource"
+				>
+					<template #renderItem="{ item }">
+						<a-list-item class="margin_top_sm">
+							<a-card
+								:class="isDaoSelected(item) && 'selected_dao_card'"
+								hoverable
+								:title="item.name"
+								@click="handleSelectDAO(item)"
 							>
-							<a-descriptions :column="1">
-								<a-descriptions-item label="App ID">{{
-									item.dao_id
-								}}</a-descriptions-item>
-								<a-descriptions-item label="Token Name">{{
-									item.token_name
-								}}</a-descriptions-item>
-								<a-descriptions-item label="Token ID">{{
-									item.token_id
-								}}</a-descriptions-item>
-								<a-descriptions-item label="Link">
-									<a :href="'//' + item.link" target="_blank">
-										{{ item.link }}
-									</a>
-								</a-descriptions-item>
-								<a-descriptions-item label="Proposals">
-									{{ item.proposal_count }}
-								</a-descriptions-item>
-							</a-descriptions>
-						</a-card>
-					</a-list-item>
-				</template>
-			</a-list>
+								<template #extra>
+									<div v-if="isDaoSelected(item)" style="color: #1890ff">
+										Selected
+									</div></template
+								>
+								<a-descriptions :column="1">
+									<a-descriptions-item label="App ID">{{
+										item.dao_id
+									}}</a-descriptions-item>
+									<a-descriptions-item label="Token Name">{{
+										item.token_name
+									}}</a-descriptions-item>
+									<a-descriptions-item label="Token ID">{{
+										item.token_id
+									}}</a-descriptions-item>
+									<a-descriptions-item label="Link">
+										<a :href="'//' + item.link" target="_blank">
+											{{ item.link }}
+										</a>
+									</a-descriptions-item>
+									<a-descriptions-item label="Proposals">
+										{{ item.proposal_count }}
+									</a-descriptions-item>
+									<a-descriptions-item label="DAO Address">
+										<address-copyable :walletAddress="item.dao_address" />
+									</a-descriptions-item>
+									<a-descriptions-item label="Algo Balance">
+										{{ item.lsig_fund_algo }}
+									</a-descriptions-item>
+								</a-descriptions>
+							</a-card>
+						</a-list-item>
+					</template>
+				</a-list>
+			</div>
+			<div v-else-if="dataLoading" class="spinner_container">
+				<a-spin size="large" />
+				<h4 class="margin_left_sm">Fetching Data</h4>
+			</div>
+			<div v-else>
+				<a-empty :description="EmptyDataDescription.DAO" />
+			</div>
+		</a-row>
+		<div class="flex_end">
+			<TablePagination
+				v-bind:totalDataRowsCount="totalDataRowsCount"
+				:paginationHandler="handlePaginationCall"
+			/>
 		</div>
-		<div v-else-if="dataLoading" class="spinner_container">
-			<a-spin size="large" />
-			<h4 class="margin_left_sm">Fetching Data</h4>
-		</div>
-		<div v-else>
-			<a-empty :description="EmptyDataDescription.DAO" />
-		</div>
-	</a-row>
-	<div class="flex_end">
-		<TablePagination
-			v-bind:totalDataRowsCount="totalDataRowsCount"
-			:paginationHandler="handlePaginationCall"
-		/>
 	</div>
 </template>
 
@@ -116,14 +127,17 @@ import {
 } from "@/types";
 import WalletStore from "@/store/WalletStore";
 import TablePagination from "../UIKit/TablePagination.vue";
-import { redirectTo } from "@/utility";
+import { redirectTo, getTruncatedAddress } from "@/utility";
 import { PlusOutlined } from "@ant-design/icons-vue";
+import AddressCopyable from "@/UIKit/Address.vue";
+import { storeToRefs } from "pinia";
 
 export default defineComponent({
 	name: "AllDao",
 	components: {
 		TablePagination,
 		PlusOutlined,
+		AddressCopyable,
 	},
 	data() {
 		return {
@@ -142,6 +156,8 @@ export default defineComponent({
 			EndPoint,
 			isFilterActive: false,
 			EmptyDataDescription,
+			getTruncatedAddress,
+			showNetworkSelection: false,
 		};
 	},
 	methods: {
@@ -360,13 +376,33 @@ export default defineComponent({
 	},
 	setup() {
 		const formState = reactive(DaoStore());
+		const { network } = storeToRefs(WalletStore());
 		return {
 			formState,
 			validateMessages: VALIDATE_MESSAGES,
+			network,
 		};
 	},
 	mounted() {
-		this.handlePaginationCall(PaginationCallType.FIRST_PAGE);
+		if (this.walletStore.network) {
+			this.handlePaginationCall(PaginationCallType.FIRST_PAGE);
+		} else {
+			// network is not selected
+			this.showNetworkSelection = true;
+		}
+	},
+	watch: {
+		network() {
+			if (this.walletStore.network) {
+				this.showNetworkSelection = false;
+				// no DAOs are fetch
+				if (!this.dataSource.length) {
+					this.handlePaginationCall(PaginationCallType.FIRST_PAGE);
+				}
+			} else {
+				this.showNetworkSelection = true;
+			}
+		},
 	},
 });
 </script>

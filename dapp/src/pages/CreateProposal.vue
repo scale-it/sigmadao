@@ -8,8 +8,8 @@
 	<a-row>
 		<a-col>
 			<h3>Current DAO conditions</h3>
-			<a-descriptions size="small" bordered :column="{ xs: 1, sm: 3 }">
-				<a-descriptions-item label="Minimum deposit amount of the gov tokens"
+			<a-descriptions size="small">
+				<a-descriptions-item label="Minimum Deposit Amount of the GOV Tokens"
 					>{{ globalStateMinAmount }} tokens
 				</a-descriptions-item>
 				<a-descriptions-item label="Maximum Duration of voting period">{{
@@ -185,7 +185,7 @@
 						{
 							required: true,
 							type: 'number',
-							validator: (rule, value) =>
+							validator: (rule:Rule, value:string) =>
 								validateFundAmount(rule, value, lsig_fund_amount),
 						},
 					]"

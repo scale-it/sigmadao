@@ -24,7 +24,7 @@
 			tab="Execute Proposal"
 			force-render
 		>
-			<ExecuteProposal />
+			<ExecuteProposal @handleTabChange="handleTabChange" />
 		</a-tab-pane>
 	</a-tabs>
 </template>
@@ -52,6 +52,9 @@ export default defineComponent({
 		ProposalInfo,
 	},
 	methods: {
+		handleTabChange(tabNumber: number) {
+			this.activeKey = tabNumber;
+		},
 		redirectToAllProposal() {
 			redirectTo(this.$router, EndPoint.PROPOSALS);
 		},

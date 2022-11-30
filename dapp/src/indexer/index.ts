@@ -7,7 +7,7 @@ import DaoID from "@/store/DaoID";
 import WalletStore from "@/store/WalletStore";
 import ProposalFormStore from "@/store/AddProposalStore";
 import { Key, StateValue } from "@algo-builder/algob/build/types";
-import { encodeAddress, LogicSigAccount } from "algosdk";
+import { encodeAddress, getApplicationAddress, LogicSigAccount, microalgosToAlgos } from "algosdk";
 import { getProposalLsig } from "../contract/dao";
 import { convertToHex } from "@/utility";
 import {
@@ -274,12 +274,15 @@ export async function decodeDaoAppParams(params: any): Promise<DaoTableData> {
 	// parse global state(gs) from response. gs is a json node in response
 	const globalState = decodeAppParamsState(appParams.gs);
 	const tokenData = await getAssetInformation(params.assetId);
+	const daoAccountInfo = await getAccountInfoByAddress(getApplicationAddress(+params.index))
 	return {
 		dao_id: +params.index,
 		token_id: +params.assetId,
 		token_name: tokenData.an as string,
 		name: globalState.get(GLOBAL_STATE_MAP_KEY.DaoName) as string,
 		link: globalState.get(GLOBAL_STATE_MAP_KEY.Url) as string,
+		dao_address: getApplicationAddress(+params.index),
+		lsig_fund_algo: microalgosToAlgos(daoAccountInfo?.amount ?? 0)
 	};
 }
 

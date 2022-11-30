@@ -34,7 +34,7 @@ export interface VoteFormState {
 
 export interface ProposalFormState {
 	proposal_name: string;
-	proposal_type: string;
+	proposal_type?: number;
 	url: string;
 	url_hash: string;
 	vote_date: [string, string];
@@ -60,6 +60,8 @@ export interface DaoTableData {
 	link: string;
 	key?: number;
 	proposal_count?: number;
+	dao_address?: string;
+	lsig_fund_algo?: number
 }
 
 // Proposal Table interfaces
