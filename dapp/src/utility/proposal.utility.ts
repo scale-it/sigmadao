@@ -163,36 +163,15 @@ export const executeProposal = async (
 			PROPOSAL_LOCAL_STATE_MAP_KEY.ASA_ID
 		) as number;
 
-		const optInTx1: types.ExecParams[] = [
-			{
-				type: types.TransactionType.OptInASA,
-				sign: types.SignType.LogicSignature,
-				fromAccountAddr: daoFundLsig.address(),
-				lsig: daoFundLsig,
-				assetID: assetID,
-				payFlags: { totalFee: 1000 },
-			},
-		];
-
-		const optInTx2: types.ExecParams[] = [
-			{
-				type: types.TransactionType.TransferAsset,
-				sign: types.SignType.SecretKey,
-				fromAccount: {
-					addr: senderAddr,
-					sk: new Uint8Array(0),
-				},
-				toAccountAddr: daoFundLsig.address(),
-				amount: microalgosToAlgos(amount) as number,
-				assetID: assetID,
-				payFlags: { totalFee: 1000 },
-			}
-		];
-
-		const executeResponse1 = await toRaw(webMode).executeTx(optInTx1);
-		console.log(executeResponse1);
-		const executeResponse2 = await toRaw(webMode).executeTx(optInTx2);
-		console.log(executeResponse2);
+		if (proposalData.type === ProposalType.ASA_TRANSFER) {
+			await transferASA(
+				senderAddr,
+				daoFundLsig.address(),
+				microalgosToAlgos(amount) as number,
+				assetID,
+				webMode
+			);
+		}
 
 		switch (proposalData.type) {
 			case ProposalType.ALGO_TRANSFER:
@@ -284,3 +263,39 @@ export const checkProposalResult = (record: ProposalTableData) => {
 	}
 	return false;
 };
+
+export const optInASAToAccount = async (from: string, assetID: number, lsig: LogicSigAccount, webMode: any) => {
+	const execParam: types.ExecParams[] = [
+		{
+			type: types.TransactionType.OptInASA,
+			sign: types.SignType.LogicSignature,
+			fromAccountAddr: from,
+			lsig: lsig,
+			assetID: assetID,
+			payFlags: { totalFee: 1000 },
+		},
+	];
+
+	const executeResponse = await toRaw(webMode).executeTx(execParam);
+	console.log(executeResponse);
+}
+
+export const transferASA = async (from: string, to: string, amountInAlgos: number, assetID: number, webMode: any) => {
+	const execParams: types.ExecParams[] = [
+		{
+			type: types.TransactionType.TransferAsset,
+			sign: types.SignType.SecretKey,
+			fromAccount: {
+				addr: from,
+				sk: new Uint8Array(0),
+			},
+			toAccountAddr: to,
+			amount: amountInAlgos,
+			assetID: assetID,
+			payFlags: { totalFee: 1000 },
+		}
+	];
+
+	const executeResponse = await toRaw(webMode).executeTx(execParams);
+	console.log(executeResponse);
+}
