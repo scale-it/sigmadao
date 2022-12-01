@@ -8,7 +8,7 @@ import { getAccountAppLocalState, isAssetOpted } from "@/indexer";
 import DaoID from "@/store/DaoID";
 import { DAOActions, ProposalTableData } from "@/types";
 import { types } from "@algo-builder/web";
-import { LogicSigAccount, microalgosToAlgos } from "algosdk";
+import { LogicSigAccount } from "algosdk";
 import moment from "moment";
 import { toRaw } from "vue";
 import { isCurrentTimeValid } from "./dateFormatter.utility";

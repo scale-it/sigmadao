@@ -2,7 +2,7 @@ import { EndPoint } from "../types";
 import { Router } from "vue-router";
 import { DEFAULT_FUND_AMT } from "@/constants";
 import { Rule } from "ant-design-vue/lib/form";
-import { decodeAddress } from "algosdk";
+import { isValidAddress } from "algosdk";
 
 /**
  * Method to redirect user
@@ -53,21 +53,10 @@ export const validateAlgroandAddress = (
 			`Please input the address.`
 		);
 	}
-	if (!isValidAlgroandAddress(addr)) {
+	if (!isValidAddress(addr)) {
 		return Promise.reject(
 			`Please provide valid address.`
 		);
 	}
 	return Promise.resolve();
 };
-
-/**
- * Verify Algorand address
- * @param addr Address to be verifited
- */
-export const isValidAlgroandAddress = (addr: string): boolean => {
-	if (addr && addr.length && decodeAddress(addr)) {
-		return true;
-	}
-	return false;
-}
