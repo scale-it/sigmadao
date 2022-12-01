@@ -131,7 +131,14 @@
 					<a-form-item
 						label="Recipient"
 						name="recipient"
-						:rules="[{ required: true }]"
+						:rules="[
+							{
+								required: true,
+								type: 'string',
+								validator: (rule, value) =>
+									validateAlgroandAddress(rule, value),
+							},
+						]"
 					>
 						<a-input v-model:value="formState.recipient" />
 					</a-form-item>
@@ -223,6 +230,7 @@ import {
 	toDaysMinutesSeconds,
 	redirectTo,
 	validateFundAmount,
+	validateAlgroandAddress,
 } from "../utility";
 import DaoStore from "../store/DaoID";
 import ProposalTableStore from "../store/ProposalTableStore";
@@ -265,6 +273,7 @@ export default defineComponent({
 			globalStateMinAmount,
 			toDaysMinutesSeconds,
 			validateFundAmount,
+			validateAlgroandAddress,
 		};
 	},
 	methods: {

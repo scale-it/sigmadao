@@ -4,6 +4,7 @@ export const VALIDATE_MESSAGES = {
 	types: {
 		url: "It is not a valid url!",
 		number: "It is is not a valid number!",
+		string: "It is is not a valid string!",
 	},
 };
 

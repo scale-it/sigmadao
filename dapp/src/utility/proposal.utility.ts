@@ -269,6 +269,13 @@ export const checkProposalResult = (record: ProposalTableData) => {
 	return false;
 };
 
+/**
+ * Opt ASA to given account
+ * @param from : Account address that wants to opt asset
+ * @param assetID : Asset ID
+ * @param lsig : Logic Signature
+ * @param webMode : webmode instace to execute transaction
+ */
 export const optInASAToAccount = async (from: string, assetID: number, lsig: LogicSigAccount, webMode: any) => {
 	const execParam: types.ExecParams[] = [
 		{
@@ -281,11 +288,18 @@ export const optInASAToAccount = async (from: string, assetID: number, lsig: Log
 		},
 	];
 
-	const executeResponse = await toRaw(webMode).executeTx(execParam);
-	console.log(executeResponse);
+	await toRaw(webMode).executeTx(execParam);
 }
 
-export const transferASA = async (from: string, to: string, amountInAlgos: number, assetID: number, webMode: any) => {
+/**
+ * Transfer ASA from one account to another account
+ * @param from : Account address that wants to send transfer ASA
+ * @param to : Account address that wants to receive ASA
+ * @param numberOfASA : Number of ASA that has to be transferred
+ * @param assetID : Asset ID
+ * @param webMode : webmode instace to execute transaction
+ */
+export const transferASA = async (from: string, to: string, numberOfASA: number, assetID: number, webMode: any) => {
 	const execParams: types.ExecParams[] = [
 		{
 			type: types.TransactionType.TransferAsset,
@@ -295,12 +309,11 @@ export const transferASA = async (from: string, to: string, amountInAlgos: numbe
 				sk: new Uint8Array(0),
 			},
 			toAccountAddr: to,
-			amount: amountInAlgos,
+			amount: numberOfASA,
 			assetID: assetID,
 			payFlags: { totalFee: 1000 },
 		}
 	];
 
-	const executeResponse = await toRaw(webMode).executeTx(execParams);
-	console.log(executeResponse);
+	await toRaw(webMode).executeTx(execParams);
 }
