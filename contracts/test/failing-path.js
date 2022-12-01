@@ -1,5 +1,5 @@
 const { AccountStore } = require("@algo-builder/runtime");
-const { types } = require("@algo-builder/web");
+const { types, parsing } = require("@algo-builder/web");
 const { assert } = require("chai");
 const { Context, initialBalance, minSupport, deposit } = require("./common");
 const { ProposalType, Vote, DAOActions } = require("../scripts/run/common/common");
@@ -478,19 +478,34 @@ describe("DAO - Failing Paths", function () {
 		});
 
 		it("Should reject if fee paid by daoFundLsig for type == 2 (ASA TRANSFER)", function () {
-			executeProposalTx[1] = {
-				type: types.TransactionType.TransferAsset,
-				sign: types.SignType.LogicSignature,
-				fromAccountAddr: ctx.daoFundLsig.address(),
-				toAccountAddr: ctx.proposer.address,
-				amount: config.amount,
-				lsig: ctx.daoFundLsig,
-				assetID: ctx.govTokenID,
-				payFlags: { totalFee: 1000 },
+			const config = {
+				type: BigInt(ProposalType.ASA_TRANSFER),
+				from: parsing.addressToPk(ctx.daoFundLsig.address()),
+				asa_id: BigInt(ctx.govTokenID),
+				recipient: parsing.addressToPk(ctx.proposer.address),
+				amount: 10n,
 			};
-			assert.throw(function () {
-				ctx.executeTx(executeProposalTx);
-			}, RUNTIME_ERR1009);
+			for (const [k, v] of Object.entries(config)) {
+				ctx.proposalLsigAcc.setLocalState(ctx.daoAppID, k, v);
+			}
+			ctx.syncAccounts();
+			assert.throws(
+				() =>
+					ctx.executeTx([
+						{ ...executeProposalTx[0] },
+						{
+							type: types.TransactionType.TransferAsset,
+							sign: types.SignType.LogicSignature,
+							fromAccountAddr: ctx.daoFundLsig.address(),
+							toAccountAddr: ctx.proposer.address,
+							amount: config.amount,
+							lsig: ctx.daoFundLsig,
+							assetID: ctx.govTokenID,
+							payFlags: { totalFee: 1000 }, // shouldn't be paid by daoFundLsig
+						},
+					]),
+				RUNTIME_ERR1009
+			);
 		});
 	});
 
