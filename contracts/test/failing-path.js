@@ -476,6 +476,22 @@ describe("DAO - Failing Paths", function () {
 				ctx.executeTx(executeProposalTx);
 			}, RUNTIME_ERR1009);
 		});
+
+		it("Should reject if fee paid by daoFundLsig for type == 2 (ASA TRANSFER)", function () {
+			executeProposalTx[1] = {
+				type: types.TransactionType.TransferAsset,
+				sign: types.SignType.LogicSignature,
+				fromAccountAddr: ctx.daoFundLsig.address(),
+				toAccountAddr: ctx.proposer.address,
+				amount: config.amount,
+				lsig: ctx.daoFundLsig,
+				assetID: ctx.govTokenID,
+				payFlags: { totalFee: 1000 },
+			};
+			assert.throw(function () {
+				ctx.executeTx(executeProposalTx);
+			}, RUNTIME_ERR1009);
+		});
 	});
 
 	describe("Withdraw Vote Deposit", function () {
