@@ -223,7 +223,6 @@ import {
 	toDaysMinutesSeconds,
 	redirectTo,
 	validateFundAmount,
-	optInASAToAccount,
 } from "../utility";
 import DaoStore from "../store/DaoID";
 import ProposalTableStore from "../store/ProposalTableStore";
@@ -403,7 +402,7 @@ export default defineComponent({
 								`addr:${daoLsig.address()}`, // from
 								`int:${asaId}`, // asaId
 								`addr:${recipient}`, // recipient
-								`int:${algosToMicroalgos(amount)}` // amount in microalgos
+								`int:${amount}` // asset amount
 							);
 							break;
 						}
@@ -454,15 +453,6 @@ export default defineComponent({
 						SUCCESSFUL,
 						proposalMessage.SUCCESSFUL
 					);
-					// opt ASA into dao fund lsig
-					if (proposal_type === ProposalType.ASA_TRANSFER) {
-						await optInASAToAccount(
-							daoLsig.address(),
-							asaId,
-							daoLsig,
-							this.walletStore.webMode
-						);
-					}
 					this.redirectToAllProposal();
 					this.formState.$reset();
 				}

@@ -164,10 +164,16 @@ export const executeProposal = async (
 		) as number;
 
 		if (proposalData.type === ProposalType.ASA_TRANSFER) {
+			await optInASAToAccount(
+				daoFundLsig.address(),
+				assetID,
+				daoFundLsig,
+				webMode
+			);
 			await transferASA(
 				senderAddr,
 				daoFundLsig.address(),
-				microalgosToAlgos(amount) as number,
+				amount,
 				assetID,
 				webMode
 			);
@@ -194,11 +200,10 @@ export const executeProposal = async (
 						sign: types.SignType.LogicSignature,
 						fromAccountAddr: daoFundLsig.address(),
 						toAccountAddr: recipientAddr as string,
-						amount: microalgosToAlgos(amount) as number,
+						amount: amount,
 						lsig: daoFundLsig,
 						assetID: assetID,
-						payFlags: { totalFee: 0 },
-						args: [new Uint8Array(Buffer.from(DAOActions.EXECUTE))],
+						payFlags: { totalFee: 0 }
 					});
 				}
 				break;
