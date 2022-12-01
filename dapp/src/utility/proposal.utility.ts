@@ -164,7 +164,7 @@ export const executeProposal = async (
 		) as number;
 
 		if (proposalData.type === ProposalType.ASA_TRANSFER) {
-			await optInASAToAccount(
+			await optInASA(
 				daoFundLsig.address(),
 				assetID,
 				daoFundLsig,
@@ -276,7 +276,7 @@ export const checkProposalResult = (record: ProposalTableData) => {
  * @param lsig : Logic Signature
  * @param webMode : webmode instace to execute transaction
  */
-export const optInASAToAccount = async (from: string, assetID: number, lsig: LogicSigAccount, webMode: any) => {
+export const optInASA = async (from: string, assetID: number, lsig: LogicSigAccount, webMode: any) => {
 	const execParam: types.ExecParams[] = [
 		{
 			type: types.TransactionType.OptInASA,

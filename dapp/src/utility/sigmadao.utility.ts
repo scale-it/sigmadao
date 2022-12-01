@@ -49,15 +49,16 @@ export const validateAlgroandAddress = (
 	addr: string,
 ) => {
 	if (!addr) {
-		throw new Error(
+		return Promise.reject(
 			`Please input the address.`
 		);
 	}
 	if (!isValidAlgroandAddress(addr)) {
-		throw new Error(
+		return Promise.reject(
 			`Please provide valid address.`
 		);
 	}
+	return Promise.resolve();
 };
 
 /**
