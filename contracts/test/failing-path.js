@@ -477,6 +477,13 @@ describe("DAO - Failing Paths", function () {
 			}, RUNTIME_ERR1009);
 		});
 
+		it("Should reject if fee paid by daoFundLsig for type == 1 (ALGO TRANSFER)", function () {
+			executeProposalTx[1].payFlags.totalFee = 1000;
+			assert.throw(function () {
+				ctx.executeTx(executeProposalTx);
+			}, RUNTIME_ERR1009);
+		});
+
 		it("Should reject if fee paid by daoFundLsig for type == 2 (ASA TRANSFER)", function () {
 			const config = {
 				type: BigInt(ProposalType.ASA_TRANSFER),
