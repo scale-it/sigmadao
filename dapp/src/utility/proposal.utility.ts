@@ -163,22 +163,6 @@ export const executeProposal = async (
 			PROPOSAL_LOCAL_STATE_MAP_KEY.ASA_ID
 		) as number;
 
-		if (proposalData.type === ProposalType.ASA_TRANSFER) {
-			await optInASA(
-				daoFundLsig.address(),
-				assetID,
-				daoFundLsig,
-				webMode
-			);
-			await transferASA(
-				senderAddr,
-				daoFundLsig.address(),
-				amount,
-				assetID,
-				webMode
-			);
-		}
-
 		switch (proposalData.type) {
 			case ProposalType.ALGO_TRANSFER:
 				{
