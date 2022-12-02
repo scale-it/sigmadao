@@ -261,7 +261,11 @@ export default defineComponent({
 				this.walletAddress = addr;
 				this.setAddress(addr);
 				searchApplicationAndAccount();
-				redirectTo(this.$router, EndPoint.ALL_DAO);
+				// refresh proposal info page
+				if (this.$route.fullPath === EndPoint.PROPOSAL_INFO) {
+					redirectTo(this.$router, EndPoint.PROPOSALS);
+				}
+
 				console.log("Address Switched.");
 			}
 		},
@@ -269,7 +273,7 @@ export default defineComponent({
 			console.log("Wallet Disconnected");
 			this.walletAddress = "";
 			this.setAddress("");
-			DaoID().handleLogOut();
+			DaoID().resetDaoStore();
 			this.setWalletType(WalletType.NONE);
 			this.selectedWallet = WalletType.NONE;
 			this.selectedNetwork = NetworkTypes.NONE;

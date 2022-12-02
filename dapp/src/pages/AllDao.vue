@@ -1,6 +1,6 @@
 <template>
 	<div v-if="showNetworkSelection">
-		<a-result title="Please select a network to fetch DAOs" />
+		<a-result title="Please select a network to access DAOs" />
 	</div>
 	<div v-else>
 		<div class="margin_bottom_sm">
@@ -49,7 +49,7 @@
 									<a-descriptions-item label="Token Name">{{
 										item.token_name
 									}}</a-descriptions-item>
-									<a-descriptions-item label="Token ID">{{
+									<a-descriptions-item label="Gov Token ID">{{
 										item.token_id
 									}}</a-descriptions-item>
 									<a-descriptions-item label="Link">

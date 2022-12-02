@@ -67,7 +67,7 @@
 							<a-descriptions-item label="DAO Name">{{
 								name
 							}}</a-descriptions-item>
-							<a-descriptions-item label="Govt Token ID">
+							<a-descriptions-item label="Gov Token ID">
 								{{ govtId }}
 							</a-descriptions-item>
 							<a-descriptions-item>
