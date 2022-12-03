@@ -143,7 +143,11 @@
 						<a-input v-model:value="formState.recipient" />
 					</a-form-item>
 					<a-form-item
-						label="Amount"
+						:label="
+							formState.proposal_type === ProposalType.ALGO_TRANSFER
+								? 'Amount (Algos)'
+								: 'ASA Count'
+						"
 						name="amount"
 						:rules="[{ required: true, type: 'number' }]"
 					>
@@ -212,6 +216,7 @@ import {
 	UNSUCCESSFUL,
 	GLOBAL_STATE_MAP_KEY,
 	DEFAULT_FUND_AMT,
+	daoAppMessage,
 } from "@/constants";
 import { DateRange, DAOActions, EndPoint } from "@/types";
 import { defineComponent, reactive, toRaw } from "vue";
@@ -219,10 +224,15 @@ import ProposalFormStore from "../store/AddProposalStore";
 import WalletStore from "../store/WalletStore";
 import DaoID from "../store/DaoID";
 import { types } from "@algo-builder/web";
-import type { LogicSigAccount } from "algosdk";
+import { LogicSigAccount, microalgosToAlgos } from "algosdk";
 import { algosToMicroalgos } from "algosdk";
 import { getProposalLsig, getDaoFundLSig } from "../contract/dao";
-import { isApplicationOpted, searchApplicationAndAccount } from "@/indexer";
+import {
+	isApplicationOpted,
+	searchApplicationAndAccount,
+	getAccountInfoByAddress,
+	getGovASATokenAmount,
+} from "@/indexer";
 import {
 	fundAmount,
 	convertToSeconds,
@@ -397,6 +407,17 @@ export default defineComponent({
 						`int:${executeBefore}`, // execute_before
 						`int:${proposal_type}`, // type
 					];
+					// validate proposal parameters
+					if (
+						await this.validateProposalParam(
+							proposal_type,
+							daoLsig.address(),
+							amount,
+							asaId
+						)
+					) {
+						return;
+					}
 					switch (proposal_type) {
 						case ProposalType.ALGO_TRANSFER: {
 							proposalParams.push(
@@ -474,6 +495,57 @@ export default defineComponent({
 		},
 		onFinishFailed(errorinfo: Event) {
 			console.warn("Failed:", errorinfo);
+		},
+		async validateProposalParam(
+			proposal_type: ProposalType,
+			addr: string,
+			amount,
+			asaId
+		): Promise<boolean> {
+			return (
+				(proposal_type == ProposalType.ALGO_TRANSFER &&
+					!(await this.isDAOHavingRequiredFund(addr, amount))) ||
+				(proposal_type == ProposalType.ASA_TRANSFER &&
+					!(await this.isDAOHavingRequiredASA(addr, asaId, amount)))
+			);
+		},
+		async isDAOHavingRequiredFund(
+			addr: string,
+			amountInAlgos: number
+		): Promise<boolean> {
+			try {
+				const daoInfo = await getAccountInfoByAddress(addr);
+				if (microalgosToAlgos(daoInfo.amount) < amountInAlgos) {
+					throw Error(
+						daoAppMessage.DAO_INSUFFICIENT_BALANCE(
+							microalgosToAlgos(daoInfo.amount),
+							amountInAlgos
+						)
+					);
+				}
+			} catch (err) {
+				openErrorNotificationWithIcon(UNSUCCESSFUL, err.message);
+				return false;
+			}
+			return true;
+		},
+		async isDAOHavingRequiredASA(
+			addr: string,
+			assetID: number,
+			numberOfASA: number
+		): Promise<boolean> {
+			try {
+				const asaCount = await getGovASATokenAmount(addr, assetID);
+				if (asaCount < numberOfASA) {
+					throw Error(
+						daoAppMessage.DAO_INSUFFICIENT_ASA_COUNT(asaCount, numberOfASA)
+					);
+				}
+			} catch (err) {
+				openErrorNotificationWithIcon(UNSUCCESSFUL, err.message);
+				return false;
+			}
+			return true;
 		},
 		disabledDate(current: number | Date) {
 			// Can not select day before today

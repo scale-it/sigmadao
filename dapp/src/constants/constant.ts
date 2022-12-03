@@ -66,6 +66,10 @@ export const daoAppMessage = {
 	PROPOSAL_UNSUCCESSFUL: `Couldn't select the proposal`,
 	OPT_IN_SUCCESSFUL: (daoID: number) =>
 		`You have successfully opted in DAO of ID ${daoID}`,
+	DAO_INSUFFICIENT_BALANCE: (balance: number, required: number) =>
+		`DAO balance ${balance} Algos is less than required ${required} Algos.`,
+	DAO_INSUFFICIENT_ASA_COUNT: (balance: number, required: number) =>
+		`DAO ASA count ${balance} is less than required ${required} ASA.`,
 };
 
 export const voteMessage = {
