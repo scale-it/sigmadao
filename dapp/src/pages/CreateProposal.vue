@@ -497,13 +497,13 @@ export default defineComponent({
 			console.warn("Failed:", errorinfo);
 		},
 		async validateProposalParam(
-			proposal_type: ProposalType,
+			proposal_type: any,
 			addr: string,
-			amount,
-			asaId
+			amount: number,
+			asaId: number
 		): Promise<boolean> {
 			return (
-				(proposal_type == ProposalType.ALGO_TRANSFER &&
+				(proposal_type === ProposalType.ALGO_TRANSFER &&
 					!(await this.isDAOHavingRequiredFund(addr, amount))) ||
 				(proposal_type == ProposalType.ASA_TRANSFER &&
 					!(await this.isDAOHavingRequiredASA(addr, asaId, amount)))
@@ -515,7 +515,7 @@ export default defineComponent({
 		): Promise<boolean> {
 			try {
 				const daoInfo = await getAccountInfoByAddress(addr);
-				if (microalgosToAlgos(daoInfo.amount) < amountInAlgos) {
+				if (daoInfo && microalgosToAlgos(daoInfo.amount) < amountInAlgos) {
 					throw Error(
 						daoAppMessage.DAO_INSUFFICIENT_BALANCE(
 							microalgosToAlgos(daoInfo.amount),
@@ -535,7 +535,7 @@ export default defineComponent({
 			numberOfASA: number
 		): Promise<boolean> {
 			try {
-				const asaCount = await getGovASATokenAmount(addr, assetID);
+				const asaCount: number = await getGovASATokenAmount(addr, assetID);
 				if (asaCount < numberOfASA) {
 					throw Error(
 						daoAppMessage.DAO_INSUFFICIENT_ASA_COUNT(asaCount, numberOfASA)
