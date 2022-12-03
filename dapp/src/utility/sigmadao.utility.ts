@@ -44,7 +44,7 @@ export const validateFundAmount = (
  * @param _rule the antd rules
  * @param addr Address
  */
-export const validateAlgroandAddress = (
+export const validateAlgorandAddress = (
 	_rule: Rule,
 	addr: string,
 ) => {
