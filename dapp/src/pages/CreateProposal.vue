@@ -136,7 +136,7 @@
 								required: true,
 								type: 'string',
 								validator: (rule, value) =>
-									validateAlgroandAddress(rule, value),
+									validateAlgorandAddress(rule, value),
 							},
 						]"
 					>
@@ -240,7 +240,7 @@ import {
 	toDaysMinutesSeconds,
 	redirectTo,
 	validateFundAmount,
-	validateAlgroandAddress,
+	validateAlgorandAddress,
 } from "../utility";
 import DaoStore from "../store/DaoID";
 import ProposalTableStore from "../store/ProposalTableStore";
@@ -283,7 +283,7 @@ export default defineComponent({
 			globalStateMinAmount,
 			toDaysMinutesSeconds,
 			validateFundAmount,
-			validateAlgroandAddress,
+			validateAlgorandAddress,
 		};
 	},
 	methods: {
