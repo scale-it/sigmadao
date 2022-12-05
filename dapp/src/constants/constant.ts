@@ -1,3 +1,5 @@
+import { Proposal } from "@/types";
+
 export const GOV_TOKEN_ASSET = "gov-token";
 export const VALIDATE_MESSAGES = {
 	required: "required!",
@@ -27,9 +29,9 @@ export const DAY_TO_SECONDS = 24 * HOUR_TO_SECONDS;
 export const DAY_TO_MILLISECONDS = 1000 * DAY_TO_SECONDS;
 
 export const ProposalType = {
-	ALGO_TRANSFER: 1,
-	ASA_TRANSFER: 2,
-	MESSAGE: 3,
+	ALGO_TRANSFER: Proposal.ALGO_TRANSFER,
+	ASA_TRANSFER: Proposal.ASA_TRANSFER,
+	MESSAGE: Proposal.MESSAGE,
 	[1]: "Algo Transfer",
 	[2]: "ASA Transfer",
 	[3]: "Message",

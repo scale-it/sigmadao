@@ -218,7 +218,7 @@ import {
 	DEFAULT_FUND_AMT,
 	daoAppMessage,
 } from "@/constants";
-import { DateRange, DAOActions, EndPoint } from "@/types";
+import { DateRange, DAOActions, EndPoint, Proposal } from "@/types";
 import { defineComponent, reactive, toRaw } from "vue";
 import ProposalFormStore from "../store/AddProposalStore";
 import WalletStore from "../store/WalletStore";
@@ -252,6 +252,7 @@ export default defineComponent({
 	data() {
 		return {
 			ProposalType,
+			Proposal,
 			error: "",
 			key: "AddProposalKey",
 			DaoStore,
@@ -392,6 +393,7 @@ export default defineComponent({
 					let daoLsig: LogicSigAccount = await getDaoFundLSig(
 						this.daoStore.dao_id as number
 					);
+					const proposalType = proposal_type as Proposal;
 					const startTime = convertToSeconds(vote_date[0]);
 					const endTime = convertToSeconds(vote_date[1]);
 					const executeBefore = convertToSeconds(execute_before);
@@ -409,8 +411,8 @@ export default defineComponent({
 					];
 					// validate proposal parameters
 					if (
-						await this.validateProposalParam(
-							proposal_type,
+						await this.validateProposalParams(
+							proposalType,
 							daoLsig.address(),
 							amount,
 							asaId
@@ -418,7 +420,7 @@ export default defineComponent({
 					) {
 						return;
 					}
-					switch (proposal_type) {
+					switch (proposalType) {
 						case ProposalType.ALGO_TRANSFER: {
 							proposalParams.push(
 								`addr:${daoLsig.address()}`, // from
@@ -496,8 +498,8 @@ export default defineComponent({
 		onFinishFailed(errorinfo: Event) {
 			console.warn("Failed:", errorinfo);
 		},
-		async validateProposalParam(
-			proposal_type: any,
+		async validateProposalParams(
+			proposal_type: Proposal,
 			addr: string,
 			amount: number,
 			asaId: number
