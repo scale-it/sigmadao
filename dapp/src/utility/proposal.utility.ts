@@ -159,6 +159,10 @@ export const executeProposal = async (
 			PROPOSAL_LOCAL_STATE_MAP_KEY.Amount
 		) as number;
 
+		const assetID = localState?.get(
+			PROPOSAL_LOCAL_STATE_MAP_KEY.ASA_ID
+		) as number;
+
 		switch (proposalData.type) {
 			case ProposalType.ALGO_TRANSFER:
 				{
@@ -167,7 +171,7 @@ export const executeProposal = async (
 						sign: types.SignType.LogicSignature,
 						fromAccountAddr: daoFundLsig.address(),
 						toAccountAddr: recipientAddr as string,
-						amountMicroAlgos: amount,
+						amountMicroAlgos: amount as number,
 						lsig: daoFundLsig,
 						payFlags: { totalFee: 0 },
 					});
@@ -179,13 +183,11 @@ export const executeProposal = async (
 						type: types.TransactionType.TransferAsset,
 						sign: types.SignType.LogicSignature,
 						fromAccountAddr: daoFundLsig.address(),
-						amount: amount,
-						assetID: localState?.get(
-							PROPOSAL_LOCAL_STATE_MAP_KEY.ASA_ID
-						) as number,
 						toAccountAddr: recipientAddr as string,
+						amount: amount,
 						lsig: daoFundLsig,
-						payFlags: { totalFee: 0 },
+						assetID: assetID,
+						payFlags: { totalFee: 0 }
 					});
 				}
 				break;

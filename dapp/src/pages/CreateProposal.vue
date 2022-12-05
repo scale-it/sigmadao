@@ -131,12 +131,23 @@
 					<a-form-item
 						label="Recipient"
 						name="recipient"
-						:rules="[{ required: true }]"
+						:rules="[
+							{
+								required: true,
+								type: 'string',
+								validator: (rule, value) =>
+									validateAlgorandAddress(rule, value),
+							},
+						]"
 					>
 						<a-input v-model:value="formState.recipient" />
 					</a-form-item>
 					<a-form-item
-						label="Amount"
+						:label="
+							formState.proposal_type === ProposalType.ALGO_TRANSFER
+								? 'Amount (Algos)'
+								: 'ASA Count'
+						"
 						name="amount"
 						:rules="[{ required: true, type: 'number' }]"
 					>
@@ -205,16 +216,23 @@ import {
 	UNSUCCESSFUL,
 	GLOBAL_STATE_MAP_KEY,
 	DEFAULT_FUND_AMT,
+	daoAppMessage,
 } from "@/constants";
-import { DateRange, DAOActions, EndPoint } from "@/types";
+import { DateRange, DAOActions, EndPoint, Proposal } from "@/types";
 import { defineComponent, reactive, toRaw } from "vue";
 import ProposalFormStore from "../store/AddProposalStore";
 import WalletStore from "../store/WalletStore";
 import DaoID from "../store/DaoID";
 import { types } from "@algo-builder/web";
-import type { LogicSigAccount } from "algosdk";
+import { LogicSigAccount, microalgosToAlgos } from "algosdk";
+import { algosToMicroalgos } from "algosdk";
 import { getProposalLsig, getDaoFundLSig } from "../contract/dao";
-import { isApplicationOpted, searchApplicationAndAccount } from "@/indexer";
+import {
+	isApplicationOpted,
+	searchApplicationAndAccount,
+	getAccountInfoByAddress,
+	getGovASATokenAmount,
+} from "@/indexer";
 import {
 	fundAmount,
 	convertToSeconds,
@@ -222,6 +240,7 @@ import {
 	toDaysMinutesSeconds,
 	redirectTo,
 	validateFundAmount,
+	validateAlgorandAddress,
 } from "../utility";
 import DaoStore from "../store/DaoID";
 import ProposalTableStore from "../store/ProposalTableStore";
@@ -233,6 +252,7 @@ export default defineComponent({
 	data() {
 		return {
 			ProposalType,
+			Proposal,
 			error: "",
 			key: "AddProposalKey",
 			DaoStore,
@@ -264,6 +284,7 @@ export default defineComponent({
 			globalStateMinAmount,
 			toDaysMinutesSeconds,
 			validateFundAmount,
+			validateAlgorandAddress,
 		};
 	},
 	methods: {
@@ -372,6 +393,7 @@ export default defineComponent({
 					let daoLsig: LogicSigAccount = await getDaoFundLSig(
 						this.daoStore.dao_id as number
 					);
+					const proposalType = proposal_type as Proposal;
 					const startTime = convertToSeconds(vote_date[0]);
 					const endTime = convertToSeconds(vote_date[1]);
 					const executeBefore = convertToSeconds(execute_before);
@@ -387,12 +409,23 @@ export default defineComponent({
 						`int:${executeBefore}`, // execute_before
 						`int:${proposal_type}`, // type
 					];
-					switch (proposal_type) {
+					// validate proposal parameters
+					if (
+						await this.validateProposalParams(
+							proposalType,
+							daoLsig.address(),
+							amount,
+							asaId
+						)
+					) {
+						return;
+					}
+					switch (proposalType) {
 						case ProposalType.ALGO_TRANSFER: {
 							proposalParams.push(
 								`addr:${daoLsig.address()}`, // from
 								`addr:${recipient}`, // recipient
-								`int:${amount * 1e6}` // amount
+								`int:${algosToMicroalgos(amount)}` // amount in microalgos
 							);
 							break;
 						}
@@ -401,7 +434,7 @@ export default defineComponent({
 								`addr:${daoLsig.address()}`, // from
 								`int:${asaId}`, // asaId
 								`addr:${recipient}`, // recipient
-								`int:${amount}` // amount
+								`int:${amount}` // asset amount
 							);
 							break;
 						}
@@ -464,6 +497,57 @@ export default defineComponent({
 		},
 		onFinishFailed(errorinfo: Event) {
 			console.warn("Failed:", errorinfo);
+		},
+		async validateProposalParams(
+			proposal_type: Proposal,
+			addr: string,
+			amount: number,
+			asaId: number
+		): Promise<boolean> {
+			return (
+				(proposal_type === ProposalType.ALGO_TRANSFER &&
+					!(await this.isDAOHavingRequiredFund(addr, amount))) ||
+				(proposal_type == ProposalType.ASA_TRANSFER &&
+					!(await this.isDAOHavingRequiredASA(addr, asaId, amount)))
+			);
+		},
+		async isDAOHavingRequiredFund(
+			addr: string,
+			amountInAlgos: number
+		): Promise<boolean> {
+			try {
+				const daoInfo = await getAccountInfoByAddress(addr);
+				if (daoInfo && microalgosToAlgos(daoInfo.amount) < amountInAlgos) {
+					throw Error(
+						daoAppMessage.DAO_INSUFFICIENT_BALANCE(
+							microalgosToAlgos(daoInfo.amount),
+							amountInAlgos
+						)
+					);
+				}
+			} catch (err) {
+				openErrorNotificationWithIcon(UNSUCCESSFUL, err.message);
+				return false;
+			}
+			return true;
+		},
+		async isDAOHavingRequiredASA(
+			addr: string,
+			assetID: number,
+			numberOfASA: number
+		): Promise<boolean> {
+			try {
+				const asaCount: number = await getGovASATokenAmount(addr, assetID);
+				if (asaCount < numberOfASA) {
+					throw Error(
+						daoAppMessage.DAO_INSUFFICIENT_ASA_COUNT(asaCount, numberOfASA)
+					);
+				}
+			} catch (err) {
+				openErrorNotificationWithIcon(UNSUCCESSFUL, err.message);
+				return false;
+			}
+			return true;
 		},
 		disabledDate(current: number | Date) {
 			// Can not select day before today

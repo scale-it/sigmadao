@@ -98,3 +98,9 @@ export enum ProposalFilterType {
 	Active = 3,
 	Past = 4,
 }
+
+export enum Proposal {
+	ALGO_TRANSFER = 1,
+	ASA_TRANSFER = 2,
+	MESSAGE = 3,
+}

@@ -2,6 +2,7 @@ import { EndPoint } from "../types";
 import { Router } from "vue-router";
 import { DEFAULT_FUND_AMT } from "@/constants";
 import { Rule } from "ant-design-vue/lib/form";
+import { isValidAddress } from "algosdk";
 
 /**
  * Method to redirect user
@@ -36,4 +37,26 @@ export const validateFundAmount = (
 		}
 		return Promise.resolve();
 	}
+};
+
+/**
+ * Validate the Algorand Address
+ * @param _rule the antd rules
+ * @param addr Address
+ */
+export const validateAlgorandAddress = (
+	_rule: Rule,
+	addr: string,
+) => {
+	if (!addr) {
+		return Promise.reject(
+			`Please input the address.`
+		);
+	}
+	if (!isValidAddress(addr)) {
+		return Promise.reject(
+			`Please provide valid address.`
+		);
+	}
+	return Promise.resolve();
 };
