@@ -7,6 +7,7 @@ import {
 	ProposalFilterType,
 	Proposal
 } from "@/types";
+import { HttpNetworkConfig } from "@algo-builder/web/build/types";
 
 export interface WalletStoreState {
 	walletKind: WalletType;
@@ -107,3 +108,7 @@ export interface CreateDaoFormState {
 	url?: string;
 	dao_name?: string;
 }
+
+export interface NetworkConfig extends HttpNetworkConfig {
+	backendBaseURL: string,
+};

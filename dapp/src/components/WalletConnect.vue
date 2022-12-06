@@ -113,6 +113,7 @@ import {
 	walletMessage,
 } from "@/constants";
 import { getWalletConfig, getTruncatedAddress, redirectTo } from "@/utility";
+import { EndPoint } from "../types";
 declare var AlgoSigner: any; // eslint-disable-line
 
 export default defineComponent({
@@ -253,6 +254,7 @@ export default defineComponent({
 				this.selectedNetwork = e.key;
 				this.walletStore.setNetworkTypes(e.key);
 				this.connectWallet(this.walletStore.walletKind);
+				redirectTo(this.$router, EndPoint.ALL_DAO);
 			}
 		},
 		handleAddressSwitch(e: any) {

@@ -1,7 +1,8 @@
-import { BACKEND_URL } from "./constants";
-
+import { getWalletConfig } from "@/utility"
 export const executeReq = (query: string) => {
-	return fetch(BACKEND_URL, {
+	const url = getWalletConfig();
+
+	return fetch(url.backendBaseURL, {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
