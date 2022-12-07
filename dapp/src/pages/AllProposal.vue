@@ -101,7 +101,6 @@ import {
 	openErrorNotificationWithIcon,
 	UNSUCCESSFUL,
 	ROWS_PER_PAGE,
-	ProposalType,
 	SUCCESSFUL,
 	openSuccessNotificationWithIcon,
 	daoAppMessage,
@@ -113,6 +112,7 @@ import {
 	ProposalFilterType,
 	DateTimeFormat,
 	EndPoint,
+	Proposal as ProposalType,
 } from "@/types";
 import { defineComponent, reactive } from "vue";
 import DaoID from "../store/DaoID";

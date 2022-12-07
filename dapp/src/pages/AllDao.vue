@@ -1,8 +1,5 @@
 <template>
-	<div v-if="showNetworkSelection">
-		<a-result title="Please select a network to access DAOs" />
-	</div>
-	<div v-else>
+	<div v-if="!showNetworkSelection">
 		<div class="margin_bottom_sm">
 			<h3 class="text_center">Sigma DAOs</h3>
 			<div class="flexbox_justify_space">
