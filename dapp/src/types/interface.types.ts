@@ -5,6 +5,7 @@ import {
 	WebModeTypes,
 	WalletType,
 	ProposalFilterType,
+	Proposal
 } from "@/types";
 
 export interface WalletStoreState {
@@ -34,7 +35,7 @@ export interface VoteFormState {
 
 export interface ProposalFormState {
 	proposal_name: string;
-	proposal_type?: number;
+	proposal_type?: Proposal;
 	url: string;
 	url_hash: string;
 	vote_date: [string, string];
