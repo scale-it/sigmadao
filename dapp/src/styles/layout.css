@@ -34,3 +34,8 @@
 .text_center {
 	text-align: center;
 }
+
+.dao-info-layout {
+	display: flex;
+	flex-wrap: wrap;
+}

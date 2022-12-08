@@ -41,3 +41,11 @@
 .margin_top_extra_sm {
 	margin-top: 0.5rem;
 }
+
+.margin_inline_sm {
+	margin-inline: 1rem;
+}
+
+.flex_1 {
+	flex: 1;
+}
