@@ -13,90 +13,95 @@
 					</div>
 				</div>
 			</template>
-			<div class="content">
-				<a-row align="middle" justify="center">
-					<a-col class="menu" :span="24">
-						<div>
-							<!-- add route after page component is added  -->
-							<router-link :to="{ path: EndPoint.ALL_DAO }">
-								<a-button
-									class="menu_option"
-									:type="isLinkActive(EndPoint.ALL_DAO)"
-									>All DAOs</a-button
-								>
-							</router-link>
-							<router-link :to="{ path: EndPoint.PROPOSALS }">
-								<a-button
-									class="menu_option"
-									:type="isLinkActive(EndPoint.PROPOSALS)"
-									:disabled="!DaoStore().isDaoSelected"
-									>Proposals</a-button
-								>
-							</router-link>
-							<router-link :to="{ path: EndPoint.VOTE_TOKEN }">
-								<a-button
-									class="menu_option"
-									:type="isLinkActive(EndPoint.VOTE_TOKEN)"
-									:disabled="DaoStore().disableActions"
-									>Deposit Vote Tokens</a-button
-								>
-							</router-link>
-						</div>
-					</a-col>
-				</a-row>
-				<a-row class="dao-table" type="flex">
-					<a-col flex="auto">
-						<a-descriptions
-							:column="{ xs: 3, sm: 5 }"
-							size="small"
-							bordered
-							layout="vertical"
-						>
-							<a-descriptions-item label="DAO App ID">
-								<a-input-search
-									v-model:value="daoID"
-									type="number"
-									@search="searchID"
-									placeholder="Select DAO by App ID"
-								>
-									<template #enterButton>
-										<a-button type="primary">Select</a-button>
+			<div v-if="showNetworkSelection">
+				<a-result title="Please select a network to access DAOs" />
+			</div>
+			<div v-else>
+				<div class="content">
+					<a-row align="middle" justify="center">
+						<a-col class="menu" :span="24">
+							<div>
+								<!-- add route after page component is added  -->
+								<router-link :to="{ path: EndPoint.ALL_DAO }">
+									<a-button
+										class="menu_option"
+										:type="isLinkActive(EndPoint.ALL_DAO)"
+										>All DAOs</a-button
+									>
+								</router-link>
+								<router-link :to="{ path: EndPoint.PROPOSALS }">
+									<a-button
+										class="menu_option"
+										:type="isLinkActive(EndPoint.PROPOSALS)"
+										:disabled="!DaoStore().isDaoSelected"
+										>Proposals</a-button
+									>
+								</router-link>
+								<router-link :to="{ path: EndPoint.VOTE_TOKEN }">
+									<a-button
+										class="menu_option"
+										:type="isLinkActive(EndPoint.VOTE_TOKEN)"
+										:disabled="DaoStore().disableActions"
+										>Deposit Vote Tokens</a-button
+									>
+								</router-link>
+							</div>
+						</a-col>
+					</a-row>
+					<a-row class="dao-table" type="flex">
+						<a-col flex="auto">
+							<a-descriptions
+								:column="{ xs: 3, sm: 5 }"
+								size="small"
+								bordered
+								layout="vertical"
+							>
+								<a-descriptions-item label="DAO App ID">
+									<a-input-search
+										v-model:value="daoID"
+										type="number"
+										@search="searchID"
+										placeholder="Select DAO by App ID"
+									>
+										<template #enterButton>
+											<a-button type="primary">Select</a-button>
+										</template>
+									</a-input-search>
+								</a-descriptions-item>
+								<a-descriptions-item label="DAO Name">{{
+									name
+								}}</a-descriptions-item>
+								<a-descriptions-item label="Gov Token ID">
+									{{ govtId }}
+								</a-descriptions-item>
+								<a-descriptions-item>
+									<template #label>
+										Available
+										<info-tool-tip
+											data="The tokens are available for you to deposit and vote."
+										/>
 									</template>
-								</a-input-search>
-							</a-descriptions-item>
-							<a-descriptions-item label="DAO Name">{{
-								name
-							}}</a-descriptions-item>
-							<a-descriptions-item label="Govt Token ID">
-								{{ govtId }}
-							</a-descriptions-item>
-							<a-descriptions-item>
-								<template #label>
-									Available
-									<info-tool-tip
-										data="The tokens are available for you to deposit and vote."
-									/>
-								</template>
-								{{ availableTokens }}</a-descriptions-item
-							>
-							<a-descriptions-item>
-								<template #label>
-									Locked
-									<info-tool-tip
-										data="The tokens are locked for the voting period. You can
+									{{ availableTokens }}</a-descriptions-item
+								>
+								<a-descriptions-item>
+									<template #label>
+										Locked
+										<info-tool-tip
+											data="The tokens are locked for the voting period. You can
 												withdraw them once the voting period ends."
-									/>
-								</template>
-								{{ lockedTokens }}</a-descriptions-item
-							>
-						</a-descriptions>
-					</a-col>
-				</a-row>
-				<a-row class="opt_btn" v-if="showOptIn">
-					<a-col class="menu" :span="24">
-						<a-button type="primary" @click="optIn">Opt-in DAO App</a-button>
-					</a-col>
-				</a-row>
+										/>
+									</template>
+									{{ lockedTokens }}</a-descriptions-item
+								>
+							</a-descriptions>
+						</a-col>
+					</a-row>
+					<a-row class="opt_btn" v-if="showOptIn">
+						<a-col class="menu" :span="24">
+							<a-button type="primary" @click="optIn">Opt-in DAO App</a-button>
+						</a-col>
+					</a-row>
+				</div>
 			</div>
 		</a-page-header>
 	</div>
@@ -135,6 +140,7 @@ export default defineComponent({
 	data() {
 		const daoStore = storeToRefs(DaoStore());
 		const walletStore = WalletStore();
+		const { network } = storeToRefs(WalletStore());
 		return {
 			EndPoint,
 			daoID: daoStore.searchDaoId,
@@ -148,6 +154,8 @@ export default defineComponent({
 			walletStore,
 			resetDaoStore: DaoStore().resetDaoStore,
 			DaoStore,
+			showNetworkSelection: false,
+			network,
 		};
 	},
 	methods: {
@@ -231,6 +239,21 @@ export default defineComponent({
 				}
 			} catch (error) {
 				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message);
+			}
+		},
+	},
+	mounted() {
+		// network is not selected
+		if (!this.walletStore.network) {
+			this.showNetworkSelection = true;
+		}
+	},
+	watch: {
+		network() {
+			if (this.walletStore.network) {
+				this.showNetworkSelection = false;
+			} else {
+				this.showNetworkSelection = true;
 			}
 		},
 	},

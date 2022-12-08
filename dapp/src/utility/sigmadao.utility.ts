@@ -60,3 +60,6 @@ export const validateAlgorandAddress = (
 	}
 	return Promise.resolve();
 };
+export const getTruncatedAddress = (addr: string, places: number): string => {
+	return addr.substring(0, places) + "..." + addr.slice(-places);
+}

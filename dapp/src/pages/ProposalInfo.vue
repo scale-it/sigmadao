@@ -150,7 +150,11 @@
 				<div v-if="isVoteRecordsAvailable()">
 					<PieChart />
 				</div>
-				<div v-else>No vote has been submitted yet.</div>
+				<div v-else>
+					<a-typography-text type="warning"
+						>No vote has been submitted yet.</a-typography-text
+					>
+				</div>
 			</a-card>
 		</a-col>
 	</a-row>

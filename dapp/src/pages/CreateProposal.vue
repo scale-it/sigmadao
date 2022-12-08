@@ -8,8 +8,8 @@
 	<a-row>
 		<a-col>
 			<h3>Current DAO conditions</h3>
-			<a-descriptions size="small" bordered :column="{ xs: 1, sm: 3 }">
-				<a-descriptions-item label="Minimum deposit amount of the gov tokens"
+			<a-descriptions size="small">
+				<a-descriptions-item label="Minimum Deposit Amount of the GOV Tokens"
 					>{{ globalStateMinAmount }} tokens
 				</a-descriptions-item>
 				<a-descriptions-item label="Maximum Duration of voting period">{{
@@ -135,7 +135,7 @@
 							{
 								required: true,
 								type: 'string',
-								validator: (rule, value) =>
+								validator: (rule:Rule, value:string) =>
 									validateAlgorandAddress(rule, value),
 							},
 						]"
@@ -185,7 +185,7 @@
 						{
 							required: true,
 							type: 'number',
-							validator: (rule, value) =>
+							validator: (rule:Rule, value:string) =>
 								validateFundAmount(rule, value, lsig_fund_amount),
 						},
 					]"
@@ -204,7 +204,6 @@
 import {
 	DAY_TO_MILLISECONDS,
 	VALIDATE_MESSAGES,
-	ProposalType,
 	openSuccessNotificationWithIcon,
 	overallErrorCheck,
 	loadingMessage,
@@ -218,7 +217,12 @@ import {
 	DEFAULT_FUND_AMT,
 	daoAppMessage,
 } from "@/constants";
-import { DateRange, DAOActions, EndPoint, Proposal } from "@/types";
+import {
+	DateRange,
+	DAOActions,
+	EndPoint,
+	Proposal as ProposalType,
+} from "@/types";
 import { defineComponent, reactive, toRaw } from "vue";
 import ProposalFormStore from "../store/AddProposalStore";
 import WalletStore from "../store/WalletStore";
@@ -252,7 +256,6 @@ export default defineComponent({
 	data() {
 		return {
 			ProposalType,
-			Proposal,
 			error: "",
 			key: "AddProposalKey",
 			DaoStore,
@@ -393,7 +396,7 @@ export default defineComponent({
 					let daoLsig: LogicSigAccount = await getDaoFundLSig(
 						this.daoStore.dao_id as number
 					);
-					const proposalType = proposal_type as Proposal;
+					const proposalType = proposal_type as ProposalType;
 					const startTime = convertToSeconds(vote_date[0]);
 					const endTime = convertToSeconds(vote_date[1]);
 					const executeBefore = convertToSeconds(execute_before);
@@ -499,7 +502,7 @@ export default defineComponent({
 			console.warn("Failed:", errorinfo);
 		},
 		async validateProposalParams(
-			proposal_type: Proposal,
+			proposal_type: ProposalType,
 			addr: string,
 			amount: number,
 			asaId: number

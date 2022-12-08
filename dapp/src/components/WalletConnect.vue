@@ -60,7 +60,7 @@
 					<a-typography-link :copyable="{ text: walletAddress }">
 						<a-tooltip>
 							<template #title>{{ walletAddress }}</template>
-							{{ getTruncatedAddress(walletAddress) }}
+							{{ getTruncatedAddress(walletAddress, 4) }}
 						</a-tooltip>
 					</a-typography-link>
 				</a-row>
@@ -80,7 +80,7 @@
 							</a-menu>
 						</template>
 						<a-button>
-							<span>{{ getTruncatedAddress(walletAddress) }}</span>
+							<span>{{ getTruncatedAddress(walletAddress, 4) }}</span>
 							<DownOutlined />
 						</a-button>
 					</a-dropdown>
@@ -98,7 +98,7 @@
 <script lang="ts">
 import { DownOutlined, LogoutOutlined } from "@ant-design/icons-vue";
 import { defineComponent } from "vue";
-import { WalletType, NetworkTypes } from "@/types";
+import { WalletType, NetworkTypes, EndPoint } from "@/types";
 import {
 	MyAlgoWalletSession,
 	WallectConnectSession,
@@ -112,7 +112,7 @@ import {
 	WALLET_CONNECTION_ERROR,
 	walletMessage,
 } from "@/constants";
-import { getWalletConfig } from "@/utility";
+import { getWalletConfig, getTruncatedAddress, redirectTo } from "@/utility";
 declare var AlgoSigner: any; // eslint-disable-line
 
 export default defineComponent({
@@ -128,6 +128,7 @@ export default defineComponent({
 			selectedNetwork: NetworkTypes.NONE,
 			NetworkTypes,
 			walletAddresses: new Array<string>(),
+			getTruncatedAddress,
 		};
 	},
 	setup() {
@@ -260,6 +261,11 @@ export default defineComponent({
 				this.walletAddress = addr;
 				this.setAddress(addr);
 				searchApplicationAndAccount();
+				// refresh proposal info page
+				if (this.$route.fullPath === EndPoint.PROPOSAL_INFO) {
+					redirectTo(this.$router, EndPoint.PROPOSALS);
+				}
+
 				console.log("Address Switched.");
 			}
 		},
@@ -267,14 +273,11 @@ export default defineComponent({
 			console.log("Wallet Disconnected");
 			this.walletAddress = "";
 			this.setAddress("");
-			DaoID().handleLogOut();
+			DaoID().resetDaoStore();
 			this.setWalletType(WalletType.NONE);
 			this.selectedWallet = WalletType.NONE;
 			this.selectedNetwork = NetworkTypes.NONE;
 			this.walletStore.setNetworkTypes(NetworkTypes.NONE);
-		},
-		getTruncatedAddress(addr: string) {
-			return addr.substring(0, 4) + "..." + addr.slice(-4);
 		},
 	},
 });

@@ -68,7 +68,7 @@ import { searchApplicationAndAccount } from "@/indexer";
 import Description from "@/UIKit/Description.vue";
 import { executeProposal, isCurrentTimeValid, secToFormat } from "@/utility";
 import ProposalStore from "@/store/ProposalStore";
-import { DateTimeFormat } from "@/types";
+import { DateTimeFormat, ProposalDetailType } from "@/types";
 import moment from "moment";
 
 export default defineComponent({
@@ -128,6 +128,7 @@ export default defineComponent({
 				searchApplicationAndAccount(); // to update locked and available token on UI
 				successMessage(this.key);
 				openSuccessNotificationWithIcon(SUCCESSFUL, PROPOSAL_EXECUTED);
+				this.$emit("handleTabChange", ProposalDetailType.DETAILS); // redirect to proposal info tab to show execute success message
 			} catch (error) {
 				errorMessage(this.key);
 				this.error = error.message;
