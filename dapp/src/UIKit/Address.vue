@@ -12,10 +12,11 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
 	name: "AddressCopyable",
-	props: ["walletAddress"],
+	props: ["walletAddress", "truncateDigits"],
 	methods: {
 		getTruncatedAddress(addr: string) {
-			return addr.substring(0, 4) + "..." + addr.slice(-4);
+			const digits = this.truncateDigits ?? 4;
+			return addr.substring(0, digits) + "..." + addr.slice(-digits);
 		},
 	},
 });

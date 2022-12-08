@@ -37,6 +37,7 @@ export enum EndPoint {
 	VOTE_TOKEN = "/voteTokens",
 	CREATE_DAO = "/createDao",
 	PAGE_404 = "/:pathMatch(.*)*",
+	DAO_INFO = '/daoInfo'
 }
 
 export enum DAOActions {
