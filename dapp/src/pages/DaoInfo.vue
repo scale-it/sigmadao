@@ -6,10 +6,9 @@
 			>
 			<a-breadcrumb-item>Dao Info</a-breadcrumb-item>
 		</a-breadcrumb>
-
-		<div class="dao-info-layout">
+		<h4 class="text_center">{{ daoInfo.name }} Details</h4>
+		<div class="dao_info_layout">
 			<div class="flex_1">
-				<h4 class="text_center">{{ daoInfo.name }} Details</h4>
 				<a-descriptions :column="1" bordered>
 					<a-descriptions-item label="App ID">{{
 						daoInfo.dao_id
@@ -27,22 +26,7 @@
 					</a-descriptions-item>
 				</a-descriptions>
 			</div>
-			<div class="margin_inline_sm flex_1">
-				<h4>Conditions for Creating Proposal</h4>
-				<a-descriptions :column="1" bordered>
-					<a-descriptions-item label="Minimum Duration for Voting Period">{{
-						daoInfo.minDuration
-					}}</a-descriptions-item>
-					<a-descriptions-item label="Maximum Duration for Voting Period">{{
-						daoInfo.maxDuration
-					}}</a-descriptions-item>
-					<a-descriptions-item label="Minimum deposit of Gov Token"
-						>{{ daoInfo.minDepositAmt }} Gov Tokens</a-descriptions-item
-					>
-				</a-descriptions>
-			</div>
 			<div class="flex_1">
-				<h4>Account Details</h4>
 				<a-descriptions :column="1" bordered>
 					<a-descriptions-item label="App address">
 						<address-copyable :walletAddress="daoInfo.daoAddress" />
@@ -53,6 +37,27 @@
 					<a-descriptions-item label="Algo Amount">{{
 						accountDetails.algoAmt
 					}}</a-descriptions-item>
+				</a-descriptions>
+			</div>
+
+			<div class="break_flex_row"></div>
+			<div class="margin_top_med flex_1">
+				<div class="flexbox_justify_space">
+					<h4>Conditions for Creating Proposal</h4>
+					<a-button type="link" @click="redirectToProposals">
+						Checkout Proposals
+					</a-button>
+				</div>
+				<a-descriptions :column="1" bordered>
+					<a-descriptions-item label="Minimum Duration for Voting Period">{{
+						daoInfo.minDuration
+					}}</a-descriptions-item>
+					<a-descriptions-item label="Maximum Duration for Voting Period">{{
+						daoInfo.maxDuration
+					}}</a-descriptions-item>
+					<a-descriptions-item label="Minimum deposit of Gov Token"
+						>{{ daoInfo.minDepositAmt }} Gov Tokens</a-descriptions-item
+					>
 				</a-descriptions>
 			</div>
 		</div>
@@ -120,6 +125,9 @@ export default defineComponent({
 	methods: {
 		redirectToAllDao() {
 			redirectTo(this.$router, EndPoint.ALL_DAO);
+		},
+		redirectToProposals() {
+			redirectTo(this.$router, EndPoint.PROPOSALS);
 		},
 	},
 });
