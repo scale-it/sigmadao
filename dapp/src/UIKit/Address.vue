@@ -13,12 +13,11 @@ import { getTruncatedAddress } from "@/utility";
 
 export default defineComponent({
 	name: "AddressCopyable",
-	props: ["walletAddress", "truncateDigits"],
-	methods: {
-		getTruncatedAddress(addr: string) {
-			const digits = this.truncateDigits ?? 4;
-			return addr.substring(0, digits) + "..." + addr.slice(-digits);
-		},
+	props: ["walletAddress"],
+	data() {
+		return {
+			getTruncatedAddress,
+		};
 	},
 });
 </script>
