@@ -113,7 +113,6 @@ import {
 	walletMessage,
 } from "@/constants";
 import { getWalletConfig, getTruncatedAddress, redirectTo } from "@/utility";
-import { EndPoint } from "../types";
 declare var AlgoSigner: any; // eslint-disable-line
 
 export default defineComponent({
