@@ -16,13 +16,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@algo-builder/algob@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "@algo-builder/algob@npm:6.0.0"
+"@algo-builder/algob@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "@algo-builder/algob@npm:7.0.0"
   dependencies:
-    "@algo-builder/runtime": 6.0.0
-    "@algo-builder/web": 6.0.0
-    algosdk: ^1.22.0
+    "@algo-builder/runtime": 7.0.0
+    "@algo-builder/web": 7.0.0
+    algosdk: ^1.24.0
     chalk: ^4.1.2
     debug: ^4.3.4
     deep-equal: ^2.0.5
@@ -42,19 +42,19 @@ __metadata:
     zod: ^3.19.1
   bin:
     algob: build/internal/cli/cli.js
-  checksum: b2b33574b791370425761e7c2454b318f787b1d92263205c9f6421a8f870ecc6b3e338b22f2e9e90f82809b10da97e6c9bb157f49431df959f11867740d709b7
+  checksum: ef0d4e54f37a83dfa61158316c1590b52da366db1fe5eedf18e9e63aadcf1204563d4d107890d1e3af3ed349b7cdc17a35ae7ff4e6bbb3201d1eeb6feaccd633
   languageName: node
   linkType: hard
 
-"@algo-builder/runtime@npm:6.0.0":
-  version: 6.0.0
-  resolution: "@algo-builder/runtime@npm:6.0.0"
+"@algo-builder/runtime@npm:7.0.0":
+  version: 7.0.0
+  resolution: "@algo-builder/runtime@npm:7.0.0"
   dependencies:
-    "@algo-builder/web": 6.0.0
+    "@algo-builder/web": 7.0.0
     "@nodelib/fs.walk": ^1.2.8
     "@types/crypto-js": ^4.1.1
     "@types/json-bigint": ^1.0.1
-    algosdk: ^1.22.0
+    algosdk: ^1.24.0
     chalk: ^4.1.2
     crypto-js: ^4.1.1
     debug: ^4.3.4
@@ -70,23 +70,23 @@ __metadata:
     tweetnacl-ts: ^1.0.3
     yaml: ^1.10.2
     zod: ^3.19.1
-  checksum: e3746628b68b2e57336e20318e4e83a7c679e192a596cdac07dadbd198ce47ad205988d67ecf4c35ae5984593bbed18858be87dac83b697ace4e6c8973c79cd2
+  checksum: 3d7f4a225a95b7e4749f32a26f9ef5e5480491cbdbaf5fd18c195dc8bee9830060c24a2f875cc4de8b466cca7c7a7763c51aa194256c163da41ec424df1c52fe
   languageName: node
   linkType: hard
 
-"@algo-builder/web@npm:6.0.0, @algo-builder/web@npm:^6.0.0":
-  version: 6.0.0
-  resolution: "@algo-builder/web@npm:6.0.0"
+"@algo-builder/web@npm:7.0.0, @algo-builder/web@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "@algo-builder/web@npm:7.0.0"
   dependencies:
     "@json-rpc-tools/utils": ^1.7.6
     "@randlabs/myalgo-connect": ^1.4.0
     "@walletconnect/client": ^1.8.0
     "@walletconnect/types": ^1.8.0
     algorand-walletconnect-qrcode-modal: ^1.8.0
-    algosdk: ^1.22.0
+    algosdk: ^1.24.0
     debug: ^4.3.4
     zod: ^3.19.1
-  checksum: ee9702a1e0913965fb794c92c41808a917bb036415e9a0031230e915d2ffae4ab29aae28ab28c47cc3deb2f138b749d990942a0d9fc6a777c4721cb179c7f913
+  checksum: 04342b4264eb931549f51005f182dce6ba3fb21e55faa58ec945873395e0445efb3c8349915dc23d30eb3a638856db20394631e3c7e6bfdebc12d9d1eab61a8a
   languageName: node
   linkType: hard
 
@@ -3697,7 +3697,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"algosdk@npm:^1.22.0, algosdk@npm:^1.23.2":
+"algosdk@npm:^1.23.2":
   version: 1.23.2
   resolution: "algosdk@npm:1.23.2"
   dependencies:
@@ -3712,6 +3712,24 @@ __metadata:
     tweetnacl: ^1.0.3
     vlq: ^2.0.4
   checksum: c0ef0f357001165c545a4db095177300ebc982e891c0a4356997bd550d515e2b50f66c685b2d7402665d3fba42a11add9595936711c9a934f7d24e58a9d1b40b
+  languageName: node
+  linkType: hard
+
+"algosdk@npm:^1.24.0":
+  version: 1.24.0
+  resolution: "algosdk@npm:1.24.0"
+  dependencies:
+    algo-msgpack-with-bigint: ^2.1.1
+    buffer: ^6.0.2
+    cross-fetch: ^3.1.5
+    hi-base32: ^0.5.1
+    js-sha256: ^0.9.0
+    js-sha3: ^0.8.0
+    js-sha512: ^0.8.0
+    json-bigint: ^1.0.0
+    tweetnacl: ^1.0.3
+    vlq: ^2.0.4
+  checksum: 9c81eb69a605d907710b18e71c939d93f9e1fd013b409a8372e9abdaf9bc52964b1a120e870194e71a27e5a556a6d0b8694ba03eb3cb3238de916b5d33f36de4
   languageName: node
   linkType: hard
 
@@ -5111,8 +5129,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "contracts@workspace:contracts"
   dependencies:
-    "@algo-builder/algob": ^6.0.0
-    "@algo-builder/web": ^6.0.0
+    "@algo-builder/algob": ^7.0.0
+    "@algo-builder/web": ^7.0.0
     algosdk: ^1.23.2
     chai: ^4.3.7
     eslint: ^8.10.0
@@ -5513,8 +5531,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "dapp@workspace:dapp"
   dependencies:
-    "@algo-builder/algob": ^6.0.0
-    "@algo-builder/web": ^6.0.0
+    "@algo-builder/algob": ^7.0.0
+    "@algo-builder/web": ^7.0.0
     "@ant-design/icons-vue": ^6.1.0
     "@babel/core": ^7.17.7
     "@babel/eslint-parser": ^7.17.0

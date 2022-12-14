@@ -4,8 +4,8 @@
 	"main": "index.js",
 	"license": "Apache-2.0",
 	"dependencies": {
-		"@algo-builder/algob": "^6.0.0",
-		"@algo-builder/web": "^6.0.0",
+		"@algo-builder/algob": "^7.0.0",
+		"@algo-builder/web": "^7.0.0",
 		"algosdk": "^1.23.2",
 		"chai": "^4.3.7",
 		"mocha": "^10.1.0"
