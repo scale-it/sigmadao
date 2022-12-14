@@ -41,3 +41,7 @@ html {
 .ant-alert-with-description .ant-alert-description {
 	word-break: break-all;
 }
+
+#dao-info .ant-descriptions-item-label {
+	width: 50%;
+}

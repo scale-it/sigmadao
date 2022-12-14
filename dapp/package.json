@@ -22,10 +22,10 @@
 		"upgrade:dependency": "npx yarn-upgrade-all"
 	},
 	"dependencies": {
-		"@algo-builder/algob": "^6.0.0",
-		"@algo-builder/web": "^6.0.0",
+		"@algo-builder/algob": "^7.0.0",
+		"@algo-builder/web": "^7.0.0",
 		"@ant-design/icons-vue": "^6.1.0",
-		"algosdk": "^1.22.0",
+		"algosdk": "^1.23.2",
 		"ant-design-vue": "^3.2.15",
 		"chart.js": "^3.9.1",
 		"core-js": "^3.21.1",
