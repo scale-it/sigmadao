@@ -129,6 +129,7 @@ export default defineComponent({
 			NetworkTypes,
 			walletAddresses: new Array<string>(),
 			getTruncatedAddress,
+			EndPoint,
 		};
 	},
 	setup() {
@@ -244,7 +245,6 @@ export default defineComponent({
 		// eslint-disable-next-line
 		handleWalletConnect(e: any) {
 			this.handleLogOut();
-			console.log("changing wallet kind", e.key);
 			this.selectedWallet = e.key;
 			this.setWalletType(e.key);
 		},
@@ -253,7 +253,6 @@ export default defineComponent({
 				this.selectedNetwork = e.key;
 				this.walletStore.setNetworkTypes(e.key);
 				this.connectWallet(this.walletStore.walletKind);
-				redirectTo(this.$router, EndPoint.ALL_DAO);
 			}
 		},
 		handleAddressSwitch(e: any) {
@@ -266,8 +265,6 @@ export default defineComponent({
 				if (this.$route.fullPath === EndPoint.PROPOSAL_INFO) {
 					redirectTo(this.$router, EndPoint.PROPOSALS);
 				}
-
-				console.log("Address Switched.");
 			}
 		},
 		handleLogOut() {
@@ -279,6 +276,7 @@ export default defineComponent({
 			this.selectedWallet = WalletType.NONE;
 			this.selectedNetwork = NetworkTypes.NONE;
 			this.walletStore.setNetworkTypes(NetworkTypes.NONE);
+			redirectTo(this.$router, EndPoint.ALL_DAO);
 		},
 	},
 });
