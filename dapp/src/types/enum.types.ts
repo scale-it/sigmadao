@@ -5,6 +5,14 @@ export enum WalletType {
 	WALLET_CONNECT = "Wallet Connect",
 }
 
+// TODO: Update the URL when network backend is ready
+export enum BACKEND_BASE_URL {
+	MAIN_NET = "http://localhost:4000/api",
+	TEST_NET = "http://localhost:4000/api",
+	BETA_NET = "http://localhost:4000/api",
+	PRIVATE_NET = "http://localhost:4000/api"
+}
+
 export enum ASA {
 	NONE,
 	ALGOSIGNER,

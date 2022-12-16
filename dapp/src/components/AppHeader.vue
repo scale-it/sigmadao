@@ -13,7 +13,7 @@
 					</div>
 				</div>
 			</template>
-			<div v-if="showNetworkSelection">
+			<div v-if="walletStore.network === NetworkTypes.NONE">
 				<a-result title="Please select a network to access DAOs" />
 			</div>
 			<div v-else>
@@ -110,7 +110,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import WalletConnect from "./WalletConnect.vue";
-import { EndPoint, SearchDaoType } from "../types/enum.types";
+import { EndPoint, SearchDaoType, NetworkTypes } from "../types/enum.types";
 import DaoStore from "../store/DaoID";
 import {
 	handleDaoSearch,
@@ -154,8 +154,8 @@ export default defineComponent({
 			walletStore,
 			resetDaoStore: DaoStore().resetDaoStore,
 			DaoStore,
-			showNetworkSelection: false,
 			network,
+			NetworkTypes,
 		};
 	},
 	methods: {
@@ -239,21 +239,6 @@ export default defineComponent({
 				}
 			} catch (error) {
 				openErrorNotificationWithIcon(UNSUCCESSFUL, error.message);
-			}
-		},
-	},
-	mounted() {
-		// network is not selected
-		if (!this.walletStore.network) {
-			this.showNetworkSelection = true;
-		}
-	},
-	watch: {
-		network() {
-			if (this.walletStore.network) {
-				this.showNetworkSelection = false;
-			} else {
-				this.showNetworkSelection = true;
 			}
 		},
 	},

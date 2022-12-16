@@ -1,9 +1,8 @@
 import { types } from "@algo-builder/web";
 import { algodClient, port, server, token } from "@/config/algob.config";
-import { EncodingType, NetworkTypes } from "@/types";
+import { BACKEND_BASE_URL, EncodingType, NetworkConfig, NetworkTypes } from "@/types";
 import algosdk from "algosdk";
 import { toRaw } from "vue";
-import { HttpNetworkConfig } from "@algo-builder/web/build/types";
 import { BETA_NET_URL, MAIN_NET_URL, TEST_NET_URL } from "@/constants";
 import WalletStore from "@/store/WalletStore";
 import base32 from "hi-base32";
@@ -117,42 +116,47 @@ export const convertHexToAlgorandAddr = (hex: string) => {
 
 export function getAlgodNetworkConfig(
 	networkType: NetworkTypes
-): HttpNetworkConfig {
+): NetworkConfig {
 	switch (networkType) {
 		case NetworkTypes.MAIN_NET:
 			return {
 				token: "",
 				server: MAIN_NET_URL,
 				port: "",
+				backendBaseURL: BACKEND_BASE_URL.MAIN_NET
 			};
 		case NetworkTypes.TEST_NET:
 			return {
 				token: "",
 				server: TEST_NET_URL,
 				port: "",
+				backendBaseURL: BACKEND_BASE_URL.TEST_NET
 			};
 		case NetworkTypes.BETA_NET:
 			return {
 				token: "",
 				server: BETA_NET_URL,
 				port: "",
+				backendBaseURL: BACKEND_BASE_URL.BETA_NET
 			};
 		case NetworkTypes.PRIVATE_NET:
 			return {
 				token: token,
 				server: server,
 				port: port,
+				backendBaseURL: BACKEND_BASE_URL.PRIVATE_NET
 			};
 		default:
 			return {
 				token: "",
 				server: "",
 				port: "",
+				backendBaseURL: ""
 			};
 	}
 }
 
-export const getWalletConfig = () => {
+export const getWalletConfig = (): NetworkConfig => {
 	const walletStore = WalletStore();
 	return getAlgodNetworkConfig(walletStore.network);
 };
