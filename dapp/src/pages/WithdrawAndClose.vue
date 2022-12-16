@@ -60,7 +60,7 @@ import { types } from "@algo-builder/web";
 import { defineComponent, reactive, toRaw } from "vue";
 import { searchApplicationAndAccount } from "@/indexer";
 import ProposalStore from "@/store/ProposalStore";
-import { LogicSigAccount } from "algosdk/dist/types/src/logicsig";
+import { LogicSigAccount } from "algosdk";
 import { getProposalLsig } from "@/contract/dao";
 import { closeProposal } from "@/utility";
 import moment from "moment";

@@ -3697,9 +3697,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"algosdk@npm:^1.23.2":
-  version: 1.23.2
-  resolution: "algosdk@npm:1.23.2"
+"algosdk@npm:^1.24.0, algosdk@npm:^1.24.1":
+  version: 1.24.1
+  resolution: "algosdk@npm:1.24.1"
   dependencies:
     algo-msgpack-with-bigint: ^2.1.1
     buffer: ^6.0.2
@@ -3711,25 +3711,7 @@ __metadata:
     json-bigint: ^1.0.0
     tweetnacl: ^1.0.3
     vlq: ^2.0.4
-  checksum: c0ef0f357001165c545a4db095177300ebc982e891c0a4356997bd550d515e2b50f66c685b2d7402665d3fba42a11add9595936711c9a934f7d24e58a9d1b40b
-  languageName: node
-  linkType: hard
-
-"algosdk@npm:^1.24.0":
-  version: 1.24.0
-  resolution: "algosdk@npm:1.24.0"
-  dependencies:
-    algo-msgpack-with-bigint: ^2.1.1
-    buffer: ^6.0.2
-    cross-fetch: ^3.1.5
-    hi-base32: ^0.5.1
-    js-sha256: ^0.9.0
-    js-sha3: ^0.8.0
-    js-sha512: ^0.8.0
-    json-bigint: ^1.0.0
-    tweetnacl: ^1.0.3
-    vlq: ^2.0.4
-  checksum: 9c81eb69a605d907710b18e71c939d93f9e1fd013b409a8372e9abdaf9bc52964b1a120e870194e71a27e5a556a6d0b8694ba03eb3cb3238de916b5d33f36de4
+  checksum: 3b6960dddec3d7d37a1505dcb3c6997740c5b02fa076a140efcf51eaddd83b7a7c8f56bab3001ec0ac7b1ccdd264e5a41d051b8bf5b9b72762e338c704547203
   languageName: node
   linkType: hard
 
@@ -5131,7 +5113,7 @@ __metadata:
   dependencies:
     "@algo-builder/algob": ^7.0.0
     "@algo-builder/web": ^7.0.0
-    algosdk: ^1.23.2
+    algosdk: ^1.24.1
     chai: ^4.3.7
     eslint: ^8.10.0
     mocha: ^10.1.0
@@ -5540,7 +5522,7 @@ __metadata:
     "@vue/cli-plugin-typescript": ^5.0.1
     "@vue/cli-service": ^5.0.1
     "@vue/compiler-sfc": ^3.2.31
-    algosdk: ^1.23.2
+    algosdk: ^1.24.1
     ant-design-vue: ^3.2.15
     chart.js: ^3.9.1
     core-js: ^3.21.1
@@ -5555,7 +5537,7 @@ __metadata:
     postgraphile: ^4.12.9
     stream-browserify: ^3.0.0
     ts-node: ^10.7.0
-    typescript: ^4.6.2
+    typescript: ^4.7.4
     vue: ^3.2.45
     vue-chartjs: ^4.1.2
     vue-router: ^4.1.6
@@ -13700,23 +13682,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.6.2":
-  version: 4.9.3
-  resolution: "typescript@npm:4.9.3"
+"typescript@npm:^4.7.4":
+  version: 4.9.4
+  resolution: "typescript@npm:4.9.4"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 17b8f816050b412403e38d48eef0e893deb6be522d6dc7caf105e54a72e34daf6835c447735fd2b28b66784e72bfbf87f627abb4818a8e43d1fa8106396128dc
+  checksum: e782fb9e0031cb258a80000f6c13530288c6d63f1177ed43f770533fdc15740d271554cdae86701c1dd2c83b082cea808b07e97fd68b38a172a83dbf9e0d0ef9
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^4.6.2#~builtin<compat/typescript>":
-  version: 4.9.3
-  resolution: "typescript@patch:typescript@npm%3A4.9.3#~builtin<compat/typescript>::version=4.9.3&hash=701156"
+"typescript@patch:typescript@^4.7.4#~builtin<compat/typescript>":
+  version: 4.9.4
+  resolution: "typescript@patch:typescript@npm%3A4.9.4#~builtin<compat/typescript>::version=4.9.4&hash=701156"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: ef65c22622d864497d0a0c5db693523329b3284c15fe632e93ad9aa059e8dc38ef3bd767d6f26b1e5ecf9446f49bd0f6c4e5714a2eeaf352805dc002479843d1
+  checksum: 37f6e2c3c5e2aa5934b85b0fddbf32eeac8b1bacf3a5b51d01946936d03f5377fe86255d4e5a4ae628fd0cd553386355ad362c57f13b4635064400f3e8e05b9d
   languageName: node
   linkType: hard
 
