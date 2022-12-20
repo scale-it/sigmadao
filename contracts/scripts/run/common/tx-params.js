@@ -5,7 +5,7 @@ const { getApplicationAddress } = require("algosdk");
 const now = Math.round(new Date().getTime() / 1000);
 
 const votingStart = now + 1 * 60;
-const votingEnd = now + 3 * 60;
+const votingEnd = now + 2 * 60;
 const executeBefore = now + 7 * 60;
 
 function mkProposalTx(

@@ -20,9 +20,9 @@ async function run(runtimeEnv, deployer) {
 
 	// DAO App initialization parameters
 	const deposit = 15; // deposit required to make a proposal
-	const minSupport = 5; // minimum number of yes power votes to validate proposal
+	const minSupport = 1; // minimum number of yes power votes to validate proposal
 	const minDuration = 1 * 60; // 1min (minimum voting time in number of seconds)
-	const maxDuration = 5 * 60; // 5min (maximum voting time in number of seconds)
+	const maxDuration = 1 * 60 * 60; // 5min (maximum voting time in number of seconds)
 	const url = "www.my-url.com";
 	const daoName = "DAO";
 

@@ -26,10 +26,10 @@ async function run(runtimeEnv, deployer) {
 
 	// register votes (deposited in ./deposit_vote_token.js)
 	await registerVote(deployer, voterA, proposalLsig.address(), Vote.YES);
-	await registerVote(deployer, voterB, proposalLsig.address(), Vote.ABSTAIN);
+	// await registerVote(deployer, voterB, proposalLsig.address(), Vote.ABSTAIN);
 
 	// Transaction FAIL: voterA tries to register deposited votes again
-	await registerVote(deployer, voterA, proposalLsig.address(), Vote.YES);
+	// await registerVote(deployer, voterA, proposalLsig.address(), Vote.YES);
 }
 
 module.exports = { default: run };

@@ -1,6 +1,4 @@
-import { compileToUnit8Array } from "@/utility";
-
-const daoAppApproval = `#pragma version 6
+#pragma version 6
 txn ApplicationID
 int 0
 ==
@@ -1143,8 +1141,3 @@ btoi
 app_global_put
 int 1
 return
-`;
-
-export const getCompiledDaoApproval = async () => {
-    return await compileToUnit8Array(daoAppApproval);
-};

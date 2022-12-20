@@ -75,7 +75,7 @@ The scripts provide only a sample code to show how to use the template. For your
 
 To deploy the DAO, we created a deploy script in `scripts/deploy`. This script deploys initial Gov token, deploys DAO app, fund lsig's, saves deposit_lsig address to DAO app, and does initial distribution of ASA (Gov token).
 
-    yarn run algob deploy
+    yarn run algob deploy --force
 
 To add proposal (`{voting_start, voting_end}` is set as `{now + 1min, now + 3min}`). This records proposal in lsig (local state).:
 
@@ -92,6 +92,7 @@ To vote for a proposal (using deposited tokens). Records vote by voterAcc in pro
 To execute a proposal (`execute_before` is set as 7min from the time of proposal creation):
 
     yarn run algob run scripts/run/vote.js
+    yarn run algob run scripts/run/execute.js
 
 To withdraw deposited votes. User can only withdraw the deposit after the latest voting he participated in ended.:
 

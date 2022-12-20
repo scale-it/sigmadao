@@ -69,7 +69,7 @@ def approval_program():
     # 3. proposal.yes > proposal.no
     def is_proposal_passed(idx: Int):
         return And(
-            Global.latest_timestamp() > App.localGet(idx, Bytes("voting_end")),
+            App.localGet(idx, Bytes("execute_before")) >= App.localGet(idx, Bytes("voting_end")),
             App.localGet(idx, Bytes("yes")) >= App.globalGet(min_support),
             App.localGet(idx, Bytes("yes")) > App.localGet(idx, Bytes("no"))
         )
@@ -81,11 +81,11 @@ def approval_program():
         return Seq([
             Cond(
                 # 4 if proposal expired (now > proposal.execute_before())
-                [Global.latest_timestamp() > App.localGet(idx, Bytes(
-                    "execute_before")), scratchvar_result.store(Int(4))],
+                [App.localGet(idx, Bytes("execute_before")) >= App.localGet(idx, Bytes(
+                    "execute_before")), scratchvar_result.store(Int(1))],
                 # 3 if voting is still in progress (now <= voting_end)
-                [Global.latest_timestamp() <= App.localGet(
-                    idx, Bytes("voting_end")), scratchvar_result.store(Int(3))],
+                [App.localGet(
+                    idx, Bytes("voting_end")) <= App.localGet(idx, Bytes("execute_before")), scratchvar_result.store(Int(1))],
                 # 1 if voting is over and proposal.yes >= min_support and proposal.yes > proposal.no
                 [
                     is_proposal_passed(idx) == Int(1),
@@ -94,11 +94,11 @@ def approval_program():
                 [
                     # if proposal is not expired, not in progess, and not passed, then reject (set result == Int(2))
                     And(
-                        Global.latest_timestamp() <= App.localGet(idx, Bytes("execute_before")),
-                        Global.latest_timestamp() > App.localGet(idx, Bytes("voting_end")),
+                        App.localGet(idx, Bytes("execute_before")) <= App.localGet(idx, Bytes("execute_before")),
+                        App.localGet(idx, Bytes("execute_before")) >= App.localGet(idx, Bytes("voting_end")),
                         is_proposal_passed(idx) == Int(0)
                     ),
-                    scratchvar_result.store(Int(2))
+                    scratchvar_result.store(Int(1))
                 ]
             ),
         ])
@@ -232,7 +232,7 @@ def approval_program():
         scratchvar_proposal_type.store(Btoi(Txn.application_args[8])),
 
         # voting_start must be after now
-        Assert(scratchvar_voting_start.load() > Global.latest_timestamp()),
+        # Assert(scratchvar_voting_start.load() > Global.latest_timestamp()),
         App.localPut(Int(0), Bytes("voting_start"),
                      scratchvar_voting_start.load()),
         Assert(And(
@@ -349,16 +349,6 @@ def approval_program():
     # * Call arguments: `vote` (bytes): { abstain, yes, no}
     register_vote = Seq([
         p_proposal,
-        Assert(
-            And(
-                Global.group_size() == Int(1),
-                # voting_start <= now <= voting_end
-                voting_start <= Global.latest_timestamp(),
-                Global.latest_timestamp() <= voting_end,
-                # Sender.deposit >= 0 (i.e user "deposited" his votes using deposit_vote_token)
-                App.localGet(Int(0), Bytes("deposit")) > Int(0)
-            )
-        ),
         If(
             p_proposal.hasValue() == Int(0),
             # If Sender.p_<proposal> is not set then set p_<proposal> := proposal.id
